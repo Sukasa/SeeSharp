@@ -259,6 +259,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Content Include=".gitignore" />
     <Content Include="Icon1.ico" />
     <None Include="Resources\LoadWorldButtonImage.png" />
     <None Include="Resources\folder_camera.png" />

@@ -124,8 +124,8 @@ namespace SeeSharp
                 Renderer.RenderError += OnRenderError;
 
                 Configuration.Chunks = World.GetChunkManager(Metrics.Dimension);
-                if (Configuration.RenderSubregion)
-                    Configuration.SubregionChunks = new Rectangle(Metrics.MinX, Metrics.MinZ, (Metrics.MaxX - Metrics.MinX) + 1, (Metrics.MaxZ - Metrics.MinZ) + 1);
+                if (!Configuration.RenderSubregion)
+                    Configuration.SubregionChunks = new Rectangle(Metrics.MinX, Metrics.MinZ, (Metrics.MaxX - Metrics.MinX), (Metrics.MaxZ - Metrics.MinZ));
                 Renderer.Configure(Configuration);
                 Renderer.Initialize();
 

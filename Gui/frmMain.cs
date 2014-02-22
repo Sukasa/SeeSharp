@@ -4,13 +4,13 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
-using System.Windows.Forms;
-using SeeSharp.Rendering;
-using System.Threading;
 using System.Text;
-using Substrate;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Windows.Forms;
 using SeeSharp.Palette;
+using SeeSharp.Rendering;
+using Substrate;
 
 namespace SeeSharp.Gui
 {
@@ -69,8 +69,6 @@ namespace SeeSharp.Gui
         }
         private void SetupSubregion()
         {
-            RenderingConfig.SubregionChunks = new Rectangle((int)nudXMin.Value, (int)nudZMin.Value, (int)nudXMax.Value - (int)nudXMin.Value + 1, (int)nudZMax.Value - (int)nudZMin.Value + 1);
-
             nudXMin.Maximum = nudXMax.Value - 1;
             nudZMin.Maximum = nudZMax.Value - 1;
             nudXMax.Minimum = nudXMin.Value + 1;
@@ -114,7 +112,7 @@ namespace SeeSharp.Gui
                     Row.Cells[1].ToolTipText = string.Format("{0} v{1}\r\n{2}", File.Name, File.Version, File.Description);
                 else
                     Row.Cells[1].ToolTipText = string.Format("{0}\r\n{1}", File.Name, File.Description);
-                
+
             }
         }
         private void LoadRenderers()
@@ -192,7 +190,7 @@ namespace SeeSharp.Gui
                 RenderingConfig.SubregionChunks = new Rectangle(-15, -15, 31, 31);
             }
             else if (RenderingConfig.RenderSubregion)
-                RenderingConfig.SubregionChunks = new Rectangle(RenderingConfig.Metrics.MinX, RenderingConfig.Metrics.MinZ, RenderingConfig.Metrics.MaxX - RenderingConfig.Metrics.MinX, RenderingConfig.Metrics.MaxZ - RenderingConfig.Metrics.MinZ);
+                RenderingConfig.SubregionChunks = new Rectangle((int)nudXMin.Value, (int)nudZMin.Value, (int)nudXMax.Value - (int)nudXMin.Value + 1, (int)nudZMax.Value - (int)nudZMin.Value + 1);
             else
                 RenderingConfig.SubregionChunks = new Rectangle(RenderingConfig.Metrics.MinX, RenderingConfig.Metrics.MinZ, RenderingConfig.Metrics.MaxX - RenderingConfig.Metrics.MinX, RenderingConfig.Metrics.MaxZ - RenderingConfig.Metrics.MinZ);
 
@@ -345,7 +343,7 @@ namespace SeeSharp.Gui
             foreach (DataGridViewRow Row in dgPalettes.Rows)
             {
                 Row.Cells[0].Value = ((PaletteFile)Row.Tag).Selected;
-                
+
             }
 
         }
