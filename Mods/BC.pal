@@ -1,0 +1,98 @@
+﻿# Palette file for Buildcraft
+# Please note that if you have modified the default Block IDs, this file will need to be updated to match.
+
+# This additional file defines various BuildCraft blocks to render.  It doesn't get them all, nor is it intended to.
+# What this file DOES do is demonstrate the use of variables in scripts.
+
+#===================================================================================================
+# Change these variables to update all the Buildcraft block IDs
+#===================================================================================================
+$BCVersion = 3.2.0
+
+$MiningWellID = 512
+$MiningPipeID = 505
+$AutoWorkbenchID = 502
+$QuarryID = 516
+$LandmarkID = 511
+$FillerID = 507
+$BuilderID = 504
+$ArchitectTableID = 500
+$FrameID = 508
+$EngineID = 506
+$Oil1 = 254
+$Oil2 = 255
+$PumpID = 515
+$TankBlockID = 518
+$RefineryID = 517
+$BlueprintLibraryID = 503
+$LaserID = 510
+$AssemblyTableID = 501
+$PathMarkID = 513
+$HopperID = 509
+
+#===================================================================================================
+# You should not need to alter anything below this line, unless you are adding new block entries
+#===================================================================================================
+
+> BuildCraft $BCVersion palette
+> Please ensure that you have updated this file to match any Block ID changes.
+
+# Frame Block
+. $FrameID 0 128 128 198 121 192
+
+# Mining Well
+. $MiningWellID 0 255 232 232 232 255
+
+# Mining Pipe
+. $MiningPipeID 0 255 255 198 121 255
+
+# Auto Workbench
+. $AutoWorkbenchID 0 255 247 157 60 255
+
+# Quarry
+. $QuarryID 0 255 232 232 232 255
+
+# Landmark
+. $LandmarkID 0 32 32 32 240 128
+
+# Filler
+. $FillerID 0 255 255 255 32 255
+
+# Builder
+. $BuilderID 0 255 255 255 32 255
+
+# Architect Table
+. $ArchitectTableID 0 255 255 255 32 255
+
+# Engines (Redstone, Stirling, Combustion)
+. $EngineID 0 255 209 111 45 255
+. $EngineID 1 255 145 145 145 255
+. $EngineID 2 255 232 232 232 255
+
+# Oil
+. $Oil1 0 255 16 16 16 255
+. $Oil2 0 255 16 16 16 255
+
+# Pump
+. $PumpID 0 255 232 232 232 255
+
+# Tank
+. $TankBlockID 0 16 232 16 16 32
+
+# Refinery
+. $RefineryID 0 255 232 128 128 255
+
+# Blueprint Library
+. $BlueprintLibraryID 0 255 255 255 32 255
+
+# Laser
+. $LaserID 0 128 128 32 32 96
+
+# Assembly Table
+. $AssemblyTableID 0 255 32 8 8 255
+
+# Path Mark
+. $PathMarkID 0 32 32 240 32 128
+
+# Hopper
+. $HopperID 0 255 232 232 232 255

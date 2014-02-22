@@ -1,0 +1,13 @@
+﻿<#@ template language="C#" #>
+<#@ output extension=".cs" #>
+
+using System.Reflection;
+
+[assembly: AssemblyVersion("<#= this.VersionCode #>.<#= this.Days #>.<#= this.Minutes #>")]
+[assembly: AssemblyFileVersion("<#= this.VersionCode #>.<#= this.Days #>.<#= this.Minutes #>")]
+
+<#+
+	String VersionCode = "1.3";
+	int Minutes = (DateTime.UtcNow - new DateTime(DateTime.UtcNow.Year,1,1)).Minutes + ((DateTime.UtcNow - new DateTime(2013,1,1)).Hours * 60);
+	int Days = (int)(DateTime.UtcNow - new DateTime(2013,1,1)).TotalDays;
+#>

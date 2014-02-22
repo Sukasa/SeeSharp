@@ -1,0 +1,42 @@
+﻿# Default biome tinting entries for vanilla blocks
+#
+# NAME=Vanilla Biomes
+# AUTHOR=Sukasa
+# VERSION=0.1
+# DESCRIPTION=Vanilla biome colours (incomplete)
+#
+>Vanilla 1.4.x Biomes Palette loaded
+
+
+# An explanation of the format of the entries:
+
+# Biome ID is obvious
+
+# BlockID is simple, it's just the ID number of the block (e.g. 0 is air, 1 is rock, and so forth)
+
+# Metadata is also simple.  It's just the 4-bit meta-data of the block, for example Wool Colour.
+# There is a catch to this; any block in the world with a non-zero metadata will first check to see if there is a palette entry that perfectly matches the BlockID-Metadata combo
+# If one is found (e.g. a coloured wool), that entry is used.  If not, SeeSharp will try to match only the Block ID (for example, when dealing with doors or railroad tracks) and
+# use the colour for that.
+
+# R, G, B, A should be obvious.  Those are the red, green, blue, and alpha channels for the colour to associate with the BlockID/Metadata combo.
+
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# t BiomeID BlockID Metadata R G B A
+
+# Swampland
+t 6 8 * 102 58 72 192
+t 6 9 * 102 58 72 192
+t 6 2 * 83 67 45 128
+t 6 18 0 0 0 0 45
+
+# Jungle
+t 21 2 * 040 200 000 128
+t 22 2 * 040 200 000 128
+
+# Mega Taiga Hills
+t 33 2 * 240 240 030 112
+
+# Extreme Hills+
+t 34 2 * 92 102 115 80

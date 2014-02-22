@@ -1,0 +1,168 @@
+﻿# Palette file for IndustrialCraft²
+# Please note that if you have modified the default Block IDs, this file will need to be updated to match.
+
+$BlockAlloy = 600
+$BlockAlloyGlass = 602
+$BlockBarrel = 602
+$BlockCable = 603
+$BlockCrop = 604
+$BlockDoorAlloy = 605
+$BlockDynamite = 606
+$BlockDynamiteRemote = 607
+$BlockElectric = 608
+$BlockFenceIron = 609
+$BlockFoam = 610
+$BlockGenerator = 611
+$BlockHarz = 612
+$BlockITNT = 613
+$BlockIronScaffold = 614
+$BlockLuminator = 615
+$BlockLuminatorDark = 616
+$BlockMachine = 617
+$BlockMachine2 = 618
+$BlockMetal = 619
+$BlockMiningPipe = 620
+$BlockMiningTip = 621
+$BlockNuke = 622
+$BlockOreCopper = 247
+$BlockOreTin = 246
+$BlockOreUranium = 245
+$BlockPersonal = 623
+$BlockReactorChamber = 624
+$BlockRubberLeaves = 625
+$BlockRubberSapling = 626
+$BlockRubberWood = 627
+$BlockRubber = 628
+$BlockScaffold = 629
+$BlockWall = 630
+
+
+>IndustrialCraft² 1.112.
+>Please ensure that you have updated this file to match any Block ID changes.
+
+# Iron Scaffold
+. $BlockIronScaffold * 255 172 172 172 255
+
+# Beer Barrel
+. $BlockBarrel * 255 83 57 9 255
+
+# Crop
+. $BlockCrop * 128 186 119 46 64
+
+# Luminator
+. $BlockLuminator * 32 128 128 128 64
+. $BlockLuminatorDark * 32 128 128 128 64
+
+# Scaffold
+. $BlockScaffold 0 255 191 154 40 255
+
+# Construction Foam
+. $BlockFoam * 255 115 115 115 255
+. $BlockFoam 1 255 192 192 192 255
+
+
+. $BlockMachine * 32 232 232 232 32
+
+# Teleporter
+. $BlockMachine2 * 255 102 248 255 255
+
+# Tesla Coil
+. $BlockMachine2 1 255 209 102 255 255
+
+# Cropmatron
+. $BlockMachine2 2 255 232 232 232 255
+
+# Copper Block
+. $BlockMetal * 255 187 115 6 255
+
+# Tin Block
+. $BlockMetal 1 255 191 206 208 255
+
+# Bronze Block
+. $BlockMetal 2 255 235 189 7 255
+
+# Uranium Block
+. $BlockMetal 3 255 131 193 113 255
+
+# Personal Safe
+. $BlockPersonal * 232 128 128 128 192
+
+# Trade-o-Mat
+. $BlockPersonal 1 255 232 232 232 255
+
+# Energy-o-Mat
+. $BlockPersonal 2 255 232 232 232 255
+
+# BatBox
+. $BlockElectric * 255 113 68 23 255
+
+# MFE
+. $BlockElectric 1 255 232 232 232 255
+
+# MFSU
+. $BlockElectric 2 255 255 216 216 255
+
+# LV Transformer
+. $BlockElectric 3 255 113 68 23 255
+
+# MV Transformer
+. $BlockElectric 4 255 232 232 232 255
+
+# HV Transformer
+. $BlockElectric 5 255 255 216 216 255
+
+# "Unamed" - Reinforced Door
+. $BlockDoorAlloy * 255 96 96 96 255
+
+# Reinforced Glass
+. $BlockAlloyGlass * 32 192 192 192 32
+
+# Reinforced Stone
+. $BlockAlloy * 255 100 92 92 255
+
+# Iron Fence
+. $BlockFenceIron * 32 200 200 200 64
+
+# Reactor Chamber
+. $BlockReactorChamber * 255 232 255 232 255
+
+# Rubber Sheet
+. $BlockRubber * 255 32 32 32 255
+
+# "Unnamed" - Dynamites of some sort
+. $BlockDynamite * 32 248 113 54 32
+. $BlockDynamiteRemote * 32 248 113 54 32
+
+# Nuke.  Kablooie!
+. $BlockNuke * 255 255 128 128 255
+
+# iTNT, by Abble
+. $BlockITNT * 255 248 162 162 255
+
+# Rubber Tree Sapling
+. $BlockRubberSapling * 70 7 103 15 245
+
+# Rubber Leaves
+. $BlockRubberLeaves * 70 7 103 15 245
+
+# Rubber Wood
+. $BlockRubberWood * 255 167 98 35 255
+
+# Mining Pipe
+. $BlockMiningPipe * 255 92 92 92 255
+. $BlockMiningTip * 255 92 92 92 255
+
+# IndustrialCraft Generators
+. $BlockGenerator * 255 232 232 232 255
+
+# Nuclear Reactors get special treatment because I like them
+. $BlockGenerator 5 255 216 255 216 255
+
+# Ores (Uranium, Tin, Copper)
+# Use the same colour as the default _Vanilla.pal to aovid spoiling anything
+. $BlockOreUranium * 255 110 110 110 255
+. $BlockOreTin * 255 110 110 110 255
+. $BlockOreCopper * 255 110 110 110 255
+
+# Machines
+. $BlockMachine * 255 232 232 232 255

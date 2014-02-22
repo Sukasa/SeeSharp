@@ -1,0 +1,50 @@
+﻿* Gui when no command-line params present
+* Palette files can update themselves based on config files
+* Look into if worlds store block IDs somehow
+* Move palette commands out to modular classes, or at least find some way to clean that mess up
+* Tiled output support
+
+== GUI ==
+
+* Renderer: Move parallel to back-thread, move updates to calling thread
+* Add event, OnProgressUpdate
+* Complete Sign and Metrics tabs
+* Rewrite Palette core, add 'PaletteFile' class.
+
+
+== Palette Files ==
+
+ValueTokens
+..Meta Variables	%ModConfigFile %Name %Version
+..Variables			$MyVar
+..Constants			1 1.3 ~ MyString "My String with Spaces and Special chars * + - $lolol" /RegexHere/ "My \"String\""
+....Operators		( ) + - / * =
+
+Comments			#
+
+Colour Constants    { ValueToken, ValueToken, ValueToken, ValueToken }
+
+Commands			AddPaletteEntry AddTileEntityEntry Print
+
+== Example Lines ==
+
+Print "Hello, this is a working print statement"
+Print Hello, this just caused an intepretation error
+Print ButThisWorks!
+Print SoDoes + This!
+Print %Name + " " + %Version + " palette loaded."
+
+%Name = "TerraFirmaCraft"
+%Name = TerraFirmaCraft
+%Version = 1.3.4
+%ModConfigFile=Config/TinkersConstruct.config
+%ModConfigFile=Config/TinkersConstruct.config;AdditionalConfig.configs
+
+$White = {255, 255, 255, 255}
+$Grey = $White * 0.5
+#$Grey = {127, 127, 127, 127}
+
+$Grey2 = $White - $Grey
+#$Grey2 = {128, 128, 128, 128}
+
+AddPaletteEntry 1, ~, {128, 128, 128, 128}, 255

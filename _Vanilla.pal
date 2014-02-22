@@ -1,0 +1,410 @@
+﻿# NAME=Vanilla
+# AUTHOR=Sukasa
+# VERSION=1.7.4
+# DESC=Standard Vanilla palette
+
+
+# Default palette entries for vanilla blocks
+# NOTE TO CUSTOMIZERS: Don't modify this file!  Create another *.pal file in the same folder as the exe and it will automatically be loaded!
+# Alternatively, use -p "<filepath>" to load a *.pal file not in the exe's directory.  This will also ensure that the specified palette
+# file will be loaded last which will guarantee that any entries will override existing predefined ones!
+
+>Vanilla 1.7.4 Palette loaded
+
+# Note: the above is a way to print to the program's STDOUT.
+
+# An explanation of the format of the entries:
+
+# BlockID is simple, it's just the ID number of the block (e.g. 0 is air, 1 is rock, and so forth)
+
+# Metadata is also simple.  It's just the 4-bit meta-data of the block, for example Wool Colour.
+# There is a catch to this; any block in the world with a non-zero metadata will first check to see if there is a palette entry that perfectly matches the BlockID-Metadata combo
+# If one is found (e.g. a coloured wool), that entry is used.  If not, SeeSharp will try to match only the Block ID (for example, when dealing with doors or railroad tracks) and
+# use the colour for that.
+
+# Depth Adjustment is a special value.  SeeSharp will go down as many block as it needs to, in order to add up the D.A. values of the blocks until they reach 255.  This allows for easy
+# transparency control.  For example, Ice and Water have values below 255, and if you look at the output of them you can "see through" them as well.  Note that you also need to set up
+# the RGBA colour to have a proper Alpha value, too!
+
+# R, G, B, A should be obvious.  Those are the red, green, blue, and alpha channels for the colour to associate with the BlockID/Metadata combo.
+
+# Also, some blocks are not included.  Things like item frames wouldn't really be visible from top-down, so there's no point trying to render them.
+
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# . BlockID Metadata DepthAdjustment R G B A
+
+
+#-----------------------------
+# Terrain
+#-----------------------------
+
+# Rock
+. 1 * 255 110 110 110 255
+
+# Grass, Dirt
+. 2 * 255 67 188 77 255
+. 3 * 255 193 132 70 255
+
+# Cobblestone
+. 4 * 255 90 90 90 255
+
+# Bedrock
+. 7 * 255 10 10 10 255
+
+# Sand, Sandstone
+. 12 * 255 236 227 174 255
+. 24 * 255 200 190 120 255
+
+# Gravel, Clay
+. 13 * 255 144 128 132 255
+. 82 * 255 214 168 168 255
+
+# Netherrack, Soul Sand, Netherbrick
+. 87 * 255 211 44 48 255
+. 88 * 255 87 65 57 255
+. 112 * 255 180 8 12 255
+
+# Snow, Ice, Snow Block, Packed Ice
+. 78 * 255 246 255 255 254
+. 79 * 80 210 250 250 100
+. 80 * 255 246 255 255 255
+. 174 * 255 170 210 210 100
+
+# Farmland
+. 60 * 255 20 200 15 255
+
+# Mycelium
+. 110 * 255 201 180 199 255
+
+# End Stone
+. 121 * 255 201 201 100 255
+
+#-----------------------------
+# Liquids
+#-----------------------------
+
+# Water
+. 8 * 10 15 25 145 50
+. 9 * 10 15 25 145 50
+
+# Lava
+. 10 * 255 240 84 10 255
+. 11 * 255 240 84 10 255
+
+
+#-----------------------------
+# Ores.  By default drawn the same colour as rock so as to avoid spoiling stuff for people
+#-----------------------------
+
+# Gold, Iron, Coal, Lapis, Redstone
+
+. 14 * 255 110 110 110 255
+. 15 * 255 110 110 110 255
+. 16 * 255 110 110 110 255
+. 21 * 255 110 110 110 255
+. 73 * 255 110 110 110 255
+. 74 * 255 110 110 110 255
+. 129 * 255 110 110 110 255
+
+
+#-----------------------------
+# Organics (Saplings, wood etc)
+#-----------------------------
+
+# Wood, Trunk, Leaves
+. 5 * 255 159 132 72 255
+. 17 * 255 167 98 35 255
+. 18 * 70 7 103 15 245
+. 161 * 70 7 103 15 245
+. 162 * 255 174 87 55 255
+
+# Greens (Tall Grass, Flowers, Mushrooms, large flowers)
+. 31 * 32 0 110 0 96
+. 37 * 32 185 185 40 96
+. 38 * 32 185 40 40 96
+. 39 * 32 194 149 86 96
+. 40 * 32 125 10 10 96
+. 175 * 32 0 110 0 96
+
+# Cactus
+. 81 * 255 10 150 10 255
+
+# Lily Pad, Sugarcane, Carrots, Potatoes, Crops
+. 111 * 255 30 128 50 255
+. 83 * 255 50 224 70 255
+. 141 * 255 40 240 40 255
+. 142 * 255 40 240 40 255
+. 59 * 255 40 240 40 255
+
+# Pumpkin, Jack-o-Lantern, Melon
+. 86 * 255 255 128 0 255
+. 91 * 255 255 128 0 255
+. 103 * 255 126 244 70 255
+
+# Stems
+. 104 * 255 40 240 40 255
+. 105 * 255 40 240 40 255
+
+
+#-----------------------------
+# Misc Blocks
+#-----------------------------
+
+# Sponge
+. 19 * 255 190 193 51 255
+
+
+#-----------------------------
+# Decorative Blocks
+#-----------------------------
+
+# Flowerpot
+. 140 * 128 192 100 64 146
+
+# Torch
+. 50 * 200 224 224 0 200
+
+# Mossy Cobblestone, Stone Brick
+. 48 * 255 20 138 20 255
+. 98 1 255 20 138 20 255
+
+# Lapis Lazuli, Gold, Iron, Emerald, Coal blocks
+. 22 * 255 1 45 192 255
+. 41 * 255 235 248 1 255
+. 42 * 255 216 216 216 255
+. 133 * 255 80 255 80 255
+. 173 * 255 16 16 16 255
+
+# Cobweb
+. 30 * 100 230 230 230 80
+
+# Hardened Clay
+. 172 * 255 140 83 59 255
+
+# Obsidian
+. 49 * 255 16 16 16 255
+
+# Stone Brick
+. 98 * 255 128 134 128 255
+. 109 * 255 128 134 128 255
+
+# Stairs (Cobblestone, Sandstone, Oak, Spruce, Birch, Jungle, Acacia, Dark Oak)
+. 67 * 255 90 90 90 255
+. 128 * 255 200 190 120 255
+. 53 * 255 159 132 72 255
+. 134 * 255 159 132 72 255
+. 135 * 255 159 132 72 255
+. 136 * 255 159 132 72 255
+. 163 * 255 174 87 55 255
+. 164 * 255 80 66 36 255
+
+# Slabs (Stone, Sandstone, Wood, Cobblestone, Brick, Stone Brick)
+. 43 0 255 176 176 176 255
+. 43 1 255 208 198 128 255
+. 43 2 255 167 140 87 255
+. 43 3 255 98 98 98 255
+. 43 4 255 174 32 2 255
+. 43 5 255 128 134 128 255
+
+# Double Slabs, copied from above
+. 44 0 255 176 176 176 255
+. 44 1 255 208 198 128 255
+. 44 2 255 167 140 87 255
+. 44 3 255 98 98 98 255
+. 44 4 255 174 32 2 255
+. 44 5 255 128 134 128 255
+
+# Bricks
+. 45 * 255 174 32 2 255
+. 108 * 255 174 32 2 255
+
+# Fencing, Gate
+. 85 * 255 139 112 52 255
+. 107 * 255 139 112 52 255
+
+# Cobblestone Wall
+. 139 * 240 130 130 130 235
+
+# Iron Fence
+. 101 * 255 120 120 100 255
+
+# Glass, Pane
+. 20 * 20 200 200 200 30
+. 102 * 20 200 200 200 100
+
+# Fire
+. 51 * 255 224 192 16 255
+
+# Wool (All Colours - Note Metadata!)
+. 35 0 255 248 248 248 255
+. 35 1 255 192 96 0 255
+. 35 2 255 192 0 192 255
+. 35 3 255 0 192 192 255
+. 35 4 255 192 192 0 255
+. 35 5 255 0 192 0 255
+. 35 6 255 192 128 128 255
+. 35 7 255 112 112 112 255
+. 35 8 255 192 192 192 255
+. 35 9 255 0 166 166 255
+. 35 10 255 92 0 100 255
+. 35 11 255 0 0 192 255
+. 35 12 255 108 68 30 255
+. 35 13 255 0 96 0 255
+. 35 14 255 192 0 0 255
+. 35 15 255 32 32 32 255
+
+# Stained Hardened Clay (TODO: Blend in clay colour)
+. 159 0 255 248 248 248 255
+. 159 1 255 192 96 0 255
+. 159 2 255 192 0 192 255
+. 159 3 255 0 192 192 255
+. 159 4 255 192 192 0 255
+. 159 5 255 0 192 0 255
+. 159 6 255 192 128 128 255
+. 159 7 255 112 112 112 255
+. 159 8 255 192 192 192 255
+. 159 9 255 0 166 166 255
+. 159 10 255 92 0 100 255
+. 159 11 255 0 0 192 255
+. 159 12 255 108 68 30 255
+. 159 13 255 0 96 0 255
+. 159 14 255 192 0 0 255
+. 159 15 255 32 32 32 255
+
+# Stained Glass Pane
+. 160 0 16 248 248 248 128
+. 160 1 16 192 96 0 128
+. 160 2 16 192 0 192 128
+. 160 3 16 0 192 192 128
+. 160 4 16 192 192 0 128
+. 160 5 16 0 192 0 128
+. 160 6 16 192 128 128 128
+. 160 7 16 112 112 112 128
+. 160 8 16 192 192 192 128
+. 160 9 16 0 166 166 128
+. 160 10 16 92 0 100 128
+. 160 11 16 0 0 192 128
+. 160 12 16 108 68 30 128
+. 160 13 16 0 96 0 128
+. 160 14 16 192 0 0 128
+. 160 15 16 32 32 32 128
+
+# Carpet
+. 171 0 16 248 248 248 128
+. 171 1 16 192 96 0 128
+. 171 2 16 192 0 192 128
+. 171 3 16 0 192 192 128
+. 171 4 16 192 192 0 128
+. 171 5 16 0 192 0 128
+. 171 6 16 192 128 128 128
+. 171 7 16 112 112 112 128
+. 171 8 16 192 192 192 128
+. 171 9 16 0 166 166 128
+. 171 10 16 92 0 100 128
+. 171 11 16 0 0 192 128
+. 171 12 16 108 68 30 128
+. 171 13 16 0 96 0 128
+. 171 14 16 192 0 0 128
+. 171 15 16 32 32 32 128
+
+# Netherbrick Fence, Stairs
+. 113 * 255 160 4 8 255
+. 114 * 255 180 8 12 255
+
+# Glowstone
+. 89 * 255 255 255 128 255
+
+# Bookshelf
+. 47 * 255 159 132 72 255
+
+# Hay block
+. 170 * 255 128 100 16 255
+
+#-----------------------------
+# Technical or Mechanical Blocks
+#-----------------------------
+
+# Door (Wood, Iron)
+. 64 * 255 159 132 72 255
+. 71 * 255 120 120 100 255
+
+# Monster Spawner
+. 52 * 255 128 224 128 255
+
+# Dispenser
+. 23 * 255 128 128 128 255
+
+# Note Block
+. 25 * 255 147 70 45 255
+
+# Jukebox
+. 84 * 255 147 70 45 255
+
+# Vanilla Rails (Powered, Detector, Track, Activator)
+. 27 * 255 192 192 192 255
+. 28 * 255 192 192 192 255
+. 66 * 255 192 192 192 255
+. 157 * 255 192 192 192 255
+
+# Pistons
+. 29 * 255 192 192 192 255
+. 33 * 255 192 192 192 255
+. 34 * 255 192 192 192 255
+
+# Slime
+. 165 * 192 32 192 32 128
+
+# TNT
+. 46 * 255 233 22 28 255
+
+# Chest
+. 54 * 255 220 128 35 255
+
+# Furnace
+. 61 * 255 112 112 112 255
+. 62 * 255 112 112 112 255
+
+# Redstone Wiring, Lamps, Block
+. 55 * 255 128 0 0 255
+. 123 * 255 92 24 24 255
+. 134 * 255 24 24 24 255
+. 152 * 255 162 32 32 255
+
+# Redstone Logic (Diodes, Comparator, Torches)
+. 93 * 255 160 20 20 255
+. 94 * 255 160 20 20 255
+. 149 * 255 160 20 20 255
+. 150 * 255 160 20 20 255
+. 75 * 255 192 0 0 255
+. 76 * 255 192 0 0 255
+
+# Redstone Sensors (Light)
+. 151 * 255 167 98 35 255
+
+# Pressure Plates (Stone, Wood, Gold, Iron)
+. 70 * 250 110 110 110 192
+. 72 * 250 159 132 72 192
+. 147 * 250 235 248 1 192
+. 148 * 250 216 216 216 192
+
+# Dropper
+. 158 * 255 32 32 32 255
+
+# Hopper
+. 154 * 255 32 32 32 255
+
+# Trapped Chest
+. 146 * 255 159 132 72 255
+
+# Crafting Table
+. 58 * 255 159 132 72 255
+
+# Anvil
+. 145 * 255 48 48 40 255
+
+# Beacon
+. 138 * 255 224 255 255 255
+
+# Command Block
+. 137 * 255 224 200 128 255

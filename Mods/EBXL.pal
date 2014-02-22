@@ -1,0 +1,107 @@
+﻿# Palette file for ExtraBiomesXL
+# Please note that if you have modified the default Block IDs, this file will need to be updated to match.
+
+$EBVersion = 3.8.0
+
+#===================================================================================================
+# Change these variables to update all the EBXL block IDs
+#===================================================================================================
+
+$RedRockID = 251
+$RedSlabID = 1319
+$RedDoubleSlabID = 1304
+$RedFenceID = 1322
+$RedCobbleStairsID = 1317
+$RedBrickStairsID = 1318
+
+$WoodSlabID = 1323
+$WoodDoubleSlabID = 1305
+$WoodPlanksID = 1311
+
+$AutumnLeavesID = 1301
+$GreenLeavesID = 1309
+$LeafBedID = 1310
+
+$RedwoodStairsID = 1320
+$AcaciaStairsID = 1300
+$FirStairsID = 1306
+
+$ThinLogID = 1303
+$ThickLog1ID = 1312
+$ThickLog2ID = 1313
+$ThickLog3ID = 1314
+$ThickLog4ID = 1315
+
+$QuicksandID = 1316
+$CrackedSandID = 252
+
+$GreenFloraID = 1307
+$GreyFloraID = 1308
+$CatTailID = 1302
+
+
+
+#===================================================================================================
+# Change these variables to update all the EBXL Biome IDs
+#===================================================================================================
+
+
+
+#===================================================================================================
+# You should not need to alter anything below this line, unless you are adding new block entries or biomes
+#===================================================================================================
+
+>ExtraBiomesXL $EBVersion palette loaded.
+>Please ensure that you have updated this file to match any Block ID changes.
+
+# Red Rock, Cobblestone, and Brick
+. $RedRockID * 255 171 87 42 255
+
+# Red Slabs
+. $RedSlabID * 255 171 87 42 255
+. $RedDoubleSlabID * 255 171 87 42 255
+
+# Red Stairs & Fence
+. $RedCobbleStairsID * 255 171 87 42 255
+. $RedBrickStairsID * 255 171 87 42 255
+. $RedFenceID * 128 171 87 42 128
+
+# Trunks
+. $ThinLogID * 255 167 98 35 255
+. $ThickLog1ID * 255 167 98 35 255
+. $ThickLog2ID * 255 167 98 35 255
+. $ThickLog3ID * 255 167 98 35 255
+. $ThickLog4ID * 255 167 98 35 255
+
+# Planks, Slabs, Stairs
+. $WoodPlanksID * 255 159 132 72 255
+. $WoodSlabID * 255 159 132 72 255
+. $WoodDoubleSlabID * 255 159 132 72 255
+. $RedwoodStairsID * 255 159 132 72 255
+. $AcaciaStairsID * 255 159 132 72 255
+. $FirStairsID * 255 159 132 72 255
+
+# Acacia Leaves
+. $GreenLeavesID 2 64 85 166 25 245
+
+# Fir Leaves
+. $GreenLeavesID 0 64 27 139 52 245
+
+# Redwood, other Leaves
+. $GreenLeavesID * 64 0 128 0 245
+
+# Autumn Leaves
+. $AutumnLeavesID * 64 147 75 40 245
+. $AutumnLeavesID 1 64 208 111 2 245
+. $AutumnLeavesID 2 64 172 53 62 245
+. $AutumnLeavesID 3 64 206 167 49 245
+
+# Flora
+. $LeafBedID * 64 15 174 27 128
+. $GreenFloraID * 64 15 194 27 96
+. $GreyFloraID * 64 188 134 80 96
+. $CatTailID * 32 7 162 14 32
+
+# Sands
+. $QuicksandID 0 255 122 94 46 245
+. $CrackedSandID 0 255 120 116 101 255

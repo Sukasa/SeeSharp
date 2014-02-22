@@ -1,0 +1,15 @@
+﻿# Palette file for Forestry
+# Please note that if you have modified the default Block IDs, this file will need to be updated to match.
+
+>Please ensure that you have updated this file to match any Block ID changes.
+>NOTE: Forestry Palette file is currently incomplete and not ready for production use!
+
+# Humus
+192 0 255 92 48 29 255
+
+# Bog Earth
+197 1 255 91 30 30 255
+
+# Ores (Apatite, Copper, Tin)
+# Use the same colour as the default _Vanilla.pal to aovid spoiling anything
+198 0 255 110 110 110 255

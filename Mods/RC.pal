@@ -1,0 +1,74 @@
+﻿
+# Partial Railcraft palette
+
+$WorldBlock = 1050
+$Detectorblock = 1051
+$MachineBlock = 1053
+$TankBlock = 1054
+$LoaderBlock = 1055
+$Post = 1056
+
+#===================================================================================================
+# You should not need to alter anything below this line, unless you are adding new block entries
+#===================================================================================================
+
+> Railcraft Palette
+> Please ensure that you have updated this file to match any Block ID changes.
+
+# Tank Blocks
+. $TankBlock * 255 192 192 192 255
+
+# Post
+. $Post * 92 128 128 128 92
+
+# Stone Post
+. $Post 1 255 91 91 91 255
+
+# Loader Block
+. $LoaderBlock * 255 91 91 91 255
+
+# Concrete Block
+. $WorldBlock 1 255 91 91 91 255
+
+# Steel Block
+. $WorldBlock 2 255 128 128 128 255
+
+# Infernal Brick
+. $WorldBlock 3 255 47 51 53 255
+
+# Crushed Obsidian
+. $WorldBlock 4 255 17 11 31 255
+
+# Sandy Brick
+. $WorldBlock 5 255 108 86 61 255
+
+# Detector Blocks
+. $Detectorblock * 255 83 83 83 255
+
+# World Anchor
+. $MachineBlock 0 255 35 35 95 255
+
+# Steam Turbine
+. $MachineBlock 1 255 83 83 83 255
+
+# Personal Anchor
+. $MachineBlock 2 255 35 95 35 255
+
+# Coke Oven
+. $MachineBlock 7 255 108 86 61 255
+
+# Rolling Machine
+. $MachineBlock 8 255 63 63 63 255
+
+# Feed Station
+. $MachineBlock 11 255 83 69 40 255
+
+# Blast Furnace
+. $MachineBlock 12 255 47 51 53 255
+
+# Water Tank
+. $MachineBlock 14 255 69 54 32 255
+
+#525252
+# Rock Crusher
+. $MachineBlock 15 255 82 82 82 255

@@ -1,0 +1,43 @@
+﻿
+# Very partial RP2 palette
+
+
+
+$BlockWorldID = 4095
+$Rubberwood = 4093
+$RubberwoodLeaves = 243
+$GemBlock = 754
+
+
+#===================================================================================================
+# You should not need to alter anything below this line, unless you are adding new block entries
+#===================================================================================================
+
+> Redpower 2 PR6 Palette
+> Please ensure that you have updated this file to match any Block ID changes.
+
+# Rubberwood
+. $Rubberwood * 255 167 98 35 255
+
+# Rubberwood Leaves
+. $RubberwoodLeaves * 255 69 172 23 255
+
+
+# Basalt Anything
+. $BlockWorldID * 255 36 37 36 255
+
+# Marble
+. $BlockWorldID 0 255 210 203 190 255
+
+# Marble Brick
+. $BlockWorldID 2 255 210 203 190 255
+
+
+# Red Gem Block
+. $GemBlock 0 255 192 0 0 255
+
+# Green Gem Block
+. $GemBlock 1 255 0 192 0 255
+
+# Blue Gem Block
+. $GemBlock 1 255 0 0 192 255
