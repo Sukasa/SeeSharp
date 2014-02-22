@@ -1,16 +1,20 @@
-﻿* Gui when no command-line params present
-* Palette files can update themselves based on config files
-* Look into if worlds store block IDs somehow
-* Move palette commands out to modular classes, or at least find some way to clean that mess up
-* Tiled output support
-
-== GUI ==
-
-* Renderer: Move parallel to back-thread, move updates to calling thread
-* Add event, OnProgressUpdate
-* Complete Sign and Metrics tabs
-* Rewrite Palette core, add 'PaletteFile' class.
-
+﻿* [x] Gui when no command-line params present
+* [ ] Palette files can update themselves based on config files
+* [ ] Look into if worlds store block IDs somehow
+* [x] Tiled output support
+* [x] Renderer: Move parallel to back-thread, move updates to calling thread
+* [ ] Complete Sign and Metrics tabs
+* [x] Rewrite Palette core
+* [x] Add 'PaletteFile' class.
+* [ ] Move palette commands out to modular classes, or at least find some way to clean that mess up
+* [ ] Rewrite palette data format - look for preexisting stuff I can use
+* [ ] Advanced world metrics core
+* [ ] Block ratios
+* [ ] Basic framework for "_____-distribution" charts
+* [ ] Mineral Wealth Distribution metrics
+* [ ] "Development Index" distribution metrics
+* [ ] Unit tests?
+* [ ] Redo vanilla palette to look better
 
 == Palette Files ==
 
