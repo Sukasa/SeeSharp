@@ -270,10 +270,8 @@
     <None Include="Resources\cross.png" />
     <None Include="Resources\application_xp_terminal.png" />
     <None Include="Resources\help.png" />
-    <Content Include="Todos.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="DefaultSigns\DefaultSigns\" />
     <Folder Include="Palette\PaletteCommands\" />
     <Folder Include="Plugins\" />
   </ItemGroup>

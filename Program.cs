@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Xml;
-using Substrate;
 using System.Windows.Forms;
 
 namespace SeeSharp
@@ -14,7 +7,7 @@ namespace SeeSharp
     {
         private SeeSharpMain()
         {
-            // Empty
+            // *** Empty
         }
         [STAThread]
         public static int Main(string[] args)

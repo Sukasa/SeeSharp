@@ -1,21 +1,20 @@
 ﻿using System;
-using System.Linq.Expressions;
+using System.Collections;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using Substrate;
-using System.IO;
-using System.Linq;
-using System.Drawing;
-using System.Collections;
-using System.Collections.Generic;
 
 
 namespace SeeSharp
 {
-    //Basic set of extension methods used in places.
+    // *** Basic set of extension methods used in places.
     public static class SeeSharpExtensions
     {
-        // If there is no tile entity, Substrate can throw an exception.  This utility function just handles that gracefully
+        // *** If there is no tile entity, Substrate can throw an exception.  This utility function just handles that gracefully
         public static TileEntity SafeGetTileEntity(this AlphaBlockCollection Blocks, int X, int Y, int Z)
         {
             try
@@ -63,7 +62,7 @@ namespace SeeSharp
             String RootRef = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             Uri pathUri = new Uri(FilePath);
 
-            // Folders must end in a slash
+            // *** Folders must end in a slash
             if (!RootRef.EndsWith(Path.DirectorySeparatorChar.ToString()))
             {
                 RootRef += Path.DirectorySeparatorChar;

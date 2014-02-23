@@ -3,25 +3,52 @@ using Substrate;
 
 namespace SeeSharp
 {
+    /// <summary>
+    ///     Every block/metadata/entity combo has an associated full palette entry.  This entity stores depth-opacity, colour, metadata, entity tag, and custom data for each block.
+    /// </summary>
     public class PaletteEntry : IComparable<PaletteEntry>
     {
+        /// <summary>
+        ///     What type of palette entry
+        /// </summary>
         public enum EntryType
         {
+            /// <summary>
+            ///     Metadata entry - the block is identified by metadata and blockID
+            /// </summary>
             IDMetadata,
+            /// <summary>
+            ///     Entity entry - the block is distinguished from similar blocks by specific data in its NBT structure
+            /// </summary>
             IDEntity
         }
 
+        /// <summary>
+        ///     What kind of entry this is, whether a basic BlockID-Metadata entry, or BlockID-Metadata-Entity entry
+        /// </summary>
         public EntryType PaletteEntryType = EntryType.IDMetadata;
+        /// <summary>
+        ///     The base colour for the block
+        /// </summary>
         public Colour Color;
+        /// <summary>
+        ///     The depth opacity for a block.  Lower depth opacities cause the renderer to draw farther down past this block
+        /// </summary>
         public int DepthOpacity;
 
+        /// <summary>
+        ///     Block ID this palette entry applies to
+        /// </summary>
         public int BlockID;
+        /// <summary>
+        ///     Metadata this palette entry applies to, or -1 if it applies to all 16 metadatas for this entry's Block ID.
+        /// </summary>
         public int Metadata;
 
         private string EntityTag;
         private string EntityTagCheckValue;
 
-        public PaletteEntry(int BlockID, int MetaData, int Opacity, int Red, int Green, int Blue, int Alpha)
+        internal PaletteEntry(int BlockID, int MetaData, int Opacity, int Red, int Green, int Blue, int Alpha)
         {
             this.BlockID = BlockID;
             this.Metadata = MetaData;
@@ -29,7 +56,7 @@ namespace SeeSharp
             this.DepthOpacity = Opacity;
         }
 
-        public PaletteEntry(int BlockID, int MetaData, string ValueKey, string ValueRef, int Opacity, int Red, int Green, int Blue, int Alpha)
+        internal PaletteEntry(int BlockID, int MetaData, string ValueKey, string ValueRef, int Opacity, int Red, int Green, int Blue, int Alpha)
             : this(BlockID, MetaData, Opacity, Red, Green, Blue, Alpha)
         {
             PaletteEntryType = EntryType.IDEntity;
@@ -37,7 +64,7 @@ namespace SeeSharp
             this.EntityTagCheckValue = ValueRef;
         }
 
-        public bool IsSupplantedBy(PaletteEntry NewEntry)
+        internal bool IsSupplantedBy(PaletteEntry NewEntry)
         {
             if (NewEntry.BlockID != BlockID)
                 return false;
@@ -60,7 +87,7 @@ namespace SeeSharp
         /// <returns>
         ///     True if the block is a match, False if not
         /// </returns>
-        public bool IsMatch(int CheckMetaData, TileEntity Entity)
+        internal bool IsMatch(int CheckMetaData, TileEntity Entity)
         {
             if (Metadata >= 0 && CheckMetaData != Metadata)
                 return false;

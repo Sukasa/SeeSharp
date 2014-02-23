@@ -72,18 +72,9 @@ namespace SeeSharp
                         AssociatedCfgFile = LineParts[1];
                         Selected = true;
                         break;
-
                 }
-
-
-
             }
-
-
             S.Close();
         }
-
-        // Config info - BlockID/Metadata -> Regex
-        //e.g. (4, -1) => "^\w*MyValue *= *(?<ID>\d+)"
     }
 }

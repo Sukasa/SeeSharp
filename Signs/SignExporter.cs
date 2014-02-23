@@ -37,14 +37,14 @@ namespace SeeSharp
                         }
                         catch
                         {
-                            //Handle a broken or incompatible Class
+                            // *** Handle a broken or incompatible Class
                             continue;
                         }
                     }
                 }
                 catch
                 {
-                    //Handle a broken or incompatible DLL
+                    // *** Handle a broken or incompatible DLL
                     continue;
                 }
             }
@@ -67,7 +67,7 @@ namespace SeeSharp
 
         public void Process(RegionChunkManager Chunks, WorldMetrics Metrics, String Filename)
         {
-            // Accumulate list of sign types
+            // *** Accumulate list of sign types
             SignMap = CreateSignMap();
 
 
@@ -80,7 +80,7 @@ namespace SeeSharp
             Point PercentageUpdatePoint = new Point(Console.CursorLeft - 3, Console.CursorTop);
 
 
-            // Find all signs in the world and scan
+            // *** Find all signs in the world and scan
             foreach (ChunkRef Chunk in Chunks)
             {
                 ProcessedChunks++;
@@ -99,7 +99,7 @@ namespace SeeSharp
 
             Writer.WriteStartElement("Signs");
 
-            // Curly braces used to ensure that start and end element counts are matched.
+            // *** Curly braces used to ensure that start and end element counts are matched.
             foreach (SignBase Sign in ExportableSigns)
             {
 
@@ -174,23 +174,23 @@ namespace SeeSharp
 
         void ParseSignInfo(TileEntitySign SignEntity, int X, int Y, int Z, ChunkRef Chunk)
         {
-            //Try to create a sign from the entity.  NULL will be returned if the sign doesn't map to anything.
+            // *** Try to create a sign from the entity.  NULL will be returned if the sign doesn't map to anything.
             SignBase Sign = CreateSign(SignEntity.Text1);
             
             if (Sign == null)
                 return;
 
-            // Pre-set the Location var...
+            // *** Pre-set the Location var...
             Sign.Location = new Point(SignEntity.X, SignEntity.Z);
 
-            // ...and pass control to the sign's validation/setup function.
+            // *** ...and pass control to the sign's validation/setup function.
             if (!Sign.CreateFrom(SignEntity))
                 return;
 
-            // Now scan for and process any "rider" signs that might add additional information.
+            // *** Now scan for and process any "rider" signs that might add additional information.
             TileEntity Ent;
-                        
-            //This is kind of ugly but oh well
+
+            // *** This is kind of ugly but oh well
             do {
                 Ent = Chunk.Blocks.SafeGetTileEntity(X, --Y, Z);
             } while (Y > 0 && Ent is TileEntitySign && Sign.AddSign((TileEntitySign)Ent));

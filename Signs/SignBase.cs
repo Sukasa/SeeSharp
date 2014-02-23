@@ -1,8 +1,7 @@
-﻿using Substrate.TileEntities;
-using System.Drawing;
-using System.Xml;
+﻿using System;
 using System.Collections.Generic;
-using System;
+using System.Drawing;
+using Substrate.TileEntities;
 
 namespace SeeSharp
 {

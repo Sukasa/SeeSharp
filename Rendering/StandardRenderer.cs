@@ -43,6 +43,7 @@ namespace SeeSharp
         string NumFormat;
         private int ProcessedChunks = 0;
         private bool CorruptChunks = false;
+        private bool PendingRender = false;
 
 
         // *** Events
@@ -112,9 +113,18 @@ namespace SeeSharp
                                                   where !Config.RenderSubregion || Config.SubregionChunks.ContainsPoint(Chunk.X, Chunk.Z)
                                                   select Chunk;
 
+            PendingRender = false;
+
             if (Config.RenderSubregion)
                 foreach (ChunkRef Chunk in ChunkProvider)
                     RenderableChunks++;
+
+            if (Cancellation.IsCancellationRequested)
+            {
+                OutputMap.Dispose();
+                OutputMap = null;
+                return;
+            }
 
             // *** And render
             if (Config.EnableMultithreading)
@@ -149,10 +159,18 @@ namespace SeeSharp
             OutputMap.UnlockBits(RenderTarget);
 
             if (Cancellation.IsCancellationRequested)
+            {
+                OutputMap.Dispose();
+                OutputMap = null;
                 return;
+            }
 
             if (!Config.IsPreview)
+            {
                 OutputMap.Save(Config.SaveFilename);
+                OutputMap.Dispose();
+                OutputMap = null;
+            }
 
             // *** If a chunk failed to render, let the user know.  Unless we aborted, because there's no point then.
             if (CorruptChunks)
@@ -325,6 +343,11 @@ namespace SeeSharp
         public void Abort()
         {
             Cancellation.Cancel();
+            if (PendingRender)
+            {
+                OutputMap.Dispose();
+                OutputMap = null;
+            }
         }
         public void Initialize()
         {
@@ -336,6 +359,7 @@ namespace SeeSharp
             try
             {
                 OutputMap = new Bitmap((Config.SubregionChunks.Width + 1) * 16, (Config.SubregionChunks.Height + 1) * 16, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                PendingRender = true;
             }
             catch (OutOfMemoryException)
             {
@@ -377,6 +401,8 @@ namespace SeeSharp
         public Bitmap Preview()
         {
             Render();
+            if (Cancellation.IsCancellationRequested)
+                return new Bitmap(512, 512, PixelFormat.Format32bppArgb);
             return OutputMap;
         }
 

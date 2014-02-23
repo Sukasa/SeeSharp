@@ -5,9 +5,9 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Xml;
-using Substrate;
 using SeeSharp.Palette;
 using SeeSharp.Rendering;
+using Substrate;
 
 namespace SeeSharp
 {
@@ -76,7 +76,7 @@ namespace SeeSharp
                 StepTimer.Reset();
                 StepTimer.Start();
 
-                // Load palettes.  Start with palettes in EXE directory, then append all palettes in the force-load list.
+                // *** Load palettes.  Start with palettes in EXE directory, then append all palettes in the force-load list.
                 Console.WriteLine("Loading Palettes...");
                 foreach (String PalFile in Directory.EnumerateFiles(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "*.pal").Concat(LoadAdditionalPalettes))
                 {
@@ -116,7 +116,7 @@ namespace SeeSharp
                 StepTimer.Start();
                 Renderer = new Renderer();
 
-                // Set up the progress indicator
+                // *** Set up the progress indicator
                 Console.WriteLine("Using " + (Configuration.EnableMultithreading ? "multi-threaded" : "single-threaded") + " " + Renderer.RendererFriendlyName);
 
 
@@ -162,7 +162,7 @@ namespace SeeSharp
             }
 
 #if DEBUG
-            System.Threading.Thread.Sleep(5500); //If debug mode, pause at the end to give me time to read any messages
+            System.Threading.Thread.Sleep(5500); // *** If debug mode, pause at the end to give me time to read any messages
 #endif
             return 0;
         }
