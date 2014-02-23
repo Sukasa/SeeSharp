@@ -21,7 +21,7 @@ namespace SeeSharp
 
 
         // *** Configuration data
-        private PaletteCore ColourPalette = new PaletteCore();
+        private BlockPalette ColourPalette = new BlockPalette();
         private WorldMetrics Metrics;
         private RenderConfiguration Config;
         private RegionChunkManager Chunks;
@@ -63,7 +63,7 @@ namespace SeeSharp
             if (Y > 255)
                 Y = 255;
             if (Y == 0)
-                return ColourPalette.DepthOpacities[Blocks.GetID(X, Y, Z), Blocks.GetData(X, Y, Z)] == 0 ? -1 : 0;
+                return ColourPalette.DepthOpacities[Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)] == 0 ? -1 : 0;
             return Y;
         }
         public int GetStartRenderYCave(AlphaBlockCollection Blocks, int X, int Z)
@@ -80,7 +80,7 @@ namespace SeeSharp
                 Y--;
 
             if (Y == 0)
-                return ColourPalette.DepthOpacities[Blocks.GetID(X, Y, Z), Blocks.GetData(X, Y, Z)] == 0 ? -1 : 0;
+                return ColourPalette.DepthOpacities[Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)] == 0 ? -1 : 0;
             return Y;
         }
         public int GetStartRenderYCaveAlternate(AlphaBlockCollection Blocks, int X, int Z)
@@ -97,7 +97,7 @@ namespace SeeSharp
                 Y--;
 
             if (Y == 0)
-                return ColourPalette.DepthOpacities[Blocks.GetID(X, Y, Z), Blocks.GetData(X, Y, Z)] == 0 ? -1 : 0;
+                return ColourPalette.DepthOpacities[Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)] == 0 ? -1 : 0;
 
             return Y;
         }
@@ -107,7 +107,7 @@ namespace SeeSharp
         public void Render()
         {
 
-            // Define the chunk query, in order to cleanly support subregions
+            // *** Define the chunk query, in order to cleanly support subregions
             IEnumerable<ChunkRef> ChunkProvider = from ChunkRef Chunk in Chunks
                                                   where !Config.RenderSubregion || Config.SubregionChunks.ContainsPoint(Chunk.X, Chunk.Z)
                                                   select Chunk;
@@ -116,7 +116,7 @@ namespace SeeSharp
                 foreach (ChunkRef Chunk in ChunkProvider)
                     RenderableChunks++;
 
-            // And render
+            // *** And render
             if (Config.EnableMultithreading)
             {
                 Thread UpdateThread = new Thread(DisplayProgress);
@@ -154,7 +154,7 @@ namespace SeeSharp
             if (!Config.IsPreview)
                 OutputMap.Save(Config.SaveFilename);
 
-            // If a chunk failed to render, let the user know.  Unless we aborted, because there's no point then.
+            // *** If a chunk failed to render, let the user know.  Unless we aborted, because there's no point then.
             if (CorruptChunks)
             {
                 RenderingErrorEventArgs e = new RenderingErrorEventArgs();
@@ -188,36 +188,36 @@ namespace SeeSharp
             {
                 for (int Z = 0; Z < 16; Z++)
                 {
-                    // Start by finding the topmost block to render
+                    // *** Start by finding the topmost block to render
                     int EndY = RenderStartY(Blocks, X, Z);
                     int Y = EndY;
                     int RenderVal = 255;
 
                     if (Y < 0)
-                        continue; // No valid renderable blocks in this column, so continue with the next column
+                        continue; // *** No valid renderable blocks in this column, so continue with the next column
 
-                    // Drill into the column to determine how many blocks down to render
+                    // *** Drill into the column to determine how many blocks down to render
                     while (RenderVal > 0)
                     {
-                        RenderVal -= ColourPalette.DepthOpacities[Blocks.GetID(X, Y, Z), Blocks.GetData(X, Y, Z)];
-                        if (Y == 0) // If we've hit the bottom of the map, don't try and keep going.
-                            break;  // It wouldn't end well.
+                        RenderVal -= ColourPalette.DepthOpacities[Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)];
+                        if (Y == 0) // *** If we've hit the bottom of the map, don't try and keep going.
+                            break;  // *** It wouldn't end well.
                         Y--;
                     }
 
-                    Colour SetColour = Colour.Transparent; // What colour to set the current column's pixel to.
-                    Colour TempColour; // Working pixel colour
+                    Colour SetColour = Colour.Transparent; // *** What colour to set the current column's pixel to.
+                    Colour TempColour; // *** Working pixel colour
 
-                    // The Block-Metadata palette for this column's biome
+                    // *** The Block-Metadata palette for this column's biome
                     MiniPaletteEntry[][] BiomePalette = ColourPalette.FastPalette[Chunk.Biomes.GetBiome(X, Z)];
 
 
-                    for (; Y <= EndY; Y++) //Now render up from the lowest block to the starting block
+                    for (; Y <= EndY; Y++) // *** Now render up from the lowest block to the starting block
                     {
-                        // For each block we render, grab its palette entry.
+                        // *** For each block we render, grab its palette entry.
                         MiniPaletteEntry Entry = BiomePalette[Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)];
 
-                        // If it has an associated .EntityColours list, then it needs special consideration to get its colour
+                        // *** If it has an associated .EntityColours list, then it needs special consideration to get its colour
                         if (Entry.EntityColours != null)
                         {
                             PaletteEntry Entry2 = Entry.EntityColours.Find((E) => E.IsMatch(Blocks.GetData(X, Y, Z), Blocks.SafeGetTileEntity(X, Y, Z)));
@@ -226,21 +226,21 @@ namespace SeeSharp
                             else
                                 TempColour = Entry.Colour;
                         }
-                        else // No special consideration, just grab the colour in the palette
+                        else // *** No special consideration, just grab the colour in the palette
                             TempColour = Entry.Colour;
 
                         if (TempColour.A == 0)
-                            continue; // If we're trying to render air, let's not.
+                            continue; // *** If we're trying to render air, let's not.
 
-                        // Blend in our working colour to the column's pixel, after applying altitude and light-level blends.
+                        // *** Blend in our working colour to the column's pixel, after applying altitude and light-level blends.
                         SetColour.Blend(TempColour.LightLevel((uint)Math.Max(Config.MinLightLevel, Blocks.GetBlockLight(X, Math.Min(Y + 1, 255), Z))).Altitude(Y));
                     }
 
-                    if (SetColour.A > 0) // If our pixel isn't just transparent, then write it out to the target bitmap
+                    if (SetColour.A > 0) // *** If our pixel isn't just transparent, then write it out to the target bitmap
                         Marshal.WriteInt32(RenderTarget.Scan0 + (Stride * (((Chunk.Z - Config.SubregionChunks.Y) << 4) + Z)) + ((((Chunk.X - Config.SubregionChunks.X) << 4) + X) << 2), (int)SetColour.FullAlpha().Color);
                 }
             }
-#if !DEBUG // When not running in debug mode, chunks that fail to render should NOT crash everything.
+#if !DEBUG // *** When not running in debug mode, chunks that fail to render should NOT crash everything.
             }
             catch (Exception ex)
             {
@@ -328,7 +328,7 @@ namespace SeeSharp
         }
         public void Initialize()
         {
-            // Perform basic init.  Set up the bitmap, cache stride, etc
+            // *** Perform basic init.  Set up the bitmap, cache stride, etc
 
             RenderableChunks = Config.RenderSubregion ? 0 : Metrics.NumberOfChunks;
             NumFormat = "D" + Math.Ceiling(Math.Log10(RenderableChunks + 1)).ToString();

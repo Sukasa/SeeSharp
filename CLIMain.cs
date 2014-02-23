@@ -19,7 +19,7 @@ namespace SeeSharp
         Stopwatch StepTimer = new Stopwatch();
         List<String> LoadAdditionalPalettes = new List<string>();
         WorldMetrics Metrics = new WorldMetrics();
-        PaletteCore ColourPalette = new PaletteCore();
+        BlockPalette ColourPalette = new BlockPalette();
 
         RenderConfiguration Configuration;
         IRenderer Renderer;
@@ -91,14 +91,14 @@ namespace SeeSharp
                         {
                             ColourPalette.LoadPalette(PaletteFile);
                         }
-                        catch (PaletteCore.PaletteExecutionException ex)
+                        catch (BlockPalette.PaletteExecutionException ex)
                         {
                             Console.WriteLine(ex.Message);
                         }
                         catch (Exception ex)
                         {
                             Console.WriteLine("Failed to load palette " + Path.GetFileNameWithoutExtension(PaletteFile) + ":");
-                            if (ex is PaletteCore.PaletteExecutionException)
+                            if (ex is BlockPalette.PaletteExecutionException)
                                 Console.WriteLine(ex.Message);
                             else
                                 Console.WriteLine("Internal Error");

@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 
-// Currently in rewrite
-
-
 namespace SeeSharp.Palette
 {
-    public sealed class PaletteCore
+    /// <summary>
+    ///     Block palette
+    /// </summary>
+    public sealed class BlockPalette
     {
         public const int BlocksMax = 4096;
         public const int BiomesMax = 256;
@@ -23,11 +23,23 @@ namespace SeeSharp.Palette
         private Dictionary<int, List<PaletteEntry>> PaletteEntries = new Dictionary<int, List<PaletteEntry>>();
         private Dictionary<int, List<TintEntry>> BiomeTints = new Dictionary<int, List<TintEntry>>();
 
-        // Lookup tables, for faster rendering
-        public int[,] DepthOpacities = new int[BlocksMax, MetadataMax]; // Will store the *lowest* depth opacity for any given Block ID/Metadata.  The speedup from an array lookup far outweighs the potential cost of extra blocks being rendered.
+        // *** Lookup tables, for faster rendering
+        /// <summary>
+        ///     Depth opacity table for block/metadata.  Supports extended (0-4095) block IDs
+        /// </summary>
+        /// <remarks>
+        ///     Ordered by [BlockID][Metadata]
+        /// </remarks>
+        public int[][] DepthOpacities = new int[BlocksMax][]; // *** Will store the *lowest* depth opacity for any given Block ID/Metadata.  The speedup from an array lookup far outweighs the potential cost of extra blocks being rendered.
+        /// <summary>
+        ///     Block colour values.    Supports extended (0-4095) block IDs
+        /// </summary>
+        /// <remarks>
+        ///     Ordered by [Biome][BlockID][Metadata]
+        /// </remarks>
         public MiniPaletteEntry[][][] FastPalette = new MiniPaletteEntry[BiomesMax][][];
 
-        public PaletteCore()
+        internal BlockPalette()
         {
             for (int X = 0; X < BiomesMax; X++)
             {
@@ -35,10 +47,12 @@ namespace SeeSharp.Palette
                 for (int Y = 0; Y < BlocksMax; Y++)
                     FastPalette[X][Y] = new MiniPaletteEntry[MetadataMax];
             }
+            for (int X = 0; X < BlocksMax; X++)
+                DepthOpacities[X] = new int[MetadataMax];
 
         }
 
-        PaletteToken[] TokenizePaletteFile(string[] PaletteFileLines)
+        internal PaletteToken[] TokenizePaletteFile(string[] PaletteFileLines)
         {
             List<PaletteToken> Tokens = new List<PaletteToken>();
             int LineNumber = 0;
@@ -86,7 +100,7 @@ namespace SeeSharp.Palette
             return Tokens.ToArray();
         }
 
-        string Resolve(Dictionary<string, string> Variables, PaletteToken Token)
+        internal string Resolve(Dictionary<string, string> Variables, PaletteToken Token)
         {
             if (Token.Type == PaletteToken.TokenType.Constant)
                 return Token.TokenData;
@@ -95,13 +109,13 @@ namespace SeeSharp.Palette
             return Variables[Token.TokenData];
         }
 
-        int ResolveInteger(PaletteToken Token, Dictionary<string, string> Variables)
+        internal int ResolveInteger(PaletteToken Token, Dictionary<string, string> Variables)
         {
             String S = Resolve(Variables, Token);
             return (S == "*" ? -1 : int.Parse(S));
         }
 
-        bool IsValidNumericToken(object Data, Dictionary<string, string> Variables)
+        internal bool IsValidNumericToken(object Data, Dictionary<string, string> Variables)
         {
             if (Data is PaletteToken)
                 Data = Resolve(Variables, (PaletteToken)Data);
@@ -111,7 +125,7 @@ namespace SeeSharp.Palette
             return Data is string && ((string)Data == "*" || int.TryParse((string)Data, out t)); // "*" resolves to -1 in practice, so return that it has a valid numeric value.
         }
 
-        bool IsValidStringToken(object Data, Dictionary<string, string> Variables)
+        internal bool IsValidStringToken(object Data, Dictionary<string, string> Variables)
         {
             if (Data is PaletteToken)
                 Data = Resolve(Variables, (PaletteToken)Data);
@@ -121,10 +135,10 @@ namespace SeeSharp.Palette
             return false;
         }
 
-        public void AssembleLookupTables()
+        internal void AssembleLookupTables()
         {
 
-            // Assemble palette & depth opacity lookup arrays
+            // *** Assemble palette & depth opacity lookup arrays
             foreach (int Key in PaletteEntries.Keys)
             {
                 List<PaletteEntry> Entries = PaletteEntries[Key];
@@ -139,7 +153,7 @@ namespace SeeSharp.Palette
                                     FastPalette[X][Key][Entry.Metadata].EntityColours = new List<PaletteEntry>();
 
                                 FastPalette[X][Key][Entry.Metadata].EntityColours.Add(Entry);
-                                DepthOpacities[Entry.BlockID, Entry.Metadata] = Entry.DepthOpacity;
+                                DepthOpacities[Entry.BlockID][Entry.Metadata] = Entry.DepthOpacity;
                             }
                             else
                                 for (int Meta = 0; Meta < 16; Meta++)
@@ -148,14 +162,14 @@ namespace SeeSharp.Palette
                                         FastPalette[X][Key][Meta].EntityColours = new List<PaletteEntry>();
 
                                     FastPalette[X][Key][Meta].EntityColours.Add(Entry);
-                                    DepthOpacities[Entry.BlockID, Meta] = Entry.DepthOpacity;
+                                    DepthOpacities[Entry.BlockID][Meta] = Entry.DepthOpacity;
                                 }
                         else
                         {
                             if (Entry.Metadata != -1)
                             {
                                 FastPalette[X][Key][Entry.Metadata].Colour = Entry.Color;
-                                DepthOpacities[Entry.BlockID, Entry.Metadata] = Entry.DepthOpacity;
+                                DepthOpacities[Entry.BlockID][Entry.Metadata] = Entry.DepthOpacity;
                             }
                             else
                             {
@@ -163,7 +177,7 @@ namespace SeeSharp.Palette
                                 {
                                     if (FastPalette[X][Key][Meta].Colour.A == 0)
                                         FastPalette[X][Key][Meta].Colour = Entry.Color;
-                                    DepthOpacities[Entry.BlockID, Meta] = Entry.DepthOpacity;
+                                    DepthOpacities[Entry.BlockID][Meta] = Entry.DepthOpacity;
                                 }
                             }
                         }
@@ -172,7 +186,7 @@ namespace SeeSharp.Palette
             }
 
 
-            // Assemble tint lookups
+            // *** Assemble tint lookups
             foreach (int Key in BiomeTints.Keys)
             {
                 List<TintEntry> Entries = BiomeTints[Key];
@@ -199,13 +213,13 @@ namespace SeeSharp.Palette
         }
 
         // TODO Refactor this because it's horrible (SeeSharp)
-        void ExecutePalette(PaletteToken[] Tokens)
+        internal void ExecutePalette(PaletteToken[] Tokens)
         {
             List<PaletteEntry> ProspectiveAdditions = new List<PaletteEntry>();
             List<TintEntry> ProspectiveTintAdditions = new List<TintEntry>();
             Dictionary<string, string> Variables = new Dictionary<string, string>();
 
-            // Loop through all the tokens and execute them as necessary
+            // *** Loop through all the tokens and execute them as necessary
             for (int x = 0; x < Tokens.Length; x++)
             {
                 PaletteToken Token = Tokens[x];
@@ -217,12 +231,12 @@ namespace SeeSharp.Palette
                             case "=":
                                 if (Tokens[x - 1].Type != PaletteToken.TokenType.Variable)
                                 {
-                                    // Throw Error - Cannot assign to non-variable
+                                    // *** Throw Error - Cannot assign to non-variable
                                     throw new PaletteExecutionException("Cannot assign to non-variable at line " + Tokens[x].Line.ToString());
                                 }
                                 if ((Tokens[x + 1].Type != PaletteToken.TokenType.Variable) && (Tokens[x + 1].Type != PaletteToken.TokenType.Constant))
                                 {
-                                    // Throw Error - Can only assign from variables or constants
+                                    // *** Throw Error - Can only assign from variables or constants
                                     throw new PaletteExecutionException("Invalid assignment source at line " + Tokens[x].Line.ToString());
                                 }
 
@@ -267,7 +281,7 @@ namespace SeeSharp.Palette
                                                                           ResolveInteger(Tokens[x + 7], Variables), ResolveInteger(Tokens[x + 5], Variables), ResolveInteger(Tokens[x + 6], Variables)));
                                 x += 9;
                                 break;
-                            case "t": // t Biome Block Meta R G B A
+                            case "t": // *** t Biome Block Meta R G B A
                                 for (int y = 1; y < 8; y++)
                                 {
                                     if (Tokens[x + y].Type == PaletteToken.TokenType.Newline)
@@ -289,14 +303,14 @@ namespace SeeSharp.Palette
                     case PaletteToken.TokenType.Constant:
                         throw new PaletteExecutionException("Unexpected constant at line " + Tokens[x].Line.ToString());
                     case PaletteToken.TokenType.Variable:
-                        // Do nothing
+                        //***  Do nothing
                         break;
                 }
             }
 
-            // Merge changes into main palette
+            // *** Merge changes into main palette
 
-            // Start by adding any lists needed to the dictionary and removing any outdated entries
+            // *** Start by adding any lists needed to the dictionary and removing any outdated entries
             foreach (PaletteEntry Entry in ProspectiveAdditions)
             {
                 if (!PaletteEntries.ContainsKey(Entry.BlockID))
@@ -306,21 +320,21 @@ namespace SeeSharp.Palette
                 Entries.RemoveAll((X) => X.IsSupplantedBy(Entry));
             }
 
-            // Then add all the new entries to the palette
+            // *** Then add all the new entries to the palette
             foreach (PaletteEntry Entry in ProspectiveAdditions)
             {
                 PaletteEntries[Entry.BlockID].Add(Entry);
             }
 
-            // Finally, sort the lists by specificity.  More specific palette entries will thus take rendering prevalence over broader catch-all entries.
+            // *** Finally, sort the lists by specificity.  More specific palette entries will thus take rendering prevalence over broader catch-all entries.
             foreach (List<PaletteEntry> EntryList in PaletteEntries.Values)
                 EntryList.Sort();
 
 
-            //Now do the same for tints
+            // *** Now do the same for tints
 
 
-            // Start by adding any lists needed to the dictionary and removing any outdated entries
+            // *** Start by adding any lists needed to the dictionary and removing any outdated entries
             foreach (TintEntry Entry in ProspectiveTintAdditions)
             {
                 if (!BiomeTints.ContainsKey(Entry.BiomeID))
@@ -329,11 +343,11 @@ namespace SeeSharp.Palette
                 Entries.RemoveAll((X) => X.IsSupplantedBy(Entry));
             }
 
-            // Then add all the new entries to the palette
+            // *** Then add all the new entries to the palette
             foreach (TintEntry Entry in ProspectiveTintAdditions)
                 BiomeTints[Entry.BiomeID].Add(Entry);
 
-            // Finally, sort the lists by specificity.  More specific palette entries will thus take rendering prevalence over broader catch-all entries.
+            // *** Finally, sort the lists by specificity.  More specific palette entries will thus take rendering prevalence over broader catch-all entries.
             foreach (List<TintEntry> EntryList in BiomeTints.Values)
                 EntryList.Sort();
 
@@ -348,7 +362,7 @@ namespace SeeSharp.Palette
         /// <remarks>
         ///     Throws a PaletteExecutionException if the palette script is invalid or malformed
         /// </remarks>
-        public void LoadPalette(String PaletteFile)
+        internal void LoadPalette(String PaletteFile)
         {
             String[] Lines = System.IO.File.ReadAllLines(PaletteFile);
             Console.WriteLine("Loading palette " + Path.GetFileNameWithoutExtension(PaletteFile));

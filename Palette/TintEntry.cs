@@ -2,8 +2,7 @@
 
 namespace SeeSharp
 {
-
-    public class TintEntry : IComparable<TintEntry>
+    internal class TintEntry : IComparable<TintEntry>
     {
         public int BiomeID;
         public int BlockID;

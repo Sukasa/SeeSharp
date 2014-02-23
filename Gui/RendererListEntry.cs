@@ -6,7 +6,7 @@ using SeeSharp.Rendering;
 
 namespace SeeSharp.Gui
 {
-    struct RendererListEntry
+    internal struct RendererListEntry
     {
         public String RendererName;
         public String RendererFriendlyName;

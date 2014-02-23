@@ -181,7 +181,7 @@ namespace SeeSharp.Gui
             // *** Set up renderer config
             RenderingConfig.IsPreview = IsPreview;
             RenderingConfig.Chunks = World.GetChunkManager(RenderingConfig.Dimension);
-            RenderingConfig.Palette = new PaletteCore();
+            RenderingConfig.Palette = new BlockPalette();
             RenderingConfig.RenderSubregion = cbCropMap.Checked;
             SkipErrors.Clear();
 
@@ -209,7 +209,7 @@ namespace SeeSharp.Gui
                 {
                     RenderingConfig.Palette.LoadPalette(Palette);
                 }
-                catch (PaletteCore.PaletteExecutionException ex)
+                catch (BlockPalette.PaletteExecutionException ex)
                 {
                     MessageBox.Show(string.Format("The palette file {0} is invalid and will be skipped:\r\n{1}", Path.GetFileName(Palette), ex.Message), "Palette Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     PaletteManager.Instance().AllPalettes.First((x) => x.PalettePath == Palette).Selected = false;
@@ -274,7 +274,7 @@ namespace SeeSharp.Gui
             {
                 lock (SkipErrors)
                 {
-                    // Alert user
+                    // *** Alert user
                     if (SkipErrors.Contains(e.ErrorCode))
                         return;
 
@@ -316,6 +316,7 @@ namespace SeeSharp.Gui
             Value = Math.Max(Math.Min(Value, pbRenderProgress.Maximum), pbRenderProgress.Minimum);
             statusStrip1.UIThread(() => pbRenderProgress.Value = Value);
         }
+        
         /// <summary>
         ///     Thread-safe way to set the status bar
         /// </summary>
@@ -351,7 +352,7 @@ namespace SeeSharp.Gui
         {
             DialogResult Result = fbOpenFolder.ShowDialog();
 
-            // Open world, or at least try
+            // *** Open world, or at least try
             if (Result != System.Windows.Forms.DialogResult.OK)
                 return;
 
@@ -363,7 +364,7 @@ namespace SeeSharp.Gui
             {
                 World = Substrate.AnvilWorld.Open(fbOpenFolder.SelectedPath);
 
-                // Load Dimension list
+                // *** Load Dimension list
                 String FilePath = World.Path;
 
                 Regex ValidDimNames = new Regex(@"(?<Path>(?:DIM[^\-\d]*)?(?<Name>-?\d{1,}|region))$");

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SeeSharp.Gui
 {
-    struct DimensionListEntry
+    internal struct DimensionListEntry
     {
         public String Name;
         public String Value;

@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Reflection;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Reflection;
 
 namespace SeeSharp.Palette
 {
@@ -25,7 +25,7 @@ namespace SeeSharp.Palette
 
         private PaletteManager()
         {
-            // Load palettes here
+            // *** Load palettes here
             Reload();
 
         }

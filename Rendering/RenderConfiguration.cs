@@ -24,7 +24,7 @@ namespace SeeSharp
         public bool IsPreview;
         public int MaxThreads;
 
-        public PaletteCore Palette;
+        public BlockPalette Palette;
         public WorldMetrics Metrics;
         public RegionChunkManager Chunks;
 
@@ -38,7 +38,7 @@ namespace SeeSharp
             // *** Nothing here
         }
 
-        public RenderConfiguration(PaletteCore UsePalette, WorldMetrics UseMetrics)
+        public RenderConfiguration(BlockPalette UsePalette, WorldMetrics UseMetrics)
         {
             MinLightLevel = 15;
             WorldPath = "";

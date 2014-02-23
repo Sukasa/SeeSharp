@@ -10,7 +10,7 @@ namespace SeeSharp.Gui
     {
         protected override void OnRenderToolStripBorder(ToolStripRenderEventArgs e)
         {
-            // Do nothing
+            // *** Do nothing, because I dislike that stupid little line
         }
     }
 }
