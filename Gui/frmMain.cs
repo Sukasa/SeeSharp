@@ -176,6 +176,7 @@ namespace SeeSharp.Gui
 
             ToggleControls(!IsPreview, true, IsPreview);
             SetStatus("Initializing...");
+            IRenderer Renderer = null;
 
             // *** Set up renderer config
             RenderingConfig.IsPreview = IsPreview;
@@ -195,7 +196,7 @@ namespace SeeSharp.Gui
                 RenderingConfig.SubregionChunks = new Rectangle(RenderingConfig.Metrics.MinX, RenderingConfig.Metrics.MinZ, RenderingConfig.Metrics.MaxX - RenderingConfig.Metrics.MinX, RenderingConfig.Metrics.MaxZ - RenderingConfig.Metrics.MinZ);
 
             if (Abort)
-                return;
+                goto Cleanup;
 
             foreach (DataGridViewRow Row in dgPalettes.Rows)
                 ((PaletteFile)Row.Tag).Selected = (bool)Row.Cells[0].Value;
@@ -220,16 +221,14 @@ namespace SeeSharp.Gui
             }
 
             if (Abort)
-                return;
+                goto Cleanup;
 
             UpdatePaletteSelection();
 
             RenderingConfig.Palette.AssembleLookupTables();
 
-            if (Abort)
-                return;
             // *** Initialize renderer
-            IRenderer Renderer = RendererManager.Instance().InstantiateRenderer((SelectedRenderer).RendererName);
+            Renderer = RendererManager.Instance().InstantiateRenderer((SelectedRenderer).RendererName);
 
             Renderer.ProgressUpdate += DoUpdate;
             Renderer.RenderError += HandleError;
@@ -239,24 +238,24 @@ namespace SeeSharp.Gui
 
             AbortRender = Renderer.Abort;
 
-            if (!Abort)
-            {
-                // *** Render
-                if (IsPreview)
-                    pbPreview.Image = Renderer.Preview();
-                else
-                    Renderer.Render();
+            // *** Render
+            if (IsPreview)
+                pbPreview.Image = Renderer.Preview();
+            else
+                Renderer.Render();
 
-            }
+
+        Cleanup:
+
             // *** Clean up
-            Renderer.ProgressUpdate -= DoUpdate;
-            Renderer.RenderError -= HandleError;
-
-            if (Abort)
-                return;
+            if (Renderer != null)
+            {
+                Renderer.ProgressUpdate -= DoUpdate;
+                Renderer.RenderError -= HandleError;
+            }
 
             ToggleControls(false, World != null, false);
-            SetStatus("Finished");
+            SetStatus(Abort ? "Aborted" : "Finished");
             SetProgress(0);
             AbortRender = null;
             Abort = false;
@@ -561,6 +560,11 @@ namespace SeeSharp.Gui
         private void tabControl1_Selecting(object sender, TabControlCancelEventArgs e)
         {
             e.Cancel = !e.TabPage.Enabled;
+        }
+
+        private void tabPage1_Click(object sender, EventArgs e)
+        {
+
         }
 
     }

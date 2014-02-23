@@ -125,8 +125,15 @@ namespace SeeSharp
                 RenderingParallelOptions.CancellationToken = Cancellation.Token;
                 RenderingParallelOptions.MaxDegreeOfParallelism = Config.MaxThreads;
 
-                Parallel.ForEach<ChunkRef>(ChunkProvider, RenderingParallelOptions, RenderChunk);
-                UpdateThread.Join();
+                try
+                {
+                    Parallel.ForEach<ChunkRef>(ChunkProvider, RenderingParallelOptions, RenderChunk);
+                    UpdateThread.Join();
+                }
+                catch (OperationCanceledException)
+                {
+
+                }
             }
             else
             {
@@ -141,10 +148,13 @@ namespace SeeSharp
 
             OutputMap.UnlockBits(RenderTarget);
 
+            if (Cancellation.IsCancellationRequested)
+                return;
+
             if (!Config.IsPreview)
                 OutputMap.Save(Config.SaveFilename);
 
-            // If a chunk failed to render, let the user know.
+            // If a chunk failed to render, let the user know.  Unless we aborted, because there's no point then.
             if (CorruptChunks)
             {
                 RenderingErrorEventArgs e = new RenderingErrorEventArgs();
@@ -274,6 +284,9 @@ namespace SeeSharp
                 DoProgressUpdate();
 
                 if (ProcessedChunks >= RenderableChunks)
+                    return;
+
+                if (Cancellation.IsCancellationRequested)
                     return;
 
                 Thread.Sleep(100);
