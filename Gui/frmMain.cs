@@ -524,9 +524,9 @@ namespace SeeSharp.Gui
 
             if (CachedConfigForm != null)
             {
-                List<Tuple<String, String>> L = CachedConfigForm.ConfigStrings;
-                foreach (Tuple<String, String> ConfigPair in L)
-                    SB.Append(" --render-option " + ConfigPair.Item1 + " \"" + ConfigPair.Item2 + "\"");
+                List<KeyValuePair<String, String>> L = CachedConfigForm.ConfigStrings;
+                foreach (KeyValuePair<String, String> ConfigPair in L)
+                    SB.Append(" --render-option " + ConfigPair.Key + " \"" + ConfigPair.Value + "\"");
             }
 
             if (cbCropMap.Checked)

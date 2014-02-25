@@ -5,7 +5,7 @@ namespace SeeSharp
 
     internal struct PaletteToken
     {
-        public enum TokenType
+        internal enum TokenType
         {
             Command,
             Variable,

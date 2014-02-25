@@ -3,19 +3,28 @@ using System.Windows.Forms;
 
 namespace SeeSharp
 {
+    /// <summary>
+    ///     See Sharp win32 entrypoint class
+    /// </summary>
     public sealed class SeeSharpMain
     {
         private SeeSharpMain()
         {
             // *** Empty
         }
+
+        /// <summary>
+        ///     Win32 main entry point
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
         [STAThread]
         public static int Main(string[] args)
         {
             return (new SeeSharpMain()).ProgramMain(args);
         }
 
-        int ProgramMain(string[] args)
+        private int ProgramMain(string[] args)
         {
 
             if (args.Length == 0)

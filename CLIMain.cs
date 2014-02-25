@@ -322,7 +322,7 @@ namespace SeeSharp
                     case "-R":
                     case "--render-option":
                             String Option = args[++x];
-                            Configuration.AdvancedRenderOptions.Add(new Tuple<string, string>(Option, args[++x]));
+                            Configuration.AdvancedRenderOptions.Add(new KeyValuePair<string, string>(Option, args[++x]));
                         break;
                     case "-ls":
                     case "--list-renderers":

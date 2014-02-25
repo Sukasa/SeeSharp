@@ -191,7 +191,7 @@
     <Compile Include="Rendering\RendererManager.cs" />
     <Compile Include="Rendering\RenderingEventArgs.cs" />
     <Compile Include="Rendering\RenderConfiguration.cs" />
-    <Compile Include="Rendering\Renderer.cs" />
+    <Compile Include="Rendering\StandardRenderer.cs" />
     <Compile Include="Rendering\StandardRendererConfig.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -69,7 +69,7 @@ namespace SeeSharp
         }
         public int GetStartRenderYCave(AlphaBlockCollection Blocks, int X, int Z)
         {
-            int Y = Blocks.GetHeight(X, Z);
+            int Y = 255;
             if (Y > 255)
                 Y = 255;
 
@@ -86,7 +86,7 @@ namespace SeeSharp
         }
         public int GetStartRenderYCaveAlternate(AlphaBlockCollection Blocks, int X, int Z)
         {
-            int Y = Blocks.GetHeight(X, Z);
+            int Y = 255;
             if (Y > 255)
                 Y = 255;
 
@@ -322,9 +322,9 @@ namespace SeeSharp
 
             Chunks = Configuration.Chunks;
 
-            if (Config.AdvancedRenderOptions.Exists((x) => x.Item1 == "Mode"))
+            if (Config.AdvancedRenderOptions.Exists((x) => x.Key == "Mode"))
             {
-                switch (Config.AdvancedRenderOptions.Find((x) => x.Item1 == "Mode").Item2)
+                switch (Config.AdvancedRenderOptions.Find((x) => x.Key == "Mode").Value)
                 {
                     case "c":
                         RenderStartY = GetStartRenderYCave;

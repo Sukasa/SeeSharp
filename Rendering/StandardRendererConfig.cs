@@ -5,17 +5,15 @@ using System.Text;
 
 namespace SeeSharp.Rendering
 {
-
-    // TODO Implement (SeeSharp)
     class StandardRendererConfig : RendererConfigForm
     {
         private System.Windows.Forms.ComboBox listRenderModes;
         private System.Windows.Forms.Label label1;
 
-        public override List<Tuple<string, string>> ConfigStrings
+        public override List<KeyValuePair<string, string>> ConfigStrings
         {
             get {
-                List<Tuple<String, String>> L = new List<Tuple<string, string>>();
+                List<KeyValuePair<String, String>> L = new List<KeyValuePair<string, string>>();
                 String N = "";
 
                 switch (listRenderModes.SelectedIndex)
@@ -32,7 +30,7 @@ namespace SeeSharp.Rendering
 
                 }
 
-                L.Add(new Tuple<string, string>("Mode", N));
+                L.Add(new KeyValuePair<string, string>("Mode", N));
 
                 return L;
             }
@@ -40,7 +38,7 @@ namespace SeeSharp.Rendering
                 if (value == null || !value.Exists((x) => true))
                     return;
 
-                String Mode = (from Tuple<String, String> T in value where T.Item1 == "Mode" select T.Item2).First();
+                String Mode = (from KeyValuePair<String, String> T in value where T.Key == "Mode" select T.Value).First();
 
                 switch (Mode)
                 {

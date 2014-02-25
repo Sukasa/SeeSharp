@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace SeeSharp
 {
-    public class AbstractControlDescriptionProvider<TAbstract, TBase> : TypeDescriptionProvider
+    internal class AbstractControlDescriptionProvider<TAbstract, TBase> : TypeDescriptionProvider
     {
         public AbstractControlDescriptionProvider()
             : base(TypeDescriptor.GetProvider(typeof(TAbstract)))
