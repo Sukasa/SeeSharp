@@ -7,6 +7,9 @@ namespace SeeSharp.Palette
     /// <summary>
     ///     Block palette
     /// </summary>
+    /// <remarks>
+    ///     The main palette class.  This contains the block colour palette modified for biome colours.
+    /// </remarks>
     public sealed class BlockPalette
     {
         public const int BlocksMax = 4096;
@@ -28,14 +31,25 @@ namespace SeeSharp.Palette
         ///     Depth opacity table for block/metadata.  Supports extended (0-4095) block IDs
         /// </summary>
         /// <remarks>
-        ///     Ordered by [BlockID][Metadata]
+        ///     <para>
+        ///         The depth opacity table is used by the top-down standard renderer.  It determines how many blocks down to render from the surface, and is made available to third-party renderers.
+        ///     </para>
+        ///     <para>
+        ///         This table is ordered [Block ID][Metadata ID]
+        ///     </para>
         /// </remarks>
         public int[][] DepthOpacities = new int[BlocksMax][]; // *** Will store the *lowest* depth opacity for any given Block ID/Metadata.  The speedup from an array lookup far outweighs the potential cost of extra blocks being rendered.
+
         /// <summary>
         ///     Block colour values.    Supports extended (0-4095) block IDs
         /// </summary>
         /// <remarks>
-        ///     Ordered by [Biome][BlockID][Metadata]
+        ///     <para>
+        ///         The FastPalette table is a jagged array designed for fast lookup of palette data.  It is designed for speed of access.
+        ///     </para>
+        ///     <para>
+        ///         This table is ordered [Biome ID][Block ID][Metadata ID]
+        ///     </para>
         /// </remarks>
         public MiniPaletteEntry[][][] FastPalette = new MiniPaletteEntry[BiomesMax][][];
 
@@ -212,7 +226,7 @@ namespace SeeSharp.Palette
 
         }
 
-        // TODO Refactor this because it's horrible (SeeSharp)
+        // TODO Refactor this because it's horrible
         internal void ExecutePalette(PaletteToken[] Tokens)
         {
             List<PaletteEntry> ProspectiveAdditions = new List<PaletteEntry>();

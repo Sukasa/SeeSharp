@@ -9,42 +9,58 @@ using System.Drawing;
 namespace SeeSharp
 {
     /// <summary>
-    ///     Render configuration.  This will reflect the settings the user selected in the render dialog, or the command line
+    ///     Render configuration as selected by user
     /// </summary>
     public sealed class RenderConfiguration
     {
         /// <summary>
-        ///     Minimum blocklight level to render at.  This might be lowered or raised to simulate time-of-day, or to set a minimum illumination for cave rendering.
+        ///     Minimum blocklight level to render
         /// </summary>
+        /// <remarks>
+        ///      MinLightLevel is the minimum light level to use when adjusting block colours for ambient and sky light.  This might be lowered or raised to simulate time-of-day, or to set a minimum illumination for cave rendering.  This value will be between 0 and 15.
+        /// </remarks>
+        /// <seealso cref="Colour.LightLevel"/>
         public int MinLightLevel;
+
         /// <summary>
         ///     What dimension is being rendered.
         /// </summary>
         /// <remarks>
-        ///     The overworld is <see cref="String.Empty"/>
+        ///     Dimension contains the folder name for the world dimension being rendered (DIM1, DIM-1, etc).  The overworld is <see cref="String.Empty"/>
         /// </remarks>
         public String Dimension;
 
         /// <summary>
         ///     The file path the world is stored at
         /// </summary>
+        /// <remarks>
+        ///     This will always be set, and is the file path of the folder containing the world data, e.g. C:\Users\YourName\AppData\Roaming\.minecraft\saves\World1
+        /// </remarks>
         public String WorldPath;
 
         /// <summary>
         ///     What file to save the output map as. 
         /// </summary>
+        /// <remarks>
+        ///     Where to save the renderer output, expressed as a file.  The file is not actually created for the renderer, and should be created as part of the render process.
+        /// </remarks>
         public String SaveFilename;
 
         /// <summary>
-        ///     Where to save sign-scan data, if that data is to be exported
+        ///     Where to save sign-scan data
         /// </summary>
+        /// <remarks>
+        ///     The file path to save the XML document listing all the sign exports processed by See Sharp.
+        /// </remarks>
         public String ScanFilename;
 
         /// <summary>
-        ///     Where to save basic world metrics data to
+        ///     Where to save basic world metrics data
         /// </summary>
+        /// <remarks>
+        ///     The file path to save the XML document detailing the world's base metrics for the current dimension
+        /// </remarks>
         public String MetricsFilename;
-
 
         /// <summary>
         ///     Which map renderer to use
@@ -54,6 +70,9 @@ namespace SeeSharp
         /// <summary>
         ///     Whether the render should run in one thread, or multiple threads.
         /// </summary>
+        /// <remarks>
+        ///     See Sharp supports both single-threaded rendering and multi-threaded rendering.  If the user has not specified single-threaded rendering, this value will be true.  If it is false, the renderer should NOT create any threads for its operation.
+        /// </remarks>
         public bool EnableMultithreading;
 
         /// <summary>
