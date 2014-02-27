@@ -1,10 +1,5 @@
-﻿using Substrate;
-using System;
+﻿using System;
 using System.Drawing;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
 
 namespace SeeSharp.Rendering
 {
@@ -16,7 +11,9 @@ namespace SeeSharp.Rendering
     /// </remarks>
     public interface IRenderer
     {
-        // *** Functions
+
+        #region "Setup Functions"
+
         /// <summary>
         ///     Configure the renderer before rendering
         /// </summary>
@@ -35,6 +32,10 @@ namespace SeeSharp.Rendering
         ///     Initialize() should prep the renderer for either previewing or rendering.  It will be called after Configure().  It should be noted that it is possible for Initialize() to be called, and then an immediate abort() instead of rendering or previewing.
         /// </remarks>
         void Initialize();
+
+        #endregion
+
+        #region "Rendering Functions"
 
         /// <summary>
         ///     Render the world to a map file, e.g. a .png
@@ -80,8 +81,37 @@ namespace SeeSharp.Rendering
         /// </returns>
         Bitmap Preview();
 
+        #endregion
 
-        // *** Advanced Configuration
+        #region "Renderer Identification"
+
+        /// <summary>
+        ///     Renderer name.  Used in the CLI interface, e.g. "-Renderer MyRenderer"
+        /// </summary>
+        String RendererName { get; }
+
+        /// <summary>
+        ///     Renderer friendly name.  Used in the GUI.
+        /// </summary>
+        String RendererFriendlyName { get; }
+
+        #endregion
+
+        #region "Event Definitions"
+
+        /// <summary>
+        ///     Raise this event to update the user on current render progress.  Failing to call this will leave your user in the dark!
+        /// </summary>
+        event ProgressUpdateHandler ProgressUpdate;
+
+        /// <summary>
+        ///     Raise this event in the event of an error during rendering, whether fatal or not.
+        /// </summary>
+        event RenderingErrorHandler RenderError;
+
+        #endregion
+
+
         /// <summary>
         ///     Configuration form for any advanced settings
         /// </summary>
@@ -101,17 +131,6 @@ namespace SeeSharp.Rendering
         /// </summary>
         void PrintHelpInfo();
 
-        // *** Renderer identification and status
-        /// <summary>
-        ///     Renderer name.  Used in the CLI interface, e.g. "-Renderer MyRenderer"
-        /// </summary>
-        String RendererName { get; }
-
-        /// <summary>
-        ///     Renderer friendly name.  Used in the GUI.
-        /// </summary>
-        String RendererFriendlyName { get; }
-
         /// <summary>
         ///     Whether the renderer is aborting.
         /// </summary>
@@ -120,16 +139,5 @@ namespace SeeSharp.Rendering
         /// </remarks>
         Boolean IsAborting { get; }
 
-
-        // *** Events
-        /// <summary>
-        ///     Raise this event to update the user on current render progress.  Failing to call this will leave your user in the dark!
-        /// </summary>
-        event ProgressUpdateHandler ProgressUpdate;
-
-        /// <summary>
-        ///     Raise this event in the event of an error during rendering, whether fatal or not.
-        /// </summary>
-        event RenderingErrorHandler RenderError;
     }
 }

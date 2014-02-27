@@ -236,9 +236,9 @@ namespace SeeSharp
                         MiniPaletteEntry Entry = BiomePalette[Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)];
 
                         // *** If it has an associated .EntityColours list, then it needs special consideration to get its colour
-                        if (Entry.EntityColours != null)
+                        if (Entry.EntityColours != 0)
                         {
-                            PaletteEntry Entry2 = Entry.EntityColours.Find((E) => E.IsMatch(Blocks.GetData(X, Y, Z), Blocks.SafeGetTileEntity(X, Y, Z)));
+                            PaletteEntry Entry2 = ColourPalette.GetPaletteEntry(Entry.EntityColours).Find((E) => E.IsMatch(Blocks.GetData(X, Y, Z), Blocks.SafeGetTileEntity(X, Y, Z)));
                             if (Entry2 != null)
                                 TempColour = Entry2.Color;
                             else
@@ -251,7 +251,7 @@ namespace SeeSharp
                             continue; // *** If we're trying to render air, let's not.
 
                         // *** Blend in our working colour to the column's pixel, after applying altitude and light-level blends.
-                        SetColour.Blend(TempColour.LightLevel((uint)Math.Max(Config.MinLightLevel, Blocks.GetBlockLight(X, Math.Min(Y + 1, 255), Z))).Altitude(Y));
+                        SetColour.Blend(TempColour.Copy().LightLevel((uint)Math.Max(Config.MinLightLevel, Blocks.GetBlockLight(X, Math.Min(Y + 1, 255), Z))).Altitude(Y));
                     }
 
                     if (SetColour.A > 0) // *** If our pixel isn't just transparent, then write it out to the target bitmap

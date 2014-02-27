@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System;
 
 namespace SeeSharp
 {
@@ -25,6 +26,6 @@ namespace SeeSharp
         /// <remarks>
         ///     Some blocks might have "Entity-Tagged" block entries; these entries are available in a list for access.  The list will be null if no such block palette entries exist.
         /// </remarks>
-        public List<PaletteEntry> EntityColours;
+        public Int32 EntityColours;
     }
 }
