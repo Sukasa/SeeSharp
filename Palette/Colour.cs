@@ -7,7 +7,7 @@ namespace SeeSharp
     ///     Color struct.  Similar to System.Drawing.Color, but is designed for extremely fast draw and blend calls, as well as some application-specific functions
     /// </summary>
     /// <remarks>
-    ///     This struct assumes little-endian packing, such as in x86 or x64
+    ///     The Colour structure wraps a speed-oriented 32bppARGB colour value.  It supports per-channel and as-whole addressing, and basic blend functions.  This struct assumes little-endian packing, such as in x86 or x64
     /// </remarks>
     [StructLayout(LayoutKind.Explicit, Size = 4)]
     public struct Colour
@@ -46,7 +46,7 @@ namespace SeeSharp
         ///     The Colour on which the function was called 
         /// </returns>
         /// <remarks>
-        ///     This function should not be called on the colours retrieved from the palette, as it will corrupt them 
+        ///     The Altitude() function shades a Colour towards white or black depending on the altitiude, expressed as a number of 0 to 255.  This function should not be called on the colours retrieved from the palette, as it will corrupt them.  Use <see cref="Colour.Copy"/> to create a new Colour first.
         /// </remarks>
         public Colour Altitude(int Altitude)
         {
@@ -64,7 +64,12 @@ namespace SeeSharp
         /// <summary>
         ///     Returns a new instance of this colour
         /// </summary>
-        /// <returns></returns>
+        /// <remarks>
+        ///     Copy() allocates a new Colour struct and sets its values to the same values as this Colour.
+        /// </remarks>
+        /// <returns>
+        ///     A fresh copy of the struct
+        /// </returns>
         public Colour Copy()
         {
             return new Colour { Color = Color };
@@ -72,6 +77,9 @@ namespace SeeSharp
         /// <summary>
         ///     Copies the current colour and shades the new instance according to the block's light level
         /// </summary>
+        /// <remarks>
+        ///     LightLevel() returns a copy of this Colour, and shades it towards black depending on the supplied light level.
+        /// </remarks>
         /// <param name="LightLevel">
         ///     Light level from 0 to 15. 
         /// </param>
@@ -80,7 +88,11 @@ namespace SeeSharp
         /// </returns>
         public Colour LightLevel(uint LightLevel)
         {
-            return Blend(new Colour { Color = Color & 0xFF000000 }, (15 - LightLevel) << 3);
+            UInt32 UseAlpha = (15 - LightLevel) << 3;
+            Color = (0xFF000000) | // *** Alpha
+                    (((((0x00800080U - (Color & 0x00FF00FFU)) * UseAlpha) >> 8)) & 0x00FF00FFU) | // Red, Blue
+                    (((((0x00008000U - (Color & 0x0000FF00U)) * UseAlpha) >> 8)) & 0x0000FF00U); // Green
+            return this;
         }
         /// <summary>
         ///     Blend another colour onto this one, storing the result into this colour
@@ -92,7 +104,7 @@ namespace SeeSharp
         ///     This colour 
         /// </returns>
         /// <remarks>
-        ///     The final alpha is set to the blended colour's alpha
+        ///     Blend another colour onto this one, storing the result into this colour.  The final alpha is set to the blended colour's alpha value.
         /// </remarks>
         public Colour Blend(Colour Top)
         {
@@ -108,10 +120,10 @@ namespace SeeSharp
         ///     What colour to blend on top of this one
         /// </param>
         /// <returns>
-        ///     This colour 
+        ///     This colour
         /// </returns>
         /// <remarks>
-        ///     The final alpha is set to the blended colour's alpha
+        ///     Blend another colour onto this one with a supplied alpha value, storing the result into this colour.  The final alpha is set to the blended colour's alpha
         /// </remarks>
         public Colour Blend(Colour Top, UInt32 UseAlpha)
         {
@@ -121,9 +133,14 @@ namespace SeeSharp
             return this;
         }
         /// <summary>
-        /// Set this colour to full alpha
+        /// Set this Colour to full alpha
         /// </summary>
-        /// <returns></returns>
+        /// <remarks>
+        ///     Sets this Colour to full alpha and returns it.
+        /// </remarks>
+        /// <returns>
+        ///     This Colour
+        /// </returns>
         public Colour FullAlpha()
         {
             Color |= 0xFF000000;

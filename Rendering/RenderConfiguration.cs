@@ -78,28 +78,43 @@ namespace SeeSharp
         /// <summary>
         ///     Set to true during initialization and rendering if the render is for the Gui preview window
         /// </summary>
+        /// <remarks>
+        ///     IsPreview is set true when the plugin is being configured and initialized for a preview render instead of a full render.
+        /// </remarks>
         public bool IsPreview;
 
         /// <summary>
-        ///     If <see cref="EnableMultithreading"/> is set, how many threads to use, maximum.
+        ///     If <see cref="EnableMultithreading"/> is set, maximum number of threads to use
         /// </summary>
+        /// <remarks>
+        ///     The MaxThreads parameter instructs the rendering plugin on the maximum number of high-processing-load threads to spawn, as per the user configuration.  If multithreading should be disabled, this will be set to one.
+        /// </remarks>
         public int MaxThreads;
 
         /// <summary>
         ///     The block colour palette. 
         /// </summary>
+        /// <remarks>
+        ///     The Palette parameter contains a reference to the <see cref="SeeSharp.Palette.BlockPalette"/> object containing the currently-configured colour palette.
+        /// </remarks>
         /// <seealso cref="SeeSharp.Palette.BlockPalette"/>
         public BlockPalette Palette;
 
         /// <summary>
         ///     World metrics for the dimension being rendered
         /// </summary>
+        /// <remarks>
+        ///     The Metrics parameter provides metrics information about the current dimension being rendered.
+        /// </remarks>
         ///  <seealso cref="SeeSharp.WorldMetrics"/>
         public WorldMetrics Metrics;
 
         /// <summary>
         ///     The chunk provider for the world.
         /// </summary>
+        /// <remarks>
+        ///     The Chunks parameter is the core object by which the renderer can get the data it needs to perform its intended function.
+        /// </remarks>
         /// <seealso cref="Substrate.RegionChunkManager"/>
         public RegionChunkManager Chunks;
 
@@ -107,7 +122,7 @@ namespace SeeSharp
         ///     If true, the user has selected a specific region to be rendered, instead of the whole world
         /// </summary>
         /// <remarks>
-        ///     Will be true during a preview render, along with the render mask. 
+        ///     RenderSubregion is set when a render mask for the world has been specified instead of the entire world.  It can be used to handle the whole-world case in the event that it allows for faster rendering, or as a hint as to the render process to be expected.
         /// </remarks>
         ///  <seealso cref="SubregionChunks"/>
         public bool RenderSubregion;
@@ -116,7 +131,12 @@ namespace SeeSharp
         ///     The rectangle mask of which chunks to render
         /// </summary>
         /// <remarks>
-        ///     This rectangle is inclusive, so remeber that your render window is (Width+1) * (Height+1)
+        ///     <para>
+        ///         The SubregionChunks mask is an inclusive rectangle measured in chunks which demarcates a region of the world to render.  The renderer should not attempt to render world chunks outside of this range, and not all chunks inside this range are guaranteed to exist.
+        ///     </para>
+        ///     <para>
+        ///         This rectangle measures in chunks and is zero-based; Rendering (0, 0) to (1, 1) is 2x2, not 1x1.  Be sure to allocate resources correctly to account for this.
+        ///     </para>
         ///  </remarks>
         public Rectangle SubregionChunks;
 
@@ -124,8 +144,10 @@ namespace SeeSharp
         ///     List of key-value render option pairs.
         /// </summary>
         /// <remarks>
-        ///     The meanings of each key and its values are dependent on and unique to the renderer being used.
+        ///     The AdvancedRenderOptions param is a list of Key-Value pairs generated either from the command line, or via user interaction with the advanced settings dialog specific to the renderer.
         /// </remarks>
+        /// <seealso cref="SeeSharp.Rendering.RendererConfigForm"/>
+        /// <seealso cref="SeeSharp.Rendering.IRenderer"/>
         public List<KeyValuePair<String, String>> AdvancedRenderOptions;
 
         internal RenderConfiguration()
