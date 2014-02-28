@@ -1,5 +1,6 @@
 ﻿using System;
 using Substrate;
+using System.Collections.Generic;
 
 namespace SeeSharp
 {
@@ -47,6 +48,28 @@ namespace SeeSharp
 
         private string EntityTag;
         private string EntityTagCheckValue;
+
+        /// <summary>
+        ///     Return custom data about a block, or a default value if it is not defined
+        /// </summary>
+        /// <remarks>
+        ///     GetCustomData() allows you to retrieve "Specialty" data about a block, such as value, name, 
+        /// </remarks>
+        /// <param name="Key">
+        ///     Key for the data, e.g. "MaterialValue"
+        /// </param>
+        /// <param name="DefaultValue">
+        ///     Default value if the key is not defined, e.g. "0" to match the example key.
+        /// </param>
+        /// <returns>
+        ///     The stored data value for that key, or the default value if the key is not defined.
+        /// </returns>
+        public String GetCustomData(String Key, String DefaultValue = "")
+        {
+            return CustomData.ContainsKey(Key) ? CustomData[Key] : DefaultValue;
+        }
+
+        internal Dictionary<String, String> CustomData = new Dictionary<string, string>();
 
         internal PaletteEntry(int BlockID, int MetaData, int Opacity, int Red, int Green, int Blue, int Alpha)
         {
