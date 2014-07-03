@@ -5,6 +5,7 @@ using Substrate.TileEntities;
 
 namespace SeeSharp
 {
+
     abstract public class SignBase
     {
         /// <summary>

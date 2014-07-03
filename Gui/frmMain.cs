@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -9,6 +10,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using SeeSharp.Palette;
+using SeeSharp.Plugins;
 using SeeSharp.Rendering;
 using Substrate;
 
@@ -31,10 +33,13 @@ namespace SeeSharp.Gui
         private AbortRenderDelegate AbortRender;
         private bool Abort = false;
 
+        private FileSystemWatcher PaletteWatcher;
+
         internal frmMain()
         {
             InitializeComponent();
 
+            // *** Why is this here?
             this.nudZMin.ValueChanged += new System.EventHandler(this.SetupSubregion);
             this.nudXMin.ValueChanged += new System.EventHandler(this.SetupSubregion);
             this.nudZMax.ValueChanged += new System.EventHandler(this.SetupSubregion);
@@ -53,6 +58,8 @@ namespace SeeSharp.Gui
             int Value = (int)nudThreads.Value;
             RenderingConfig.EnableMultithreading = Value > 1;
             RenderingConfig.MaxThreads = Value;
+            Properties.Settings.Default.MTThreadCount = Value;
+            Properties.Settings.Default.Save();
         }
 
         #endregion
@@ -83,21 +90,42 @@ namespace SeeSharp.Gui
 
         private void frmMain_Load(object sender, EventArgs e)
         {
+            int ThreadingCount = Properties.Settings.Default.MTThreadCount;
+            if (ThreadingCount == 0)
+                ThreadingCount = Environment.ProcessorCount;
+
+            chkAutoUpdate.Checked = Properties.Settings.Default.AutoCheck;
+            rbAlwaysUpdate.Checked = Properties.Settings.Default.AutoUpdate;
+            chkShowCLIButton.Checked = Properties.Settings.Default.ShowCLIButton;
+            chkTrackChanges.Checked = Properties.Settings.Default.WatchFolder;
+            chkMultithread.Checked = ThreadingCount != 1;
+
+            btnCopyCLI.Visible = chkShowCLIButton.Checked;
+
+            // *** Check for plugin updates here
+
             SetupPalettes();
 
             lblStatus.Text = string.Format("See Sharp v{0}", Assembly.GetExecutingAssembly().GetName().Version.ToString());
             LoadRenderers();
 
             nudThreads.Maximum = Environment.ProcessorCount;
-            nudThreads.Value = nudThreads.Maximum;
+
+
+            nudThreads.Value = ThreadingCount > 1 ? Math.Min(ThreadingCount, nudThreads.Maximum) : nudThreads.Maximum;
 
             toolStrip1.Renderer = new ToolStripProfessionalRendererNoSideLine();
 
             tabPage2.Enabled = false;
-            tabPage3.Enabled = false;
 
             ToggleControls(false, false, false);
         }
+
+        void PaletteFilesUpdated(object sender, FileSystemEventArgs e)
+        {
+            SetupPalettes();
+        }
+
         private void SetupPalettes()
         {
             PaletteManager PM = PaletteManager.Instance();
@@ -114,6 +142,18 @@ namespace SeeSharp.Gui
                     Row.Cells[1].ToolTipText = string.Format("{0}\r\n{1}", File.Name, File.Description);
 
             }
+
+            if (chkTrackChanges.Checked && PaletteWatcher == null)
+            {
+                PaletteWatcher = new FileSystemWatcher(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+                PaletteWatcher.EnableRaisingEvents = true;
+                PaletteWatcher.IncludeSubdirectories = true;
+                PaletteWatcher.Filter = "*.pal";
+                PaletteWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.DirectoryName;
+                PaletteWatcher.Changed += PaletteFilesUpdated;
+            }
+
+
         }
         private void LoadRenderers()
         {
@@ -127,32 +167,46 @@ namespace SeeSharp.Gui
 
         #region "Rendering Functions"
 
-        private void ToggleControls(bool IsBusy, bool WorldLoaded, bool IsPreviewing)
+        private void ToggleControls(bool IsBusy, bool WorldLoaded, bool IsPreviewing, Control ControlRef = null)
         {
-            if (this.InvokeRequired)
+            if (ControlRef == null)
+                ControlRef = this;
+
+            if (ControlRef.InvokeRequired)
             {
-                this.Invoke(InvokableControlToggler, IsBusy, WorldLoaded, IsPreviewing);
+                ControlRef.Invoke(InvokableControlToggler, IsBusy, WorldLoaded, IsPreviewing);
                 return;
             }
 
             btnCopyCLI.Enabled = WorldLoaded;
 
-            foreach (Control Control in this.GetSubControls())
+            foreach (Control Control in ControlRef.GetSubControls())
             {
                 String Tag = (String)Control.Tag;
                 if (Tag == null)
                     Tag = String.Empty;
 
-                if (Tag.Contains("IGNORE") || typeof(ScrollBar).IsAssignableFrom(Control.GetType()))
+                if (Tag.Contains("IGNORE"))
                     continue;
 
                 Control.Enabled = true;
 
-                if (Tag.Contains("ALWAYS")) // *** Always enabled
+                if (typeof(ScrollBar).IsAssignableFrom(Control.GetType()) || typeof(NumericUpDown).IsAssignableFrom(Control.Parent.GetType()))
+                {
                     continue;
+                }
 
                 if (Tag.Contains("SUBREGION") && !cbCropMap.Checked)
                     Control.Enabled = false;
+
+                if (Tag.Contains("AUTOUPDATE") && !chkAutoUpdate.Checked)
+                    Control.Enabled = false;
+
+                if (Tag.Contains("MULTITHREAD") && !chkMultithread.Checked)
+                    Control.Enabled = false;
+
+                if (Tag.Contains("ALWAYS")) // *** Always enabled
+                    continue;
 
                 if (!WorldLoaded && !Tag.Contains("NOWORLD"))
                 {
@@ -168,7 +222,7 @@ namespace SeeSharp.Gui
                 }
             }
         }
-        private delegate void ControlToggler(bool a, bool b, bool c);
+        private delegate void ControlToggler(bool a, bool b, bool c, Control d = null);
         private ControlToggler InvokableControlToggler;
         private void Render(bool IsPreview)
         {
@@ -316,7 +370,7 @@ namespace SeeSharp.Gui
             Value = Math.Max(Math.Min(Value, pbRenderProgress.Maximum), pbRenderProgress.Minimum);
             statusStrip1.UIThread(() => pbRenderProgress.Value = Value);
         }
-        
+
         /// <summary>
         ///     Thread-safe way to set the status bar
         /// </summary>
@@ -385,6 +439,7 @@ namespace SeeSharp.Gui
                     {
                         Entry.Name = "Overworld";
                         Entry.Value = "";
+                        cbDimension.SelectedIndex = cbDimension.Items.Count;
                     }
                     else if (Match.Groups["Name"].Value == "-1")
                     {
@@ -400,16 +455,10 @@ namespace SeeSharp.Gui
                     }
                     cbDimension.Items.Add(Entry);
 
-                    if (Match.Groups["Name"].Value == "region")
-                    {
-                        cbDimension.SelectedIndex = cbDimension.Items.Count - 1;
-                    }
                 }
                 cbDimension.EndUpdate();
 
                 SetStatus(String.Format("Loaded {0}", World.Level.LevelName));
-
-                SetupPalettes();
 
                 ToggleControls(false, true, false);
 
@@ -461,7 +510,6 @@ namespace SeeSharp.Gui
         {
             SelectedRenderer = (RendererListEntry)cbRenderer.SelectedItem;
             CachedConfigForm = null;
-            SetupPalettes();
         }
         private void btnAbortRender_Click(object sender, EventArgs e)
         {
@@ -471,14 +519,11 @@ namespace SeeSharp.Gui
         }
         private void button1_Click(object sender, EventArgs e)
         {
+            fdSave.Filter = "All Files|*.*|PNG Files (*.png)|*.png";
             fdSave.ShowDialog();
             RenderingConfig.SaveFilename = fdSave.FileName;
             Thread RenderThread = new Thread(() => Render(false));
             RenderThread.Start();
-        }
-        private void btnReloadPalettes_Click(object sender, EventArgs e)
-        {
-            SetupPalettes();
         }
         private void dgPalettes_CurrentCellDirtyStateChanged(object sender, EventArgs e)
         {
@@ -561,12 +606,50 @@ namespace SeeSharp.Gui
         private void tabControl1_Selecting(object sender, TabControlCancelEventArgs e)
         {
             e.Cancel = !e.TabPage.Enabled;
+            if (!e.Cancel && e.TabPageIndex < 3)
+            {
+                cbCropMap.Parent = e.TabPage;
+                gbSubregion.Parent = e.TabPage;
+                gbWorldDimensions.Parent = e.TabPage;
+                cbDimension.Parent = e.TabPage;
+                lblDimension.Parent = e.TabPage;
+                dgPalettes.Parent = e.TabPage;
+                lblSelectPalettes.Parent = e.TabPage;
+            }
         }
 
-        private void tabPage1_Click(object sender, EventArgs e)
+        private void chkShowCLIButton_CheckedChanged(object sender, EventArgs e)
         {
-
+            btnCopyCLI.Visible = chkShowCLIButton.Checked;
+            Properties.Settings.Default.ShowCLIButton = chkShowCLIButton.Checked;
+            Properties.Settings.Default.Save();
         }
 
+        private void chkAutoUpdate_CheckedChanged(object sender, EventArgs e)
+        {
+            pnlUpdate.Enabled = chkAutoUpdate.Checked;
+            Properties.Settings.Default.AutoCheck = chkAutoUpdate.Checked;
+            Properties.Settings.Default.Save();
+            ToggleControls(false, World != null, false, tpSettings);
+        }
+
+        private void rbAlwaysUpdate_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.AutoUpdate = rbAlwaysUpdate.Checked;
+            Properties.Settings.Default.Save();
+        }
+
+        private void chkTrackChanges_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.ShowCLIButton = chkShowCLIButton.Checked;
+            Properties.Settings.Default.Save();
+        }
+
+        private void chkMultithread_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.MTThreadCount = chkMultithread.Checked ? (int)nudThreads.Value : 1;
+            Properties.Settings.Default.Save();
+            ToggleControls(false, World != null, false, tpSettings);
+        }
     }
 }

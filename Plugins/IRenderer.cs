@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Drawing;
+using SeeSharp.Rendering;
 
-namespace SeeSharp.Rendering
+namespace SeeSharp.Plugins
 {
     /// <summary>
     ///     Renderer interface used by See Sharp to manage rendering operations
@@ -9,10 +10,10 @@ namespace SeeSharp.Rendering
     /// <remarks>
     ///     The IRenderer interface defines the set of functions, properties, and events used to manage rendering.  Any renderer that implements this interface as a class library will be automatically loaded by See Sharp if the DLL is placed in the application folder or a subfolder.
     /// </remarks>
-    public interface IRenderer
+    public interface IRenderer : IComponent
     {
 
-        #region "Setup Functions"
+        #region Setup Functions
 
         /// <summary>
         ///     Configure the renderer before rendering
@@ -35,7 +36,7 @@ namespace SeeSharp.Rendering
 
         #endregion
 
-        #region "Rendering Functions"
+        #region Rendering Functions
 
         /// <summary>
         ///     Render the world to a map file, e.g. a .png
@@ -59,7 +60,7 @@ namespace SeeSharp.Rendering
         ///     Called if the renderer should stop rendering.  An abort implies immediate stoppage of rendering
         /// </summary>
         /// <remarks>
-        ///     Abort() is called when the user aborts a render, or when The renderer should release all self-allocated objects, but disk cleanup (i.e. for multi-file renders) need not be performed
+        ///     Abort() is called when the user aborts a render, or when The renderer should release all self-allocated objects, but disk cleanup (i.e. for multi-file-output renders) need not be performed
         /// </remarks>
         void Abort();
 
@@ -83,7 +84,7 @@ namespace SeeSharp.Rendering
 
         #endregion
 
-        #region "Renderer Identification"
+        #region Renderer Identification
 
         /// <summary>
         ///     Renderer name.  Used in the CLI interface, e.g. "-Renderer MyRenderer"
@@ -97,7 +98,7 @@ namespace SeeSharp.Rendering
 
         #endregion
 
-        #region "Event Definitions"
+        #region Event Definitions
 
         /// <summary>
         ///     Raise this event to update the user on current render progress.  Failing to call this will leave your user in the dark!

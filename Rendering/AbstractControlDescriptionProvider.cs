@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
+// I didn't write this.  Apparently I goofed and forgot to credit the original author.  This is used so that the RendererConfigForm class renders properly in the designer for plugin authors
 namespace SeeSharp
 {
     internal class AbstractControlDescriptionProvider<TAbstract, TBase> : TypeDescriptionProvider

@@ -147,6 +147,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
@@ -158,6 +159,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CLIMain.cs" />
+    <Compile Include="Gui\Dialogs\dlgCheckingForUpdates.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\Dialogs\dlgCheckingForUpdates.Designer.cs">
+      <DependentUpon>dlgCheckingForUpdates.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Dialogs\dlgUpdates.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\Dialogs\dlgUpdates.Designer.cs">
+      <DependentUpon>dlgUpdates.cs</DependentUpon>
+    </Compile>
     <Compile Include="Gui\DimensionListEntry.cs" />
     <Compile Include="Gui\RendererListEntry.cs" />
     <Compile Include="Gui\ToolStripRenderer.cs" />
@@ -176,15 +189,25 @@
     <Compile Include="Palette\PaletteManager.cs" />
     <Compile Include="Palette\PaletteToken.cs" />
     <Compile Include="Palette\TintEntry.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="Plugins\UpdateInfo.cs" />
+    <Compile Include="Plugins\IComponent.cs" />
+    <Compile Include="Plugins\IPlugin.cs" />
+    <Compile Include="Plugins\PluginController.cs" />
+    <Compile Include="Plugins\ProxyPluginManager.cs" />
+    <Compile Include="SeeSharp.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Include="Rendering\AbstractControlDescriptionProvider.cs" />
-    <Compile Include="Rendering\IRenderer.cs" />
+    <Compile Include="Plugins\IRenderer.cs" />
     <Compile Include="Rendering\RendererConfigForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -195,6 +218,7 @@
     <Compile Include="Rendering\StandardRendererConfig.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Signs\ISign.cs" />
     <Compile Include="Signs\SignExporter.cs" />
     <Compile Include="Signs\SignBase.cs" />
     <Compile Include="Version.cs">
@@ -205,6 +229,7 @@
     <Compile Include="WorldMetrics.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="Biomes\Vanilla.pal">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -227,6 +252,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Properties\app.manifest" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="README.md" />
     <None Include="Version.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -261,6 +290,10 @@
   <ItemGroup>
     <Content Include=".gitignore" />
     <Content Include="Icon1.ico" />
+    <None Include="Resources\wrench.png" />
+    <None Include="Resources\map_magnify.png" />
+    <None Include="Resources\palette.png" />
+    <None Include="Resources\Palette.bmp" />
     <None Include="Resources\LoadWorldButtonImage.png" />
     <None Include="Resources\folder_camera.png" />
     <None Include="Resources\map_edit.png" />
@@ -273,7 +306,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Palette\PaletteCommands\" />
-    <Folder Include="Plugins\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Substrate-master\SubstrateCS\Substrate %28NET4%29.csproj">
@@ -282,6 +314,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Gui\Dialogs\dlgCheckingForUpdates.resx">
+      <DependentUpon>dlgCheckingForUpdates.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Dialogs\dlgUpdates.resx">
+      <DependentUpon>dlgUpdates.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\frmMain.resx">
       <DependentUpon>frmMain.cs</DependentUpon>
     </EmbeddedResource>

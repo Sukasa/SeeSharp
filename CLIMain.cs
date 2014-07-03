@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using SeeSharp.Palette;
+using SeeSharp.Plugins;
 using SeeSharp.Rendering;
 using Substrate;
 
@@ -31,6 +32,7 @@ namespace SeeSharp
             // *** Function returns TRUE if the command line is invalid and the program should NOT proceed.
             if (HandleCommandLineArguments(args))
                 return 0;
+
 
             // *** World path is mandatory.
             if (Configuration.WorldPath == "")

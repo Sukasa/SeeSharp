@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Reflection;
 using System.Windows.Forms;
+using SeeSharp.Plugins;
 
 namespace SeeSharp
 {
@@ -12,9 +14,9 @@ namespace SeeSharp
     /// </remarks>
     [Browsable(false)]  // This class isn't really used or useful for people writing plugins, so hide it.
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public sealed class SeeSharpMain
+    public sealed class SeeSharpMain : IPlugin
     {
-        private SeeSharpMain()
+        internal SeeSharpMain()
         {
             // *** Empty
         }
@@ -36,13 +38,11 @@ namespace SeeSharp
 
         private int ProgramMain(string[] args)
         {
-
             if (args.Length == 0)
             {
                 Console.WriteLine("No command-line parameters; opening Gui...");
                 Application.EnableVisualStyles();
                 Application.Run(new Gui.frmMain());
-
             }
             else
             {
@@ -53,6 +53,30 @@ namespace SeeSharp
             return 0;
         }
 
+        public string Name
+        {
+            get { return "See Sharp"; }
+        }
+
+        public string Description
+        {
+            get { return "Base Components"; }
+        }
+
+        public string Author
+        {
+            get { return "Sukasa"; }
+        }
+
+        public string DisplayedVersion
+        {
+            get { return Assembly.GetExecutingAssembly().GetName().Version.ToString(); }
+        }
+
+        public string Homepage
+        {
+            get { return ""; }
+        }
     }
 }
 

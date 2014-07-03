@@ -30,6 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.pbPreview = new System.Windows.Forms.PictureBox();
@@ -40,14 +41,12 @@
             this.cSelected = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.cName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.cVersion = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.label1 = new System.Windows.Forms.Label();
+            this.lblSelectPalettes = new System.Windows.Forms.Label();
             this.fdSave = new System.Windows.Forms.SaveFileDialog();
             this.tbLightLevel = new System.Windows.Forms.TrackBar();
             this.cbDimension = new System.Windows.Forms.ComboBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.nudThreads = new System.Windows.Forms.NumericUpDown();
-            this.label8 = new System.Windows.Forms.Label();
             this.btnAbortRender = new System.Windows.Forms.Button();
             this.gbWorldDimensions = new System.Windows.Forms.GroupBox();
             this.lblWorldMin = new System.Windows.Forms.Label();
@@ -68,10 +67,26 @@
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.button1 = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
-            this.btnReloadPalettes = new System.Windows.Forms.Button();
+            this.lblDimension = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.btnAbortScan = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.dgMetrics = new System.Windows.Forms.DataGridView();
+            this.dataGridViewCheckBoxColumn1 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.tpSettings = new System.Windows.Forms.TabPage();
+            this.chkMultithread = new System.Windows.Forms.CheckBox();
+            this.nudThreads = new System.Windows.Forms.NumericUpDown();
+            this.label8 = new System.Windows.Forms.Label();
+            this.chkShowCLIButton = new System.Windows.Forms.CheckBox();
+            this.chkTrackChanges = new System.Windows.Forms.CheckBox();
+            this.pnlUpdate = new System.Windows.Forms.Panel();
+            this.rbAlwaysUpdate = new System.Windows.Forms.RadioButton();
+            this.rbPromptUpdates = new System.Windows.Forms.RadioButton();
+            this.chkAutoUpdate = new System.Windows.Forms.CheckBox();
             this.ilTabs = new System.Windows.Forms.ImageList(this.components);
             this.fbOpenFolder = new System.Windows.Forms.FolderBrowserDialog();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -80,6 +95,7 @@
             this.btnCopyCLI = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.tmrPreview = new System.Windows.Forms.Timer(this.components);
+            this.Tooltips = new System.Windows.Forms.ToolTip(this.components);
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbPreview)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -87,7 +103,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.tbLightLevel)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudThreads)).BeginInit();
             this.gbWorldDimensions.SuspendLayout();
             this.gbSubregion.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudZMax)).BeginInit();
@@ -96,6 +111,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudXMin)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            this.tabPage3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgMetrics)).BeginInit();
+            this.tpSettings.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudThreads)).BeginInit();
+            this.pnlUpdate.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -168,7 +188,7 @@
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.dgPalettes.DefaultCellStyle = dataGridViewCellStyle1;
             this.dgPalettes.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.dgPalettes.Location = new System.Drawing.Point(11, 45);
+            this.dgPalettes.Location = new System.Drawing.Point(11, 35);
             this.dgPalettes.MultiSelect = false;
             this.dgPalettes.Name = "dgPalettes";
             this.dgPalettes.RowHeadersVisible = false;
@@ -176,7 +196,7 @@
             this.dgPalettes.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.dgPalettes.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgPalettes.ShowEditingIcon = false;
-            this.dgPalettes.Size = new System.Drawing.Size(305, 136);
+            this.dgPalettes.Size = new System.Drawing.Size(305, 146);
             this.dgPalettes.TabIndex = 5;
             this.dgPalettes.Tag = "ALWAYS";
             this.dgPalettes.CurrentCellDirtyStateChanged += new System.EventHandler(this.dgPalettes_CurrentCellDirtyStateChanged);
@@ -209,14 +229,14 @@
             this.cVersion.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.cVersion.Width = 60;
             // 
-            // label1
+            // lblSelectPalettes
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(10, 19);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(78, 13);
-            this.label1.TabIndex = 7;
-            this.label1.Text = "Select Palettes";
+            this.lblSelectPalettes.AutoSize = true;
+            this.lblSelectPalettes.Location = new System.Drawing.Point(10, 19);
+            this.lblSelectPalettes.Name = "lblSelectPalettes";
+            this.lblSelectPalettes.Size = new System.Drawing.Size(78, 13);
+            this.lblSelectPalettes.TabIndex = 7;
+            this.lblSelectPalettes.Text = "Select Palettes";
             // 
             // fdSave
             // 
@@ -253,6 +273,8 @@
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Controls.Add(this.tabPage4);
+            this.tabControl1.Controls.Add(this.tpSettings);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.HotTrack = true;
             this.tabControl1.ImageList = this.ilTabs;
@@ -267,8 +289,6 @@
             // 
             // tabPage1
             // 
-            this.tabPage1.Controls.Add(this.nudThreads);
-            this.tabPage1.Controls.Add(this.label8);
             this.tabPage1.Controls.Add(this.btnAbortRender);
             this.tabPage1.Controls.Add(this.gbWorldDimensions);
             this.tabPage1.Controls.Add(this.cbCropMap);
@@ -279,13 +299,12 @@
             this.tabPage1.Controls.Add(this.pictureBox3);
             this.tabPage1.Controls.Add(this.pictureBox2);
             this.tabPage1.Controls.Add(this.button1);
-            this.tabPage1.Controls.Add(this.label2);
+            this.tabPage1.Controls.Add(this.lblDimension);
             this.tabPage1.Controls.Add(this.groupBox1);
             this.tabPage1.Controls.Add(this.cbDimension);
             this.tabPage1.Controls.Add(this.dgPalettes);
             this.tabPage1.Controls.Add(this.tbLightLevel);
-            this.tabPage1.Controls.Add(this.btnReloadPalettes);
-            this.tabPage1.Controls.Add(this.label1);
+            this.tabPage1.Controls.Add(this.lblSelectPalettes);
             this.tabPage1.ImageIndex = 0;
             this.tabPage1.Location = new System.Drawing.Point(4, 23);
             this.tabPage1.Name = "tabPage1";
@@ -295,46 +314,11 @@
             this.tabPage1.Tag = "IGNORE";
             this.tabPage1.Text = "Map Export";
             this.tabPage1.UseVisualStyleBackColor = true;
-            this.tabPage1.Click += new System.EventHandler(this.tabPage1_Click);
-            // 
-            // nudThreads
-            // 
-            this.nudThreads.Location = new System.Drawing.Point(381, 273);
-            this.nudThreads.Maximum = new decimal(new int[] {
-            8,
-            0,
-            0,
-            0});
-            this.nudThreads.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudThreads.Name = "nudThreads";
-            this.nudThreads.ReadOnly = true;
-            this.nudThreads.Size = new System.Drawing.Size(33, 20);
-            this.nudThreads.TabIndex = 32;
-            this.nudThreads.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudThreads.ValueChanged += new System.EventHandler(this.nudThreads_ValueChanged);
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(330, 273);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(49, 13);
-            this.label8.TabIndex = 33;
-            this.label8.Text = "Threads:";
-            this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // btnAbortRender
             // 
             this.btnAbortRender.Enabled = false;
-            this.btnAbortRender.Image = global::SeeSharp.Properties.Resources.cross;
+            this.btnAbortRender.Image = global::SeeSharp.Properties.Resources.Cross;
             this.btnAbortRender.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnAbortRender.Location = new System.Drawing.Point(519, 269);
             this.btnAbortRender.Name = "btnAbortRender";
@@ -580,28 +564,14 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // label2
+            // lblDimension
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(360, 21);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(56, 13);
-            this.label2.TabIndex = 10;
-            this.label2.Text = "Dimension";
-            // 
-            // btnReloadPalettes
-            // 
-            this.btnReloadPalettes.Image = global::SeeSharp.Properties.Resources.Refresh;
-            this.btnReloadPalettes.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnReloadPalettes.Location = new System.Drawing.Point(242, 16);
-            this.btnReloadPalettes.Name = "btnReloadPalettes";
-            this.btnReloadPalettes.Size = new System.Drawing.Size(69, 23);
-            this.btnReloadPalettes.TabIndex = 6;
-            this.btnReloadPalettes.Tag = "ALWAYS";
-            this.btnReloadPalettes.Text = "Rescan";
-            this.btnReloadPalettes.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.btnReloadPalettes.UseVisualStyleBackColor = true;
-            this.btnReloadPalettes.Click += new System.EventHandler(this.btnReloadPalettes_Click);
+            this.lblDimension.AutoSize = true;
+            this.lblDimension.Location = new System.Drawing.Point(360, 21);
+            this.lblDimension.Name = "lblDimension";
+            this.lblDimension.Size = new System.Drawing.Size(56, 13);
+            this.lblDimension.TabIndex = 10;
+            this.lblDimension.Text = "Dimension";
             // 
             // tabPage2
             // 
@@ -617,6 +587,10 @@
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.btnAbortScan);
+            this.tabPage3.Controls.Add(this.button2);
+            this.tabPage3.Controls.Add(this.label1);
+            this.tabPage3.Controls.Add(this.dgMetrics);
             this.tabPage3.ImageIndex = 2;
             this.tabPage3.Location = new System.Drawing.Point(4, 23);
             this.tabPage3.Name = "tabPage3";
@@ -626,6 +600,247 @@
             this.tabPage3.Text = "World Metrics";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
+            // btnAbortScan
+            // 
+            this.btnAbortScan.Enabled = false;
+            this.btnAbortScan.Image = global::SeeSharp.Properties.Resources.Cross;
+            this.btnAbortScan.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnAbortScan.Location = new System.Drawing.Point(519, 269);
+            this.btnAbortScan.Name = "btnAbortScan";
+            this.btnAbortScan.Size = new System.Drawing.Size(58, 27);
+            this.btnAbortScan.TabIndex = 39;
+            this.btnAbortScan.Tag = "!NOLOCK PREVIEW";
+            this.btnAbortScan.Text = "Abort";
+            this.btnAbortScan.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.btnAbortScan.UseVisualStyleBackColor = true;
+            // 
+            // button2
+            // 
+            this.button2.Image = global::SeeSharp.Properties.Resources.ExamineMap;
+            this.button2.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.button2.Location = new System.Drawing.Point(419, 269);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(94, 27);
+            this.button2.TabIndex = 38;
+            this.button2.Text = "Scan Metrics";
+            this.button2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.button2.UseVisualStyleBackColor = true;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(330, 46);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(87, 13);
+            this.label1.TabIndex = 37;
+            this.label1.Text = "Available Metrics";
+            // 
+            // dgMetrics
+            // 
+            this.dgMetrics.AllowUserToAddRows = false;
+            this.dgMetrics.AllowUserToDeleteRows = false;
+            this.dgMetrics.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.Disable;
+            this.dgMetrics.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgMetrics.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.dataGridViewCheckBoxColumn1,
+            this.dataGridViewTextBoxColumn1});
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgMetrics.DefaultCellStyle = dataGridViewCellStyle2;
+            this.dgMetrics.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.dgMetrics.Location = new System.Drawing.Point(333, 64);
+            this.dgMetrics.MultiSelect = false;
+            this.dgMetrics.Name = "dgMetrics";
+            this.dgMetrics.RowHeadersVisible = false;
+            this.dgMetrics.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgMetrics.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.dgMetrics.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgMetrics.ShowEditingIcon = false;
+            this.dgMetrics.Size = new System.Drawing.Size(244, 199);
+            this.dgMetrics.TabIndex = 36;
+            this.dgMetrics.Tag = "ALWAYS";
+            // 
+            // dataGridViewCheckBoxColumn1
+            // 
+            this.dataGridViewCheckBoxColumn1.FalseValue = false;
+            this.dataGridViewCheckBoxColumn1.FillWeight = 1F;
+            this.dataGridViewCheckBoxColumn1.HeaderText = " ";
+            this.dataGridViewCheckBoxColumn1.IndeterminateValue = false;
+            this.dataGridViewCheckBoxColumn1.MinimumWidth = 25;
+            this.dataGridViewCheckBoxColumn1.Name = "dataGridViewCheckBoxColumn1";
+            this.dataGridViewCheckBoxColumn1.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridViewCheckBoxColumn1.TrueValue = true;
+            this.dataGridViewCheckBoxColumn1.Width = 25;
+            // 
+            // dataGridViewTextBoxColumn1
+            // 
+            this.dataGridViewTextBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dataGridViewTextBoxColumn1.HeaderText = "Metric";
+            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            this.dataGridViewTextBoxColumn1.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            // 
+            // tabPage4
+            // 
+            this.tabPage4.ImageIndex = 4;
+            this.tabPage4.Location = new System.Drawing.Point(4, 23);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage4.Size = new System.Drawing.Size(585, 306);
+            this.tabPage4.TabIndex = 3;
+            this.tabPage4.Tag = "IGNORE";
+            this.tabPage4.Text = "Palette Editor";
+            this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // tpSettings
+            // 
+            this.tpSettings.Controls.Add(this.chkMultithread);
+            this.tpSettings.Controls.Add(this.nudThreads);
+            this.tpSettings.Controls.Add(this.label8);
+            this.tpSettings.Controls.Add(this.chkShowCLIButton);
+            this.tpSettings.Controls.Add(this.chkTrackChanges);
+            this.tpSettings.Controls.Add(this.pnlUpdate);
+            this.tpSettings.Controls.Add(this.chkAutoUpdate);
+            this.tpSettings.ImageIndex = 3;
+            this.tpSettings.Location = new System.Drawing.Point(4, 23);
+            this.tpSettings.Name = "tpSettings";
+            this.tpSettings.Padding = new System.Windows.Forms.Padding(3);
+            this.tpSettings.Size = new System.Drawing.Size(585, 306);
+            this.tpSettings.TabIndex = 4;
+            this.tpSettings.Tag = "IGNORE";
+            this.tpSettings.Text = "Settings";
+            this.tpSettings.UseVisualStyleBackColor = true;
+            // 
+            // chkMultithread
+            // 
+            this.chkMultithread.AutoSize = true;
+            this.chkMultithread.Location = new System.Drawing.Point(10, 127);
+            this.chkMultithread.Name = "chkMultithread";
+            this.chkMultithread.Size = new System.Drawing.Size(190, 17);
+            this.chkMultithread.TabIndex = 36;
+            this.chkMultithread.Tag = "IGNORE";
+            this.chkMultithread.Text = "Use multithreading where available";
+            this.Tooltips.SetToolTip(this.chkMultithread, "If checked, will multi-thread operations where possible.  Takes effect immediatel" +
+                    "y.");
+            this.chkMultithread.UseVisualStyleBackColor = true;
+            this.chkMultithread.CheckedChanged += new System.EventHandler(this.chkMultithread_CheckedChanged);
+            // 
+            // nudThreads
+            // 
+            this.nudThreads.Location = new System.Drawing.Point(78, 145);
+            this.nudThreads.Maximum = new decimal(new int[] {
+            8,
+            0,
+            0,
+            0});
+            this.nudThreads.Minimum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.nudThreads.Name = "nudThreads";
+            this.nudThreads.Size = new System.Drawing.Size(33, 20);
+            this.nudThreads.TabIndex = 34;
+            this.nudThreads.Tag = "MULTITHREAD ALWAYS";
+            this.nudThreads.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.nudThreads.ValueChanged += new System.EventHandler(this.nudThreads_ValueChanged);
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(23, 147);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(49, 13);
+            this.label8.TabIndex = 35;
+            this.label8.Text = "Threads:";
+            this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // chkShowCLIButton
+            // 
+            this.chkShowCLIButton.AutoSize = true;
+            this.chkShowCLIButton.Location = new System.Drawing.Point(10, 104);
+            this.chkShowCLIButton.Name = "chkShowCLIButton";
+            this.chkShowCLIButton.Size = new System.Drawing.Size(193, 17);
+            this.chkShowCLIButton.TabIndex = 4;
+            this.chkShowCLIButton.Tag = "IGNORE";
+            this.chkShowCLIButton.Text = "Show \'CLI Params\' button in toolbar";
+            this.Tooltips.SetToolTip(this.chkShowCLIButton, "If checked, show the \'CLI Params\' button in the menu bar.  Not useful unless you " +
+                    "are planning on writing a batch script");
+            this.chkShowCLIButton.UseVisualStyleBackColor = true;
+            this.chkShowCLIButton.CheckedChanged += new System.EventHandler(this.chkShowCLIButton_CheckedChanged);
+            // 
+            // chkTrackChanges
+            // 
+            this.chkTrackChanges.AutoSize = true;
+            this.chkTrackChanges.Checked = true;
+            this.chkTrackChanges.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkTrackChanges.Location = new System.Drawing.Point(10, 81);
+            this.chkTrackChanges.Name = "chkTrackChanges";
+            this.chkTrackChanges.Size = new System.Drawing.Size(205, 17);
+            this.chkTrackChanges.TabIndex = 3;
+            this.chkTrackChanges.Tag = "IGNORE";
+            this.chkTrackChanges.Text = "Match palette list to directory changes";
+            this.Tooltips.SetToolTip(this.chkTrackChanges, resources.GetString("chkTrackChanges.ToolTip"));
+            this.chkTrackChanges.UseVisualStyleBackColor = true;
+            this.chkTrackChanges.CheckedChanged += new System.EventHandler(this.chkTrackChanges_CheckedChanged);
+            // 
+            // pnlUpdate
+            // 
+            this.pnlUpdate.Controls.Add(this.rbAlwaysUpdate);
+            this.pnlUpdate.Controls.Add(this.rbPromptUpdates);
+            this.pnlUpdate.Location = new System.Drawing.Point(23, 31);
+            this.pnlUpdate.Name = "pnlUpdate";
+            this.pnlUpdate.Size = new System.Drawing.Size(177, 42);
+            this.pnlUpdate.TabIndex = 2;
+            this.pnlUpdate.Tag = "AUTOUPDATE ALWAYS";
+            // 
+            // rbAlwaysUpdate
+            // 
+            this.rbAlwaysUpdate.AutoSize = true;
+            this.rbAlwaysUpdate.Location = new System.Drawing.Point(3, 21);
+            this.rbAlwaysUpdate.Name = "rbAlwaysUpdate";
+            this.rbAlwaysUpdate.Size = new System.Drawing.Size(125, 17);
+            this.rbAlwaysUpdate.TabIndex = 2;
+            this.rbAlwaysUpdate.Tag = "IGNORE";
+            this.rbAlwaysUpdate.Text = "Update Automatically";
+            this.rbAlwaysUpdate.UseVisualStyleBackColor = true;
+            this.rbAlwaysUpdate.CheckedChanged += new System.EventHandler(this.rbAlwaysUpdate_CheckedChanged);
+            // 
+            // rbPromptUpdates
+            // 
+            this.rbPromptUpdates.AutoSize = true;
+            this.rbPromptUpdates.Checked = true;
+            this.rbPromptUpdates.Location = new System.Drawing.Point(3, 3);
+            this.rbPromptUpdates.Name = "rbPromptUpdates";
+            this.rbPromptUpdates.Size = new System.Drawing.Size(159, 17);
+            this.rbPromptUpdates.TabIndex = 1;
+            this.rbPromptUpdates.TabStop = true;
+            this.rbPromptUpdates.Tag = "IGNORE";
+            this.rbPromptUpdates.Text = "Prompt on updates available";
+            this.rbPromptUpdates.UseVisualStyleBackColor = true;
+            // 
+            // chkAutoUpdate
+            // 
+            this.chkAutoUpdate.AutoSize = true;
+            this.chkAutoUpdate.Checked = true;
+            this.chkAutoUpdate.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkAutoUpdate.Location = new System.Drawing.Point(10, 8);
+            this.chkAutoUpdate.Name = "chkAutoUpdate";
+            this.chkAutoUpdate.Size = new System.Drawing.Size(191, 17);
+            this.chkAutoUpdate.TabIndex = 0;
+            this.chkAutoUpdate.Tag = "IGNORE";
+            this.chkAutoUpdate.Text = "Check for plugin updates at launch";
+            this.chkAutoUpdate.UseVisualStyleBackColor = true;
+            this.chkAutoUpdate.CheckedChanged += new System.EventHandler(this.chkAutoUpdate_CheckedChanged);
+            // 
             // ilTabs
             // 
             this.ilTabs.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("ilTabs.ImageStream")));
@@ -633,6 +848,8 @@
             this.ilTabs.Images.SetKeyName(0, "map.png");
             this.ilTabs.Images.SetKeyName(1, "application_view_columns.png");
             this.ilTabs.Images.SetKeyName(2, "report.png");
+            this.ilTabs.Images.SetKeyName(3, "wrench.png");
+            this.ilTabs.Images.SetKeyName(4, "palette.png");
             // 
             // fbOpenFolder
             // 
@@ -671,22 +888,24 @@
             // 
             // btnCopyCLI
             // 
-            this.btnCopyCLI.Image = global::SeeSharp.Properties.Resources.application_xp_terminal;
+            this.btnCopyCLI.Image = global::SeeSharp.Properties.Resources.Terminal;
             this.btnCopyCLI.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnCopyCLI.Name = "btnCopyCLI";
             this.btnCopyCLI.Size = new System.Drawing.Size(86, 22);
             this.btnCopyCLI.Text = "CLI Params";
+            this.btnCopyCLI.ToolTipText = "Copy the current operation settings in the GUI to clipboard as command-line argum" +
+                "ents";
             this.btnCopyCLI.Click += new System.EventHandler(this.btnCopyCLI_Click);
             // 
             // toolStripButton2
             // 
             this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton2.Image = global::SeeSharp.Properties.Resources.help;
+            this.toolStripButton2.Image = global::SeeSharp.Properties.Resources.Help;
             this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton2.Name = "toolStripButton2";
             this.toolStripButton2.Size = new System.Drawing.Size(23, 22);
             this.toolStripButton2.Tag = "ALWAYS";
-            this.toolStripButton2.Text = "btnHelp";
+            this.toolStripButton2.Text = "Open help file";
             // 
             // tmrPreview
             // 
@@ -719,7 +938,6 @@
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudThreads)).EndInit();
             this.gbWorldDimensions.ResumeLayout(false);
             this.gbWorldDimensions.PerformLayout();
             this.gbSubregion.ResumeLayout(false);
@@ -730,6 +948,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudXMin)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgMetrics)).EndInit();
+            this.tpSettings.ResumeLayout(false);
+            this.tpSettings.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudThreads)).EndInit();
+            this.pnlUpdate.ResumeLayout(false);
+            this.pnlUpdate.PerformLayout();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -745,14 +971,13 @@
         private System.Windows.Forms.DataGridView dgPalettes;
         private System.Windows.Forms.ToolStripStatusLabel lblStatus;
         private System.Windows.Forms.ToolStripProgressBar pbRenderProgress;
-        private System.Windows.Forms.Button btnReloadPalettes;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblSelectPalettes;
         private System.Windows.Forms.SaveFileDialog fdSave;
         private System.Windows.Forms.TrackBar tbLightLevel;
         private System.Windows.Forms.ComboBox cbDimension;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label lblDimension;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.PictureBox pictureBox2;
@@ -785,8 +1010,24 @@
         private System.Windows.Forms.ToolStripButton btnCopyCLI;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton toolStripButton2;
+        private System.Windows.Forms.Timer tmrPreview;
+        private System.Windows.Forms.DataGridView dgMetrics;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn dataGridViewCheckBoxColumn1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button btnAbortScan;
+        private System.Windows.Forms.TabPage tabPage4;
+        private System.Windows.Forms.TabPage tpSettings;
+        private System.Windows.Forms.CheckBox chkShowCLIButton;
+        private System.Windows.Forms.CheckBox chkTrackChanges;
+        private System.Windows.Forms.ToolTip Tooltips;
+        private System.Windows.Forms.Panel pnlUpdate;
+        private System.Windows.Forms.RadioButton rbAlwaysUpdate;
+        private System.Windows.Forms.RadioButton rbPromptUpdates;
+        private System.Windows.Forms.CheckBox chkAutoUpdate;
+        private System.Windows.Forms.CheckBox chkMultithread;
         private System.Windows.Forms.NumericUpDown nudThreads;
         private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Timer tmrPreview;
     }
 }

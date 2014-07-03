@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Reflection;
 using System.IO;
+using System.Reflection;
+using SeeSharp.Plugins;
 
 namespace SeeSharp.Rendering
 {
@@ -20,6 +19,7 @@ namespace SeeSharp.Rendering
 
         void LoadRenderers()
         {
+            // TODO replace this with code that references and uses the plugin controller
             Renderers.Clear();
             Renderer CoreRenderer = new Renderer();
             Renderers.Add(CoreRenderer.RendererName, new Tuple<string, Type>(CoreRenderer.RendererFriendlyName, CoreRenderer.GetType()));

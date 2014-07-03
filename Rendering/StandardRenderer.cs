@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using SeeSharp.Palette;
+using SeeSharp.Plugins;
 using SeeSharp.Rendering;
 using Substrate;
 
@@ -33,14 +35,13 @@ namespace SeeSharp
         private Int32 Stride;
         private Func<AlphaBlockCollection, int, int, int> RenderStartY;
         private CancellationTokenSource Cancellation = new CancellationTokenSource();
-        ParallelOptions RenderingParallelOptions = new ParallelOptions();
+        private ParallelOptions RenderingParallelOptions = new ParallelOptions();
         private ProgressUpdateEventArgs ProgressUpdateEventData = new ProgressUpdateEventArgs();
-        private int PauseRendering; // *** Will erroneously say it's not assigned to when in debug configuration.
+        private int PauseRendering = 0;
         private int RenderableChunks;
 
 
         // *** Progress Update Data
-        string NumFormat;
         private int ProcessedChunks = 0;
         private bool CorruptChunks = false;
         private bool PendingRender = false;
@@ -167,6 +168,7 @@ namespace SeeSharp
 
             if (!Config.IsPreview)
             {
+                Directory.CreateDirectory(Path.GetDirectoryName(Config.SaveFilename));
                 OutputMap.Save(Config.SaveFilename);
                 OutputMap.Dispose();
                 OutputMap = null;
@@ -238,7 +240,7 @@ namespace SeeSharp
                         // *** If it has an associated .EntityColours list, then it needs special consideration to get its colour
                         if (Entry.EntityColours != 0)
                         {
-                            PaletteEntry Entry2 = ColourPalette.GetPaletteEntry(Entry.EntityColours).Find((E) => E.IsMatch(Blocks.GetData(X, Y, Z), Blocks.SafeGetTileEntity(X, Y, Z)));
+                            PaletteEntry Entry2 = ColourPalette.GetPaletteEntry(Entry.EntityColours).First((E) => E.IsMatch(Blocks.GetData(X, Y, Z), Blocks.SafeGetTileEntity(X, Y, Z)));
                             if (Entry2 != null)
                                 TempColour = Entry2.Color;
                             else
@@ -354,7 +356,6 @@ namespace SeeSharp
             // *** Perform basic init.  Set up the bitmap, cache stride, etc
 
             RenderableChunks = Config.RenderSubregion ? 0 : Metrics.NumberOfChunks;
-            NumFormat = "D" + Math.Ceiling(Math.Log10(RenderableChunks + 1)).ToString();
 
             try
             {

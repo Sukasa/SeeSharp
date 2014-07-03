@@ -60,16 +60,9 @@ namespace SeeSharp.Properties {
             }
         }
         
-        internal static System.Drawing.Bitmap application_xp_terminal {
+        internal static System.Drawing.Bitmap Cross {
             get {
-                object obj = ResourceManager.GetObject("application_xp_terminal", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap cross {
-            get {
-                object obj = ResourceManager.GetObject("cross", resourceCulture);
+                object obj = ResourceManager.GetObject("Cross", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -81,9 +74,16 @@ namespace SeeSharp.Properties {
             }
         }
         
-        internal static System.Drawing.Bitmap help {
+        internal static System.Drawing.Bitmap ExamineMap {
             get {
-                object obj = ResourceManager.GetObject("help", resourceCulture);
+                object obj = ResourceManager.GetObject("ExamineMap", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap Help {
+            get {
+                object obj = ResourceManager.GetObject("Help", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -102,6 +102,13 @@ namespace SeeSharp.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap Palette {
+            get {
+                object obj = ResourceManager.GetObject("Palette", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap Refresh {
             get {
                 object obj = ResourceManager.GetObject("Refresh", resourceCulture);
@@ -112,6 +119,20 @@ namespace SeeSharp.Properties {
         internal static System.Drawing.Bitmap RenderMap {
             get {
                 object obj = ResourceManager.GetObject("RenderMap", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap Terminal {
+            get {
+                object obj = ResourceManager.GetObject("Terminal", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap Wrench {
+            get {
+                object obj = ResourceManager.GetObject("Wrench", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
