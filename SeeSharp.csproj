@@ -182,7 +182,6 @@
     </Compile>
     <Compile Include="Palette\Colour.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="Palette\FastPaletteEntry.cs" />
     <Compile Include="Palette\Palette.cs" />
     <Compile Include="Palette\PaletteEntry.cs" />
     <Compile Include="Palette\PaletteFile.cs" />

@@ -205,7 +205,7 @@ namespace SeeSharp.Palette
                                 for (int Meta = 0; Meta < 16; Meta++)
                                 {
                                     if (FastPalette[X][Key][Meta].A == 0)
-                                        FastPalette[X][Key][Meta]= Entry.Color;
+                                        FastPalette[X][Key][Meta] = Entry.Color;
                                     DepthOpacities[Entry.BlockID][Meta] = Entry.DepthOpacity;
                                 }
                             }

@@ -78,15 +78,15 @@
             this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.tpSettings = new System.Windows.Forms.TabPage();
-            this.chkMultithread = new System.Windows.Forms.CheckBox();
+            this.cbMultithread = new System.Windows.Forms.CheckBox();
             this.nudThreads = new System.Windows.Forms.NumericUpDown();
             this.label8 = new System.Windows.Forms.Label();
-            this.chkShowCLIButton = new System.Windows.Forms.CheckBox();
+            this.cbShowCLIButton = new System.Windows.Forms.CheckBox();
             this.chkTrackChanges = new System.Windows.Forms.CheckBox();
             this.pnlUpdate = new System.Windows.Forms.Panel();
             this.rbAlwaysUpdate = new System.Windows.Forms.RadioButton();
             this.rbPromptUpdates = new System.Windows.Forms.RadioButton();
-            this.chkAutoUpdate = new System.Windows.Forms.CheckBox();
+            this.cbAutoUpdate = new System.Windows.Forms.CheckBox();
             this.ilTabs = new System.Windows.Forms.ImageList(this.components);
             this.fbOpenFolder = new System.Windows.Forms.FolderBrowserDialog();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -698,13 +698,13 @@
             // 
             // tpSettings
             // 
-            this.tpSettings.Controls.Add(this.chkMultithread);
+            this.tpSettings.Controls.Add(this.cbMultithread);
             this.tpSettings.Controls.Add(this.nudThreads);
             this.tpSettings.Controls.Add(this.label8);
-            this.tpSettings.Controls.Add(this.chkShowCLIButton);
+            this.tpSettings.Controls.Add(this.cbShowCLIButton);
             this.tpSettings.Controls.Add(this.chkTrackChanges);
             this.tpSettings.Controls.Add(this.pnlUpdate);
-            this.tpSettings.Controls.Add(this.chkAutoUpdate);
+            this.tpSettings.Controls.Add(this.cbAutoUpdate);
             this.tpSettings.ImageIndex = 3;
             this.tpSettings.Location = new System.Drawing.Point(4, 23);
             this.tpSettings.Name = "tpSettings";
@@ -717,17 +717,17 @@
             // 
             // chkMultithread
             // 
-            this.chkMultithread.AutoSize = true;
-            this.chkMultithread.Location = new System.Drawing.Point(10, 127);
-            this.chkMultithread.Name = "chkMultithread";
-            this.chkMultithread.Size = new System.Drawing.Size(190, 17);
-            this.chkMultithread.TabIndex = 36;
-            this.chkMultithread.Tag = "IGNORE";
-            this.chkMultithread.Text = "Use multithreading where available";
-            this.Tooltips.SetToolTip(this.chkMultithread, "If checked, will multi-thread operations where possible.  Takes effect immediatel" +
+            this.cbMultithread.AutoSize = true;
+            this.cbMultithread.Location = new System.Drawing.Point(10, 127);
+            this.cbMultithread.Name = "chkMultithread";
+            this.cbMultithread.Size = new System.Drawing.Size(190, 17);
+            this.cbMultithread.TabIndex = 36;
+            this.cbMultithread.Tag = "IGNORE";
+            this.cbMultithread.Text = "Use multithreading where available";
+            this.Tooltips.SetToolTip(this.cbMultithread, "If checked, will multi-thread operations where possible.  Takes effect immediatel" +
                     "y.");
-            this.chkMultithread.UseVisualStyleBackColor = true;
-            this.chkMultithread.CheckedChanged += new System.EventHandler(this.chkMultithread_CheckedChanged);
+            this.cbMultithread.UseVisualStyleBackColor = true;
+            this.cbMultithread.CheckedChanged += new System.EventHandler(this.cbMultithread_CheckedChanged);
             // 
             // nudThreads
             // 
@@ -765,17 +765,17 @@
             // 
             // chkShowCLIButton
             // 
-            this.chkShowCLIButton.AutoSize = true;
-            this.chkShowCLIButton.Location = new System.Drawing.Point(10, 104);
-            this.chkShowCLIButton.Name = "chkShowCLIButton";
-            this.chkShowCLIButton.Size = new System.Drawing.Size(193, 17);
-            this.chkShowCLIButton.TabIndex = 4;
-            this.chkShowCLIButton.Tag = "IGNORE";
-            this.chkShowCLIButton.Text = "Show \'CLI Params\' button in toolbar";
-            this.Tooltips.SetToolTip(this.chkShowCLIButton, "If checked, show the \'CLI Params\' button in the menu bar.  Not useful unless you " +
+            this.cbShowCLIButton.AutoSize = true;
+            this.cbShowCLIButton.Location = new System.Drawing.Point(10, 104);
+            this.cbShowCLIButton.Name = "chkShowCLIButton";
+            this.cbShowCLIButton.Size = new System.Drawing.Size(193, 17);
+            this.cbShowCLIButton.TabIndex = 4;
+            this.cbShowCLIButton.Tag = "IGNORE";
+            this.cbShowCLIButton.Text = "Show \'CLI Params\' button in toolbar";
+            this.Tooltips.SetToolTip(this.cbShowCLIButton, "If checked, show the \'CLI Params\' button in the menu bar.  Not useful unless you " +
                     "are planning on writing a batch script");
-            this.chkShowCLIButton.UseVisualStyleBackColor = true;
-            this.chkShowCLIButton.CheckedChanged += new System.EventHandler(this.chkShowCLIButton_CheckedChanged);
+            this.cbShowCLIButton.UseVisualStyleBackColor = true;
+            this.cbShowCLIButton.CheckedChanged += new System.EventHandler(this.cbShowCLIButton_CheckedChanged);
             // 
             // chkTrackChanges
             // 
@@ -790,7 +790,7 @@
             this.chkTrackChanges.Text = "Match palette list to directory changes";
             this.Tooltips.SetToolTip(this.chkTrackChanges, resources.GetString("chkTrackChanges.ToolTip"));
             this.chkTrackChanges.UseVisualStyleBackColor = true;
-            this.chkTrackChanges.CheckedChanged += new System.EventHandler(this.chkTrackChanges_CheckedChanged);
+            this.chkTrackChanges.CheckedChanged += new System.EventHandler(this.cbTrackChanges_CheckedChanged);
             // 
             // pnlUpdate
             // 
@@ -829,17 +829,17 @@
             // 
             // chkAutoUpdate
             // 
-            this.chkAutoUpdate.AutoSize = true;
-            this.chkAutoUpdate.Checked = true;
-            this.chkAutoUpdate.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkAutoUpdate.Location = new System.Drawing.Point(10, 8);
-            this.chkAutoUpdate.Name = "chkAutoUpdate";
-            this.chkAutoUpdate.Size = new System.Drawing.Size(191, 17);
-            this.chkAutoUpdate.TabIndex = 0;
-            this.chkAutoUpdate.Tag = "IGNORE";
-            this.chkAutoUpdate.Text = "Check for plugin updates at launch";
-            this.chkAutoUpdate.UseVisualStyleBackColor = true;
-            this.chkAutoUpdate.CheckedChanged += new System.EventHandler(this.chkAutoUpdate_CheckedChanged);
+            this.cbAutoUpdate.AutoSize = true;
+            this.cbAutoUpdate.Checked = true;
+            this.cbAutoUpdate.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbAutoUpdate.Location = new System.Drawing.Point(10, 8);
+            this.cbAutoUpdate.Name = "chkAutoUpdate";
+            this.cbAutoUpdate.Size = new System.Drawing.Size(191, 17);
+            this.cbAutoUpdate.TabIndex = 0;
+            this.cbAutoUpdate.Tag = "IGNORE";
+            this.cbAutoUpdate.Text = "Check for plugin updates at launch";
+            this.cbAutoUpdate.UseVisualStyleBackColor = true;
+            this.cbAutoUpdate.CheckedChanged += new System.EventHandler(this.cbAutoUpdate_CheckedChanged);
             // 
             // ilTabs
             // 
@@ -1019,14 +1019,14 @@
         private System.Windows.Forms.Button btnAbortScan;
         private System.Windows.Forms.TabPage tabPage4;
         private System.Windows.Forms.TabPage tpSettings;
-        private System.Windows.Forms.CheckBox chkShowCLIButton;
+        private System.Windows.Forms.CheckBox cbShowCLIButton;
         private System.Windows.Forms.CheckBox chkTrackChanges;
         private System.Windows.Forms.ToolTip Tooltips;
         private System.Windows.Forms.Panel pnlUpdate;
         private System.Windows.Forms.RadioButton rbAlwaysUpdate;
         private System.Windows.Forms.RadioButton rbPromptUpdates;
-        private System.Windows.Forms.CheckBox chkAutoUpdate;
-        private System.Windows.Forms.CheckBox chkMultithread;
+        private System.Windows.Forms.CheckBox cbAutoUpdate;
+        private System.Windows.Forms.CheckBox cbMultithread;
         private System.Windows.Forms.NumericUpDown nudThreads;
         private System.Windows.Forms.Label label8;
     }

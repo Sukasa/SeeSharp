@@ -22,7 +22,7 @@ namespace SeeSharp.Plugins
         internal List<Type> Plugins;
         internal List<Type> AvailableComponents;
 
-        internal List<UpdateInfo> Updates;  // Valid updates - Tuple of <Name>, <UpdateURL.dll>, <LocalFilename.dll>, <Description>
+        internal List<UpdateInfo> Updates;
         internal List<String> LoadablePluginDLLs;
 
         internal AppDomain ProxyDomain;
