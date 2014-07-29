@@ -133,7 +133,7 @@ namespace SeeSharp
             return this;
         }
         /// <summary>
-        /// Set this Colour to full alpha
+        ///     Set this Colour to full alpha
         /// </summary>
         /// <remarks>
         ///     Sets this Colour to full alpha and returns it.
@@ -146,7 +146,14 @@ namespace SeeSharp
             Color |= 0xFF000000;
             return this;
         }
-
+        /// <summary>
+        ///     Whether the colour value is an entity key
+        /// </summary>
+        /// <returns></returns>
+        public bool IsEntityKey()
+        {
+            return Color < 0x01000000U && Color >= 0x00FF0000U;
+        }
 
         // *** Colour Constants
         /// <summary>

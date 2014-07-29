@@ -51,7 +51,7 @@ namespace SeeSharp.Palette
         ///         This table is ordered [Biome ID][Block ID][Metadata ID]
         ///     </para>
         /// </remarks>
-        public MiniPaletteEntry[][][] FastPalette = new MiniPaletteEntry[BiomesMax][][];
+        public Colour[][][] FastPalette = new Colour[BiomesMax][][];
 
         public List<PaletteEntry> GetPaletteEntry(Int32 Key)
         {
@@ -66,9 +66,9 @@ namespace SeeSharp.Palette
         {
             for (int X = 0; X < BiomesMax; X++)
             {
-                FastPalette[X] = new MiniPaletteEntry[BlocksMax][];
+                FastPalette[X] = new Colour[BlocksMax][];
                 for (int Y = 0; Y < BlocksMax; Y++)
-                    FastPalette[X][Y] = new MiniPaletteEntry[MetadataMax];
+                    FastPalette[X][Y] = new Colour[MetadataMax];
             }
             for (int X = 0; X < BlocksMax; X++)
                 DepthOpacities[X] = new int[MetadataMax];
@@ -172,40 +172,40 @@ namespace SeeSharp.Palette
                         if (Entry.PaletteEntryType == PaletteEntry.EntryType.IDEntity)
                             if (Entry.Metadata != -1)
                             {
-                                if (FastPalette[X][Key][Entry.Metadata].EntityColours == 0)
+                                if (!FastPalette[X][Key][Entry.Metadata].IsEntityKey())
                                 {
                                     EntityEntries.Add(new List<PaletteEntry>());
-                                    FastPalette[X][Key][Entry.Metadata].EntityColours = EntityEntries.Count;
+                                    FastPalette[X][Key][Entry.Metadata].Color = 0x00FF0000U + (UInt32)(EntityEntries.Count - 1);
                                 }
 
-                                GetPaletteEntry(FastPalette[X][Key][Entry.Metadata].EntityColours).Add(Entry);
+                                GetPaletteEntry((int)(FastPalette[X][Key][Entry.Metadata].Color & 0xFFFF)).Add(Entry);
                                 DepthOpacities[Entry.BlockID][Entry.Metadata] = Entry.DepthOpacity;
                             }
                             else
                                 for (int Meta = 0; Meta < 16; Meta++)
                                 {
-                                    if (FastPalette[X][Key][Meta].EntityColours == 0)
+                                    if (!FastPalette[X][Key][Meta].IsEntityKey())
                                     {
                                         EntityEntries.Add(new List<PaletteEntry>());
-                                        FastPalette[X][Key][Meta].EntityColours = EntityEntries.Count;
+                                        FastPalette[X][Key][Meta].Color = 0x00FF0000U + (UInt32)(EntityEntries.Count - 1);
                                     }
 
-                                    GetPaletteEntry(FastPalette[X][Key][Meta].EntityColours).Add(Entry);
+                                    GetPaletteEntry((int)(FastPalette[X][Key][Meta].Color & 0xFFFF)).Add(Entry);
                                     DepthOpacities[Entry.BlockID][Meta] = Entry.DepthOpacity;
                                 }
                         else
                         {
                             if (Entry.Metadata != -1)
                             {
-                                FastPalette[X][Key][Entry.Metadata].Colour = Entry.Color;
+                                FastPalette[X][Key][Entry.Metadata] = Entry.Color;
                                 DepthOpacities[Entry.BlockID][Entry.Metadata] = Entry.DepthOpacity;
                             }
                             else
                             {
                                 for (int Meta = 0; Meta < 16; Meta++)
                                 {
-                                    if (FastPalette[X][Key][Meta].Colour.A == 0)
-                                        FastPalette[X][Key][Meta].Colour = Entry.Color;
+                                    if (FastPalette[X][Key][Meta].A == 0)
+                                        FastPalette[X][Key][Meta]= Entry.Color;
                                     DepthOpacities[Entry.BlockID][Meta] = Entry.DepthOpacity;
                                 }
                             }
@@ -224,14 +224,14 @@ namespace SeeSharp.Palette
                 {
                     if (Entry.Metadata > -1)
                     {
-                        FastPalette[Key][Entry.BlockID][Entry.Metadata].Colour.Blend(Entry.Tint);
+                        FastPalette[Key][Entry.BlockID][Entry.Metadata].Blend(Entry.Tint);
                         M |= (1 << Entry.Metadata);
                     }
                     else
                     {
                         for (int X = 0; X < 16; X++)
                             if ((M & (1 << X)) == 0)
-                                FastPalette[Key][Entry.BlockID][X].Colour.Blend(Entry.Tint);
+                                FastPalette[Key][Entry.BlockID][X].Blend(Entry.Tint);
                     }
                 }
             }

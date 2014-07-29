@@ -74,11 +74,11 @@ namespace SeeSharp
             if (Y > 255)
                 Y = 255;
 
-            while (Y >= 0 && ColourPalette.FastPalette[0][Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)].Colour.A == 0)
+            while (Y >= 0 && ColourPalette.FastPalette[0][Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)].A == 0)
                 Y--;
-            while (Y >= 0 && ColourPalette.FastPalette[0][Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)].Colour.A != 0)
+            while (Y >= 0 && ColourPalette.FastPalette[0][Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)].A != 0)
                 Y--;
-            while (Y >= 0 && ColourPalette.FastPalette[0][Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)].Colour.A == 0)
+            while (Y >= 0 && ColourPalette.FastPalette[0][Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)].A == 0)
                 Y--;
 
             if (Y == 0)
@@ -91,11 +91,11 @@ namespace SeeSharp
             if (Y > 255)
                 Y = 255;
 
-            while (Y >= 0 && ColourPalette.FastPalette[0][Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)].Colour.A < 255) // Find first renderable fully opaque block
+            while (Y >= 0 && ColourPalette.FastPalette[0][Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)].A < 255) // Find first renderable fully opaque block
                 Y--;
-            while (Y >= 0 && ColourPalette.FastPalette[0][Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)].Colour.A != 0)
+            while (Y >= 0 && ColourPalette.FastPalette[0][Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)].A != 0)
                 Y--;
-            while (Y >= 0 && ColourPalette.FastPalette[0][Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)].Colour.A == 0)
+            while (Y >= 0 && ColourPalette.FastPalette[0][Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)].A == 0)
                 Y--;
 
             if (Y == 0)
@@ -229,25 +229,25 @@ namespace SeeSharp
                     Colour TempColour; // *** Working pixel colour
 
                     // *** The Block-Metadata palette for this column's biome
-                    MiniPaletteEntry[][] BiomePalette = ColourPalette.FastPalette[Chunk.Biomes.GetBiome(X, Z)];
+                    Colour[][] BiomePalette = ColourPalette.FastPalette[Chunk.Biomes.GetBiome(X, Z)];
 
 
                     for (; Y <= EndY; Y++) // *** Now render up from the lowest block to the starting block
                     {
                         // *** For each block we render, grab its palette entry.
-                        MiniPaletteEntry Entry = BiomePalette[Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)];
+                        Colour Entry = BiomePalette[Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)];
 
-                        // *** If it has an associated .EntityColours list, then it needs special consideration to get its colour
-                        if (Entry.EntityColours != 0)
+                        // *** If it has an associated entity colours list, then it needs special consideration to get its colour
+                        if (Entry.Color < 0x01000000U && Entry.Color >= 0x00FF0000U)
                         {
-                            PaletteEntry Entry2 = ColourPalette.GetPaletteEntry(Entry.EntityColours).First((E) => E.IsMatch(Blocks.GetData(X, Y, Z), Blocks.SafeGetTileEntity(X, Y, Z)));
+                            PaletteEntry Entry2 = ColourPalette.GetPaletteEntry((int)(Entry.Color & 0x0000FFFFU)).First((E) => E.IsMatch(Blocks.GetData(X, Y, Z), Blocks.SafeGetTileEntity(X, Y, Z)));
                             if (Entry2 != null)
                                 TempColour = Entry2.Color;
                             else
-                                TempColour = Entry.Colour;
+                                TempColour = Entry;
                         }
                         else // *** No special consideration, just grab the colour in the palette
-                            TempColour = Entry.Colour;
+                            TempColour = Entry;
 
                         if (TempColour.A == 0)
                             continue; // *** If we're trying to render air, let's not.
