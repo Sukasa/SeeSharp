@@ -94,13 +94,13 @@ namespace SeeSharp.Gui
             if (ThreadingCount == 0)
                 ThreadingCount = Environment.ProcessorCount;
 
-            chkAutoUpdate.Checked = Properties.Settings.Default.AutoCheck;
+            cbAutoUpdate.Checked = Properties.Settings.Default.AutoCheck;
             rbAlwaysUpdate.Checked = Properties.Settings.Default.AutoUpdate;
-            chkShowCLIButton.Checked = Properties.Settings.Default.ShowCLIButton;
+            cbShowCLIButton.Checked = Properties.Settings.Default.ShowCLIButton;
             chkTrackChanges.Checked = Properties.Settings.Default.WatchFolder;
-            chkMultithread.Checked = ThreadingCount != 1;
+            cbMultithread.Checked = ThreadingCount != 1;
 
-            btnCopyCLI.Visible = chkShowCLIButton.Checked;
+            btnCopyCLI.Visible = cbShowCLIButton.Checked;
 
             // *** Check for plugin updates here
 
@@ -174,7 +174,7 @@ namespace SeeSharp.Gui
 
             if (ControlRef.InvokeRequired)
             {
-                ControlRef.Invoke(InvokableControlToggler, IsBusy, WorldLoaded, IsPreviewing);
+                ControlRef.Invoke(InvokableControlToggler, IsBusy, WorldLoaded, IsPreviewing, ControlRef);
                 return;
             }
 
@@ -199,10 +199,10 @@ namespace SeeSharp.Gui
                 if (Tag.Contains("SUBREGION") && !cbCropMap.Checked)
                     Control.Enabled = false;
 
-                if (Tag.Contains("AUTOUPDATE") && !chkAutoUpdate.Checked)
+                if (Tag.Contains("AUTOUPDATE") && !cbAutoUpdate.Checked)
                     Control.Enabled = false;
 
-                if (Tag.Contains("MULTITHREAD") && !chkMultithread.Checked)
+                if (Tag.Contains("MULTITHREAD") && !cbMultithread.Checked)
                     Control.Enabled = false;
 
                 if (Tag.Contains("ALWAYS")) // *** Always enabled
@@ -237,6 +237,7 @@ namespace SeeSharp.Gui
             RenderingConfig.Chunks = World.GetChunkManager(RenderingConfig.Dimension);
             RenderingConfig.Palette = new BlockPalette();
             RenderingConfig.RenderSubregion = cbCropMap.Checked;
+            RenderingConfig.MaxThreads = cbMultithread.Checked ? (int)nudThreads.Value : 1;
             SkipErrors.Clear();
 
             if (IsPreview)
@@ -426,6 +427,8 @@ namespace SeeSharp.Gui
                 cbDimension.Items.Clear();
                 cbDimension.BeginUpdate();
 
+                int UseIndex = -1;
+
                 foreach (String S in Directory.GetDirectories(World.Path))
                 {
                     Match Match = ValidDimNames.Match(S);
@@ -439,7 +442,7 @@ namespace SeeSharp.Gui
                     {
                         Entry.Name = "Overworld";
                         Entry.Value = "";
-                        cbDimension.SelectedIndex = cbDimension.Items.Count;
+                        UseIndex = cbDimension.Items.Count;
                     }
                     else if (Match.Groups["Name"].Value == "-1")
                     {
@@ -456,8 +459,8 @@ namespace SeeSharp.Gui
                     cbDimension.Items.Add(Entry);
 
                 }
+                cbDimension.SelectedIndex = UseIndex;
                 cbDimension.EndUpdate();
-
                 SetStatus(String.Format("Loaded {0}", World.Level.LevelName));
 
                 ToggleControls(false, true, false);
@@ -618,17 +621,17 @@ namespace SeeSharp.Gui
             }
         }
 
-        private void chkShowCLIButton_CheckedChanged(object sender, EventArgs e)
+        private void cbShowCLIButton_CheckedChanged(object sender, EventArgs e)
         {
-            btnCopyCLI.Visible = chkShowCLIButton.Checked;
-            Properties.Settings.Default.ShowCLIButton = chkShowCLIButton.Checked;
+            btnCopyCLI.Visible = cbShowCLIButton.Checked;
+            Properties.Settings.Default.ShowCLIButton = cbShowCLIButton.Checked;
             Properties.Settings.Default.Save();
         }
 
-        private void chkAutoUpdate_CheckedChanged(object sender, EventArgs e)
+        private void cbAutoUpdate_CheckedChanged(object sender, EventArgs e)
         {
-            pnlUpdate.Enabled = chkAutoUpdate.Checked;
-            Properties.Settings.Default.AutoCheck = chkAutoUpdate.Checked;
+            pnlUpdate.Enabled = cbAutoUpdate.Checked;
+            Properties.Settings.Default.AutoCheck = cbAutoUpdate.Checked;
             Properties.Settings.Default.Save();
             ToggleControls(false, World != null, false, tpSettings);
         }
@@ -639,15 +642,15 @@ namespace SeeSharp.Gui
             Properties.Settings.Default.Save();
         }
 
-        private void chkTrackChanges_CheckedChanged(object sender, EventArgs e)
+        private void cbTrackChanges_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.ShowCLIButton = chkShowCLIButton.Checked;
+            Properties.Settings.Default.ShowCLIButton = cbShowCLIButton.Checked;
             Properties.Settings.Default.Save();
         }
 
-        private void chkMultithread_CheckedChanged(object sender, EventArgs e)
+        private void cbMultithread_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.MTThreadCount = chkMultithread.Checked ? (int)nudThreads.Value : 1;
+            Properties.Settings.Default.MTThreadCount = cbMultithread.Checked ? (int)nudThreads.Value : 1;
             Properties.Settings.Default.Save();
             ToggleControls(false, World != null, false, tpSettings);
         }
