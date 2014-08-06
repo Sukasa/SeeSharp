@@ -116,10 +116,15 @@ namespace SeeSharp
 
             PendingRender = false;
 
+            // *** If rendering a subregion, then wipe the RenderableChunks var and recalculate it from the number of chunks in the subregion, not the world
             if (Config.RenderSubregion)
+            {
+                RenderableChunks = 0;
                 foreach (ChunkRef Chunk in ChunkProvider)
                     RenderableChunks++;
+            }
 
+            // *** If rendering was cancelled between init and now, abort.
             if (Cancellation.IsCancellationRequested)
             {
                 OutputMap.Dispose();
@@ -127,7 +132,7 @@ namespace SeeSharp
                 return;
             }
 
-            // *** And render
+            // *** Render
             if (Config.EnableMultithreading)
             {
                 Thread UpdateThread = new Thread(DisplayProgress);
@@ -166,6 +171,7 @@ namespace SeeSharp
                 return;
             }
 
+            // *** If this is not a preview, then make sure the output directory exists then save the output bitmap
             if (!Config.IsPreview)
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(Config.SaveFilename));
@@ -238,7 +244,7 @@ namespace SeeSharp
                         Colour Entry = BiomePalette[Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)];
 
                         // *** If it has an associated entity colours list, then it needs special consideration to get its colour
-                        if (Entry.Color < 0x01000000U && Entry.Color >= 0x00FF0000U)
+                        if ((Entry.Color & 0xFFFF0000U) == 0x00FF0000U)
                         {
                             PaletteEntry Entry2 = ColourPalette.GetPaletteEntry((int)(Entry.Color & 0x0000FFFFU)).First((E) => E.IsMatch(Blocks.GetData(X, Y, Z), Blocks.SafeGetTileEntity(X, Y, Z)));
                             if (Entry2 != null)

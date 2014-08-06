@@ -152,7 +152,7 @@ namespace SeeSharp
         /// <returns></returns>
         public bool IsEntityKey()
         {
-            return Color < 0x01000000U && Color >= 0x00FF0000U;
+            return (Color & 0xFFFF0000U) == 0x00FF0000U;
         }
 
         // *** Colour Constants
