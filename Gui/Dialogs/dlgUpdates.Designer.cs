@@ -1,6 +1,6 @@
 ﻿namespace SeeSharp.Gui.Dialogs
 {
-    partial class dlgUpdates
+    partial class DlgUpdates
     {
         /// <summary>
         /// Required designer variable.
@@ -149,7 +149,7 @@
             this.btnMoreInfo.UseVisualStyleBackColor = true;
             this.btnMoreInfo.Click += new System.EventHandler(this.ResizeMoreInfo);
             // 
-            // dlgUpdates
+            // DlgUpdates
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -164,7 +164,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "dlgUpdates";
+            this.Name = "DlgUpdates";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Updates are available";
             this.TopMost = true;

@@ -1,6 +1,6 @@
 ﻿namespace SeeSharp.Gui.Dialogs
 {
-    partial class dlgCheckingForUpdates
+    partial class DlgCheckingForUpdates
     {
         /// <summary>
         /// Required designer variable.
@@ -48,7 +48,7 @@
             this.lblCurrentlyChecking.TabIndex = 1;
             this.lblCurrentlyChecking.Text = "label1";
             // 
-            // dlgCheckingForUpdates
+            // DlgCheckingForUpdates
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -59,7 +59,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "dlgCheckingForUpdates";
+            this.Name = "DlgCheckingForUpdates";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Checking for updates...";
             this.TopMost = true;

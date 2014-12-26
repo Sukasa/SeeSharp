@@ -2,8 +2,10 @@
 using System.ComponentModel;
 
 // I didn't write this.  Apparently I goofed and forgot to credit the original author.  This is used so that the RendererConfigForm class renders properly in the designer for plugin authors
-namespace SeeSharp
+namespace SeeSharp.Rendering
 {
+    [Browsable(false)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     internal class AbstractControlDescriptionProvider<TAbstract, TBase> : TypeDescriptionProvider
     {
         public AbstractControlDescriptionProvider()
@@ -11,20 +13,20 @@ namespace SeeSharp
         {
         }
 
-        public override Type GetReflectionType(Type objectType, object instance)
+        public override Type GetReflectionType(Type ObjectType, object Instance)
         {
-            if (objectType == typeof(TAbstract))
+            if (ObjectType == typeof(TAbstract))
                 return typeof(TBase);
 
-            return base.GetReflectionType(objectType, instance);
+            return base.GetReflectionType(ObjectType, Instance);
         }
 
-        public override object CreateInstance(IServiceProvider provider, Type objectType, Type[] argTypes, object[] args)
+        public override object CreateInstance(IServiceProvider Provider, Type ObjectType, Type[] ArgTypes, object[] Args)
         {
-            if (objectType == typeof(TAbstract))
-                objectType = typeof(TBase);
+            if (ObjectType == typeof(TAbstract))
+                ObjectType = typeof(TBase);
 
-            return base.CreateInstance(provider, objectType, argTypes, args);
+            return base.CreateInstance(Provider, ObjectType, ArgTypes, Args);
         }
     }
 }

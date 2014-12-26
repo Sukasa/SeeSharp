@@ -2,7 +2,7 @@
 using Substrate;
 using System.Collections.Generic;
 
-namespace SeeSharp
+namespace SeeSharp.Palette
 {
     /// <summary>
     ///     Every block/metadata/entity combo has an associated full palette entry.  This entity stores depth-opacity, colour, metadata, entity tag, and custom data for each block.
@@ -17,17 +17,17 @@ namespace SeeSharp
             /// <summary>
             ///     Metadata entry - the block is identified by metadata and blockID
             /// </summary>
-            IDMetadata,
+            IdMetadata,
             /// <summary>
             ///     Entity entry - the block is distinguished from similar blocks by specific data in its NBT structure
             /// </summary>
-            IDEntity
+            IdEntity
         }
 
         /// <summary>
-        ///     What kind of entry this is, whether a basic BlockID-Metadata entry, or BlockID-Metadata-Entity entry
+        ///     What kind of entry this is, whether a basic BlockId-Metadata entry, or BlockId-Metadata-Entity entry
         /// </summary>
-        public EntryType PaletteEntryType = EntryType.IDMetadata;
+        public EntryType PaletteEntryType = EntryType.IdMetadata;
         /// <summary>
         ///     The base colour for the block
         /// </summary>
@@ -40,14 +40,14 @@ namespace SeeSharp
         /// <summary>
         ///     Block ID this palette entry applies to
         /// </summary>
-        public int BlockID;
+        public int BlockId;
         /// <summary>
         ///     Metadata this palette entry applies to, or -1 if it applies to all 16 metadatas for this entry's Block ID.
         /// </summary>
         public int Metadata;
 
-        private string EntityTag;
-        private string EntityTagCheckValue;
+        private readonly string _EntityTag;
+        private readonly string _EntityTagCheckValue;
 
         /// <summary>
         ///     Return custom data about a block, or a default value if it is not defined
@@ -71,25 +71,25 @@ namespace SeeSharp
 
         internal Dictionary<String, String> CustomData = new Dictionary<string, string>();
 
-        internal PaletteEntry(int BlockID, int MetaData, int Opacity, int Red, int Green, int Blue, int Alpha)
+        internal PaletteEntry(int BlockId, int MetaData, int Opacity, int Red, int Green, int Blue, int Alpha)
         {
-            this.BlockID = BlockID;
-            this.Metadata = MetaData;
-            this.Color = new Colour { A = (byte)Alpha, B = (byte)Blue, G = (byte)Green, R = (byte)Red };
-            this.DepthOpacity = Opacity;
+            this.BlockId = BlockId;
+            Metadata = MetaData;
+            Color = new Colour { A = (byte)Alpha, B = (byte)Blue, G = (byte)Green, R = (byte)Red };
+            DepthOpacity = Opacity;
         }
 
-        internal PaletteEntry(int BlockID, int MetaData, string ValueKey, string ValueRef, int Opacity, int Red, int Green, int Blue, int Alpha)
-            : this(BlockID, MetaData, Opacity, Red, Green, Blue, Alpha)
+        internal PaletteEntry(int BlockId, int MetaData, string ValueKey, string ValueRef, int Opacity, int Red, int Green, int Blue, int Alpha)
+            : this(BlockId, MetaData, Opacity, Red, Green, Blue, Alpha)
         {
-            PaletteEntryType = EntryType.IDEntity;
-            this.EntityTag = ValueKey;
-            this.EntityTagCheckValue = ValueRef;
+            PaletteEntryType = EntryType.IdEntity;
+            _EntityTag = ValueKey;
+            _EntityTagCheckValue = ValueRef;
         }
 
         internal bool IsSupplantedBy(PaletteEntry NewEntry)
         {
-            if (NewEntry.BlockID != BlockID)
+            if (NewEntry.BlockId != BlockId)
                 return false;
 
             if (Metadata != NewEntry.Metadata && NewEntry.Metadata != -1)
@@ -115,15 +115,15 @@ namespace SeeSharp
             if (Metadata >= 0 && CheckMetaData != Metadata)
                 return false;
 
-            if (EntityTag != null)
+            if (_EntityTag != null)
             {
-                if (!Entity.Source.Keys.Contains(EntityTag))
+                if (!Entity.Source.Keys.Contains(_EntityTag))
                     return false;
 
-                if (Entity.Source[EntityTag].ToTagString() != EntityTagCheckValue)
+                if (Entity.Source[_EntityTag].ToTagString() != _EntityTagCheckValue)
                     return false;
             }
-            else if (PaletteEntryType == EntryType.IDEntity)
+            else if (PaletteEntryType == EntryType.IdEntity)
                 return false;
 
             return true;
@@ -143,16 +143,16 @@ namespace SeeSharp
         /// </remarks>
         int IComparable<PaletteEntry>.CompareTo(PaletteEntry OtherEntry)
         {
-            if (BlockID < OtherEntry.BlockID)
+            if (BlockId < OtherEntry.BlockId)
                 return -1;
 
-            if (BlockID > OtherEntry.BlockID)
+            if (BlockId > OtherEntry.BlockId)
                 return 1;
 
-            if (OtherEntry.PaletteEntryType == EntryType.IDEntity && PaletteEntryType == EntryType.IDMetadata)
+            if (OtherEntry.PaletteEntryType == EntryType.IdEntity && PaletteEntryType == EntryType.IdMetadata)
                 return 1;
 
-            if (OtherEntry.PaletteEntryType == EntryType.IDMetadata && PaletteEntryType == EntryType.IDEntity)
+            if (OtherEntry.PaletteEntryType == EntryType.IdMetadata && PaletteEntryType == EntryType.IdEntity)
                 return -1;
 
             if (OtherEntry.Metadata == -1 && Metadata != -1)

@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Threading;
 
 namespace SeeSharp.Rendering
 {
     class StandardRendererConfig : RendererConfigForm
     {
-        private System.Windows.Forms.ComboBox listRenderModes;
-        private System.Windows.Forms.TrackBar tbMinY;
-        private System.Windows.Forms.NumericUpDown nudMinY;
-        private System.Windows.Forms.NumericUpDown nudMaxY;
-        private System.Windows.Forms.TrackBar tbMaxY;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ComboBox _ListRenderModes;
+        private System.Windows.Forms.TrackBar _TBMinY;
+        private System.Windows.Forms.NumericUpDown _NUDMinY;
+        private System.Windows.Forms.NumericUpDown _NUDMaxY;
+        private System.Windows.Forms.TrackBar _TBMaxY;
+        private System.Windows.Forms.Label _Label2;
+        private System.Windows.Forms.Label _Label3;
+        private System.Windows.Forms.Label _Label1;
 
         public override List<KeyValuePair<string, string>> ConfigStrings
         {
@@ -22,7 +22,7 @@ namespace SeeSharp.Rendering
                 List<KeyValuePair<String, String>> L = new List<KeyValuePair<string, string>>();
                 String N = "";
 
-                switch (listRenderModes.SelectedIndex)
+                switch (_ListRenderModes.SelectedIndex)
                 {
                     case 0:
                         N = "n";
@@ -37,13 +37,13 @@ namespace SeeSharp.Rendering
                 }
 
                 L.Add(new KeyValuePair<string, string>("Mode", N));
-                L.Add(new KeyValuePair<string, string>("MinY", nudMinY.Value.ToString()));
-                L.Add(new KeyValuePair<string, string>("MaxY", nudMaxY.Value.ToString()));
+                L.Add(new KeyValuePair<string, string>("MinY", _NUDMinY.Value.ToString(Thread.CurrentThread.CurrentCulture)));
+                L.Add(new KeyValuePair<string, string>("MaxY", _NUDMaxY.Value.ToString(Thread.CurrentThread.CurrentCulture)));
 
                 return L;
             }
             set {
-                if (value == null || !value.Exists((x) => true))
+                if (value == null || !value.Exists(x => true))
                     return;
 
                 String Mode = (from KeyValuePair<String, String> T in value where T.Key == "Mode" select T.Value).First();
@@ -51,13 +51,13 @@ namespace SeeSharp.Rendering
                 switch (Mode)
                 {
                     case "c":
-                        listRenderModes.SelectedIndex = 1;
+                        _ListRenderModes.SelectedIndex = 1;
                         break;
                     case "C":
-                        listRenderModes.SelectedIndex = 2;
+                        _ListRenderModes.SelectedIndex = 2;
                         break;
                     default:
-                        listRenderModes.SelectedIndex = 0;
+                        _ListRenderModes.SelectedIndex = 0;
                         break;
                 }
 
@@ -65,169 +65,164 @@ namespace SeeSharp.Rendering
                 String ValueMin = (from KeyValuePair<String, String> T in value where T.Key == "MinY" select T.Value).First();
 
                 if (ValueMax != null)
-                    nudMaxY.Value = int.Parse(ValueMax);
+                    _NUDMaxY.Value = int.Parse(ValueMax);
                 if (ValueMin != null)
-                    nudMinY.Value = int.Parse(ValueMin);
+                    _NUDMinY.Value = int.Parse(ValueMin);
             }
         }
 
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(StandardRendererConfig));
-            this.listRenderModes = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.tbMinY = new System.Windows.Forms.TrackBar();
-            this.nudMinY = new System.Windows.Forms.NumericUpDown();
-            this.nudMaxY = new System.Windows.Forms.NumericUpDown();
-            this.tbMaxY = new System.Windows.Forms.TrackBar();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.tbMinY)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudMinY)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudMaxY)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbMaxY)).BeginInit();
-            this.SuspendLayout();
+            System.ComponentModel.ComponentResourceManager Resources = new System.ComponentModel.ComponentResourceManager(typeof(StandardRendererConfig));
+            _ListRenderModes = new System.Windows.Forms.ComboBox();
+            _Label1 = new System.Windows.Forms.Label();
+            _TBMinY = new System.Windows.Forms.TrackBar();
+            _NUDMinY = new System.Windows.Forms.NumericUpDown();
+            _NUDMaxY = new System.Windows.Forms.NumericUpDown();
+            _TBMaxY = new System.Windows.Forms.TrackBar();
+            _Label2 = new System.Windows.Forms.Label();
+            _Label3 = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(_TBMinY)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(_NUDMinY)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(_NUDMaxY)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(_TBMaxY)).BeginInit();
+            SuspendLayout();
             // 
             // listRenderModes
             // 
-            this.listRenderModes.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.listRenderModes.FormattingEnabled = true;
-            this.listRenderModes.Items.AddRange(new object[] {
+            _ListRenderModes.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            _ListRenderModes.FormattingEnabled = true;
+            _ListRenderModes.Items.AddRange(new object[] {
             "Regular",
             "Glass Ceilings",
             "Caves Only"});
-            this.listRenderModes.Location = new System.Drawing.Point(195, 6);
-            this.listRenderModes.Name = "listRenderModes";
-            this.listRenderModes.Size = new System.Drawing.Size(149, 21);
-            this.listRenderModes.TabIndex = 0;
+            _ListRenderModes.Location = new System.Drawing.Point(195, 6);
+            _ListRenderModes.Name = "_ListRenderModes";
+            _ListRenderModes.Size = new System.Drawing.Size(149, 21);
+            _ListRenderModes.TabIndex = 0;
             // 
-            // label1
+            // _Label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(120, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(69, 13);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Render Type";
+            _Label1.AutoSize = true;
+            _Label1.Location = new System.Drawing.Point(120, 9);
+            _Label1.Name = "_Label1";
+            _Label1.Size = new System.Drawing.Size(69, 13);
+            _Label1.TabIndex = 1;
+            _Label1.Text = "Render Type";
             // 
-            // tbMinY
+            // _TBMinY
             // 
-            this.tbMinY.Location = new System.Drawing.Point(12, 33);
-            this.tbMinY.Maximum = 255;
-            this.tbMinY.Name = "tbMinY";
-            this.tbMinY.Size = new System.Drawing.Size(282, 45);
-            this.tbMinY.TabIndex = 2;
-            this.tbMinY.TickFrequency = 4;
-            this.tbMinY.ValueChanged += new System.EventHandler(this.tbMinY_ValueChanged);
+            _TBMinY.Location = new System.Drawing.Point(12, 33);
+            _TBMinY.Maximum = 255;
+            _TBMinY.Name = "_TBMinY";
+            _TBMinY.Size = new System.Drawing.Size(282, 45);
+            _TBMinY.TabIndex = 2;
+            _TBMinY.TickFrequency = 4;
+            _TBMinY.ValueChanged += tbMinY_ValueChanged;
             // 
-            // nudMinY
+            // _NUDMinY
             // 
-            this.nudMinY.Location = new System.Drawing.Point(300, 33);
-            this.nudMinY.Name = "nudMinY";
-            this.nudMinY.Size = new System.Drawing.Size(44, 20);
-            this.nudMinY.TabIndex = 3;
-            this.nudMinY.ValueChanged += new System.EventHandler(this.nudMinY_ValueChanged);
+            _NUDMinY.Location = new System.Drawing.Point(300, 33);
+            _NUDMinY.Name = "_NUDMinY";
+            _NUDMinY.Size = new System.Drawing.Size(44, 20);
+            _NUDMinY.TabIndex = 3;
+            _NUDMinY.ValueChanged += nudMinY_ValueChanged;
             // 
-            // nudMaxY
+            // _NUDMaxY
             // 
-            this.nudMaxY.Location = new System.Drawing.Point(300, 84);
-            this.nudMaxY.Maximum = new decimal(new int[] {
+            _NUDMaxY.Location = new System.Drawing.Point(300, 84);
+            _NUDMaxY.Maximum = new decimal(new [] {
             255,
             0,
             0,
             0});
-            this.nudMaxY.Name = "nudMaxY";
-            this.nudMaxY.Size = new System.Drawing.Size(44, 20);
-            this.nudMaxY.TabIndex = 5;
-            this.nudMaxY.Value = new decimal(new int[] {
+            _NUDMaxY.Name = "_NUDMaxY";
+            _NUDMaxY.Size = new System.Drawing.Size(44, 20);
+            _NUDMaxY.TabIndex = 5;
+            _NUDMaxY.Value = new decimal(new [] {
             255,
             0,
             0,
             0});
-            this.nudMaxY.ValueChanged += new System.EventHandler(this.nudMaxY_ValueChanged);
             // 
-            // tbMaxY
+            // _TBMaxY
             // 
-            this.tbMaxY.Location = new System.Drawing.Point(12, 84);
-            this.tbMaxY.Maximum = 255;
-            this.tbMaxY.Name = "tbMaxY";
-            this.tbMaxY.Size = new System.Drawing.Size(282, 45);
-            this.tbMaxY.TabIndex = 4;
-            this.tbMaxY.TickFrequency = 4;
-            this.tbMaxY.Value = 255;
-            this.tbMaxY.ValueChanged += new System.EventHandler(this.tbMaxY_ValueChanged);
+            _TBMaxY.Location = new System.Drawing.Point(12, 84);
+            _TBMaxY.Maximum = 255;
+            _TBMaxY.Name = "_TBMaxY";
+            _TBMaxY.Size = new System.Drawing.Size(282, 45);
+            _TBMaxY.TabIndex = 4;
+            _TBMaxY.TickFrequency = 4;
+            _TBMaxY.Value = 255;
+            _TBMaxY.ValueChanged += tbMaxY_ValueChanged;
             // 
-            // label2
+            // _Label2
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(121, 68);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(68, 13);
-            this.label2.TabIndex = 6;
-            this.label2.Text = "Vertical Slice";
+            _Label2.AutoSize = true;
+            _Label2.Location = new System.Drawing.Point(121, 68);
+            _Label2.Name = "_Label2";
+            _Label2.Size = new System.Drawing.Size(68, 13);
+            _Label2.TabIndex = 6;
+            _Label2.Text = "Vertical Slice";
             // 
-            // label3
+            // _Label3
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(309, 61);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(20, 13);
-            this.label3.TabIndex = 7;
-            this.label3.Text = "To";
+            _Label3.AutoSize = true;
+            _Label3.Location = new System.Drawing.Point(309, 61);
+            _Label3.Name = "_Label3";
+            _Label3.Size = new System.Drawing.Size(20, 13);
+            _Label3.TabIndex = 7;
+            _Label3.Text = "To";
             // 
             // StandardRendererConfig
             // 
-            this.ClientSize = new System.Drawing.Size(347, 131);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.nudMaxY);
-            this.Controls.Add(this.tbMaxY);
-            this.Controls.Add(this.nudMinY);
-            this.Controls.Add(this.tbMinY);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.listRenderModes);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "StandardRendererConfig";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Advanced Config";
-            ((System.ComponentModel.ISupportInitialize)(this.tbMinY)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudMinY)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudMaxY)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbMaxY)).EndInit();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            ClientSize = new System.Drawing.Size(347, 131);
+            Controls.Add(_Label3);
+            Controls.Add(_Label2);
+            Controls.Add(_NUDMaxY);
+            Controls.Add(_TBMaxY);
+            Controls.Add(_NUDMinY);
+            Controls.Add(_TBMinY);
+            Controls.Add(_Label1);
+            Controls.Add(_ListRenderModes);
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            Icon = ((System.Drawing.Icon)(Resources.GetObject("$this.Icon")));
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "StandardRendererConfig";
+            StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            Text = "Advanced Config";
+            ((System.ComponentModel.ISupportInitialize)(_TBMinY)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(_NUDMinY)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(_NUDMaxY)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(_TBMaxY)).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
 
         }
 
         internal StandardRendererConfig()
         {
             InitializeComponent();
-            listRenderModes.SelectedIndex = 0;
+            _ListRenderModes.SelectedIndex = 0;
         }
 
-        private void tbMinY_ValueChanged(object sender, EventArgs e)
+        private void tbMinY_ValueChanged(object Sender, EventArgs E)
         {
-            nudMinY.Value = tbMinY.Value;
-            tbMaxY.Value = Math.Max(tbMaxY.Value, tbMinY.Value);
+            _NUDMinY.Value = _TBMinY.Value;
+            _TBMaxY.Value = Math.Max(_TBMaxY.Value, _TBMinY.Value);
         }
 
-        private void tbMaxY_ValueChanged(object sender, EventArgs e)
+        private void tbMaxY_ValueChanged(object Sender, EventArgs E)
         {
-            nudMaxY.Value = tbMaxY.Value;
-            tbMinY.Value = Math.Min(tbMaxY.Value, tbMinY.Value);
+            _NUDMaxY.Value = _TBMaxY.Value;
+            _TBMinY.Value = Math.Min(_TBMaxY.Value, _TBMinY.Value);
         }
 
-        private void nudMinY_ValueChanged(object sender, EventArgs e)
+        private void nudMinY_ValueChanged(object Sender, EventArgs E)
         {
-            tbMinY.Value = (int)nudMinY.Value;
+            _TBMinY.Value = (int)_NUDMinY.Value;
         }
 
-        private void nudMaxY_ValueChanged(object sender, EventArgs e)
-        {
-
-        }
     }
 }

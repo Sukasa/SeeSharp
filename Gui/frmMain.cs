@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -16,48 +15,48 @@ using Substrate;
 
 namespace SeeSharp.Gui
 {
-    internal partial class frmMain : Form
+    internal partial class FrmMain : Form
     {
-        private List<Type> RendererTypes = new List<Type>();
-        private List<String> RendererNames = new List<string>();
-        private List<int> SkipErrors = new List<int>();
+        //private List<Type> RendererTypes = new List<Type>();
+        //private List<String> RendererNames = new List<string>();
+        private readonly List<int> _SkipErrors = new List<int>();
 
-        private AnvilWorld World;
+        private AnvilWorld _World;
 
-        private RenderConfiguration RenderingConfig = new RenderConfiguration();
-        private RendererListEntry SelectedRenderer;
-        private RendererConfigForm CachedConfigForm;
+        private readonly RenderConfiguration _RenderingConfig = new RenderConfiguration();
+        private RendererListEntry _SelectedRenderer;
+        private RendererConfigForm _CachedConfigForm;
 
         private delegate void AbortRenderDelegate();
 
-        private AbortRenderDelegate AbortRender;
-        private bool Abort = false;
+        private AbortRenderDelegate _AbortRender;
+        private bool _Abort;
 
-        private FileSystemWatcher PaletteWatcher;
+        private FileSystemWatcher _PaletteWatcher;
 
-        internal frmMain()
+        internal FrmMain()
         {
             InitializeComponent();
 
             // *** Why is this here?
-            this.nudZMin.ValueChanged += new System.EventHandler(this.SetupSubregion);
-            this.nudXMin.ValueChanged += new System.EventHandler(this.SetupSubregion);
-            this.nudZMax.ValueChanged += new System.EventHandler(this.SetupSubregion);
-            this.nudXMax.ValueChanged += new System.EventHandler(this.SetupSubregion);
+            nudZMin.ValueChanged += SetupSubregion;
+            nudXMin.ValueChanged += SetupSubregion;
+            nudZMax.ValueChanged += SetupSubregion;
+            nudXMax.ValueChanged += SetupSubregion;
 
-            InvokableControlToggler = this.ToggleControls;
-            InvokablePaletteSelector = this.UpdatePaletteSelection;
+            _InvokableControlToggler = ToggleControls;
+            _InvokablePaletteSelector = UpdatePaletteSelection;
             PaletteManager.Instance();
 
         }
 
         #region "Meta Configuration"
 
-        private void nudThreads_ValueChanged(object sender, EventArgs e)
+        private void nudThreads_ValueChanged(object Sender, EventArgs E)
         {
             int Value = (int)nudThreads.Value;
-            RenderingConfig.EnableMultithreading = Value > 1;
-            RenderingConfig.MaxThreads = Value;
+            _RenderingConfig.EnableMultithreading = Value > 1;
+            _RenderingConfig.MaxThreads = Value;
             Properties.Settings.Default.MTThreadCount = Value;
             Properties.Settings.Default.Save();
         }
@@ -66,11 +65,11 @@ namespace SeeSharp.Gui
 
         #region "Render Configuration"
 
-        private void cbCropMap_CheckedChanged(object sender, EventArgs e)
+        private void cbCropMap_CheckedChanged(object Sender, EventArgs E)
         {
             gbSubregion.Enabled = cbCropMap.Checked;
         }
-        private void SetupSubregion(object sender, EventArgs e)
+        private void SetupSubregion(object Sender, EventArgs E)
         {
             SetupSubregion();
         }
@@ -81,14 +80,14 @@ namespace SeeSharp.Gui
             nudXMax.Minimum = nudXMin.Value + 1;
             nudZMax.Minimum = nudZMin.Value + 1;
 
-            RenderingConfig.RenderSubregion = cbCropMap.Checked;
+            _RenderingConfig.RenderSubregion = cbCropMap.Checked;
         }
 
         #endregion
 
         #region "Setup"
 
-        private void frmMain_Load(object sender, EventArgs e)
+        private void frmMain_Load(object Sender, EventArgs E)
         {
             int ThreadingCount = Properties.Settings.Default.MTThreadCount;
             if (ThreadingCount == 0)
@@ -106,7 +105,7 @@ namespace SeeSharp.Gui
 
             SetupPalettes();
 
-            lblStatus.Text = string.Format("See Sharp v{0}", Assembly.GetExecutingAssembly().GetName().Version.ToString());
+            lblStatus.Text = string.Format("See Sharp v{0}", Assembly.GetExecutingAssembly().GetName().Version);
             LoadRenderers();
 
             nudThreads.Maximum = Environment.ProcessorCount;
@@ -121,20 +120,20 @@ namespace SeeSharp.Gui
             ToggleControls(false, false, false);
         }
 
-        void PaletteFilesUpdated(object sender, FileSystemEventArgs e)
+        void PaletteFilesUpdated(object Sender, FileSystemEventArgs E)
         {
             SetupPalettes();
         }
 
         private void SetupPalettes()
         {
-            PaletteManager PM = PaletteManager.Instance();
-            PM.Reload();
-            PM.AutoConfig(World != null ? World.Path : "", SelectedRenderer.RendererName);
+            PaletteManager Manager = PaletteManager.Instance();
+            Manager.Reload();
+            Manager.AutoConfig(_World != null ? _World.Path : "", _SelectedRenderer.RendererName);
             dgPalettes.Rows.Clear();
-            foreach (PaletteFile File in PM.AllPalettes)
+            foreach (PaletteFile File in Manager.AllPalettes)
             {
-                DataGridViewRow Row = dgPalettes.Rows[dgPalettes.Rows.Add(new object[] { File.Selected, File.Name, File.Version })];
+                DataGridViewRow Row = dgPalettes.Rows[dgPalettes.Rows.Add(File.Selected, File.Name, File.Version)];
                 Row.Tag = File;
                 if (File.Version != String.Empty)
                     Row.Cells[1].ToolTipText = string.Format("{0} v{1}\r\n{2}", File.Name, File.Version, File.Description);
@@ -143,14 +142,18 @@ namespace SeeSharp.Gui
 
             }
 
-            if (chkTrackChanges.Checked && PaletteWatcher == null)
+            if (chkTrackChanges.Checked && _PaletteWatcher == null)
             {
-                PaletteWatcher = new FileSystemWatcher(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
-                PaletteWatcher.EnableRaisingEvents = true;
-                PaletteWatcher.IncludeSubdirectories = true;
-                PaletteWatcher.Filter = "*.pal";
-                PaletteWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.DirectoryName;
-                PaletteWatcher.Changed += PaletteFilesUpdated;
+                // ReSharper disable once AssignNullToNotNullAttribute
+                // *** Safe to assume the EXE file isn't going to have a NULL path.
+                _PaletteWatcher = new FileSystemWatcher(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location))
+                {
+                    EnableRaisingEvents = true,
+                    IncludeSubdirectories = true,
+                    Filter = "*.pal",
+                    NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.DirectoryName
+                };
+                _PaletteWatcher.Changed += PaletteFilesUpdated;
             }
 
 
@@ -174,7 +177,7 @@ namespace SeeSharp.Gui
 
             if (ControlRef.InvokeRequired)
             {
-                ControlRef.Invoke(InvokableControlToggler, IsBusy, WorldLoaded, IsPreviewing, ControlRef);
+                ControlRef.Invoke(_InvokableControlToggler, IsBusy, WorldLoaded, IsPreviewing, ControlRef);
                 return;
             }
 
@@ -182,75 +185,79 @@ namespace SeeSharp.Gui
 
             foreach (Control Control in ControlRef.GetSubControls())
             {
-                String Tag = (String)Control.Tag;
-                if (Tag == null)
-                    Tag = String.Empty;
+                String ControlTag = (String)Control.Tag;
+                if (ControlTag == null)
+                    ControlTag = String.Empty;
 
-                if (Tag.Contains("IGNORE"))
+                if (ControlTag.Contains("IGNORE"))
                     continue;
 
                 Control.Enabled = true;
 
-                if (typeof(ScrollBar).IsAssignableFrom(Control.GetType()) || typeof(NumericUpDown).IsAssignableFrom(Control.Parent.GetType()))
+                if ((Control is ScrollBar) || (Control is NumericUpDown)) //typeof(NumericUpDown).IsAssignableFrom(Control.Parent.GetType()))
                 {
                     continue;
                 }
 
-                if (Tag.Contains("SUBREGION") && !cbCropMap.Checked)
+                if (ControlTag.Contains("SUBREGION") && !cbCropMap.Checked)
                     Control.Enabled = false;
 
-                if (Tag.Contains("AUTOUPDATE") && !cbAutoUpdate.Checked)
+                if (ControlTag.Contains("AUTOUPDATE") && !cbAutoUpdate.Checked)
                     Control.Enabled = false;
 
-                if (Tag.Contains("MULTITHREAD") && !cbMultithread.Checked)
+                if (ControlTag.Contains("MULTITHREAD") && !cbMultithread.Checked)
                     Control.Enabled = false;
 
-                if (Tag.Contains("ALWAYS")) // *** Always enabled
+                if (ControlTag.Contains("ALWAYS")) // *** Always enabled
                     continue;
 
-                if (!WorldLoaded && !Tag.Contains("NOWORLD"))
+                if (!WorldLoaded && !ControlTag.Contains("NOWORLD"))
                 {
                     Control.Enabled = false;
                 }
                 else
                 {
-                    if (IsBusy ^ Tag.Contains("!NOLOCK"))
+                    if (IsBusy ^ ControlTag.Contains("!NOLOCK"))
                         Control.Enabled = false;
 
-                    if (IsPreviewing && Tag.Contains("PREVIEW"))
+                    if (IsPreviewing && ControlTag.Contains("PREVIEW"))
                         Control.Enabled = true;
                 }
             }
         }
-        private delegate void ControlToggler(bool a, bool b, bool c, Control d = null);
-        private ControlToggler InvokableControlToggler;
+        private delegate void ControlToggler(bool A, bool B, bool C, Control D = null);
+
+        private readonly ControlToggler _InvokableControlToggler;
         private void Render(bool IsPreview)
         {
-            Abort = false;
+            _Abort = false;
 
             ToggleControls(!IsPreview, true, IsPreview);
             SetStatus("Initializing...");
             IRenderer Renderer = null;
 
             // *** Set up renderer config
-            RenderingConfig.IsPreview = IsPreview;
-            RenderingConfig.Chunks = World.GetChunkManager(RenderingConfig.Dimension);
-            RenderingConfig.Palette = new BlockPalette();
-            RenderingConfig.RenderSubregion = cbCropMap.Checked;
-            RenderingConfig.MaxThreads = cbMultithread.Checked ? (int)nudThreads.Value : 1;
-            SkipErrors.Clear();
+            _RenderingConfig.IsPreview = IsPreview;
+            _RenderingConfig.Chunks = _World.GetChunkManager(_RenderingConfig.Dimension);
+            _RenderingConfig.Palette = new BlockPalette();
+            _RenderingConfig.RenderSubregion = cbCropMap.Checked;
+            _RenderingConfig.MaxThreads = cbMultithread.Checked ? (int)nudThreads.Value : 1;
+
+            // ReSharper disable once InconsistentlySynchronizedField
+            // *** This section of code is run before the parallel processing begins, so there is no danger of sync issues.
+            _SkipErrors.Clear();
 
             if (IsPreview)
             {
-                RenderingConfig.RenderSubregion = true;
-                RenderingConfig.SubregionChunks = new Rectangle(-15, -15, 31, 31);
+                _RenderingConfig.RenderSubregion = true;
+                _RenderingConfig.SubregionChunks = new Rectangle(-15, -15, 31, 31);
             }
-            else if (RenderingConfig.RenderSubregion)
-                RenderingConfig.SubregionChunks = new Rectangle((int)nudXMin.Value, (int)nudZMin.Value, (int)nudXMax.Value - (int)nudXMin.Value + 1, (int)nudZMax.Value - (int)nudZMin.Value + 1);
+            else if (_RenderingConfig.RenderSubregion)
+                _RenderingConfig.SubregionChunks = new Rectangle((int)nudXMin.Value, (int)nudZMin.Value, (int)nudXMax.Value - (int)nudXMin.Value + 1, (int)nudZMax.Value - (int)nudZMin.Value + 1);
             else
-                RenderingConfig.SubregionChunks = new Rectangle(RenderingConfig.Metrics.MinX, RenderingConfig.Metrics.MinZ, RenderingConfig.Metrics.MaxX - RenderingConfig.Metrics.MinX, RenderingConfig.Metrics.MaxZ - RenderingConfig.Metrics.MinZ);
+                _RenderingConfig.SubregionChunks = new Rectangle(_RenderingConfig.Metrics.MinX, _RenderingConfig.Metrics.MinZ, _RenderingConfig.Metrics.MaxX - _RenderingConfig.Metrics.MinX, _RenderingConfig.Metrics.MaxZ - _RenderingConfig.Metrics.MinZ);
 
-            if (Abort)
+            if (_Abort)
                 goto Cleanup;
 
             foreach (DataGridViewRow Row in dgPalettes.Rows)
@@ -262,36 +269,32 @@ namespace SeeSharp.Gui
             {
                 try
                 {
-                    RenderingConfig.Palette.LoadPalette(Palette);
+                    _RenderingConfig.Palette.LoadPalette(Palette);
                 }
-                catch (BlockPalette.PaletteExecutionException ex)
+                catch (BlockPalette.PaletteExecutionException Ex)
                 {
-                    MessageBox.Show(string.Format("The palette file {0} is invalid and will be skipped:\r\n{1}", Path.GetFileName(Palette), ex.Message), "Palette Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    PaletteManager.Instance().AllPalettes.First((x) => x.PalettePath == Palette).Selected = false;
-                }
-                catch
-                {
-
+                    MessageBox.Show(string.Format("The palette file {0} is invalid and will be skipped:\r\n{1}", Path.GetFileName(Palette), Ex.Message), "Palette Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    PaletteManager.Instance().AllPalettes.First(x => x.PalettePath == Palette).Selected = false;
                 }
             }
 
-            if (Abort)
+            if (_Abort)
                 goto Cleanup;
 
             UpdatePaletteSelection();
 
-            RenderingConfig.Palette.AssembleLookupTables();
+            _RenderingConfig.Palette.AssembleLookupTables();
 
             // *** Initialize renderer
-            Renderer = RendererManager.Instance().InstantiateRenderer((SelectedRenderer).RendererName);
+            Renderer = RendererManager.Instance().InstantiateRenderer((_SelectedRenderer).RendererName);
 
             Renderer.ProgressUpdate += DoUpdate;
             Renderer.RenderError += HandleError;
 
-            Renderer.Configure(RenderingConfig);
+            Renderer.Configure(_RenderingConfig);
             Renderer.Initialize();
 
-            AbortRender = Renderer.Abort;
+            _AbortRender = Renderer.Abort;
 
             // *** Render
             if (IsPreview)
@@ -309,46 +312,46 @@ namespace SeeSharp.Gui
                 Renderer.RenderError -= HandleError;
             }
 
-            ToggleControls(false, World != null, false);
-            SetStatus(Abort ? "Aborted" : "Finished");
+            ToggleControls(false, _World != null, false);
+            SetStatus(_Abort ? "Aborted" : "Finished");
             SetProgress(0);
-            AbortRender = null;
-            Abort = false;
+            _AbortRender = null;
+            _Abort = false;
         }
-        private void DoUpdate(object sender, ProgressUpdateEventArgs e)
+        private void DoUpdate(object Sender, ProgressUpdateEventArgs E)
         {
-            SetStatus(e.ProgressShortDescription);
-            SetProgress(e.Progress);
+            SetStatus(E.ProgressShortDescription);
+            SetProgress(E.Progress);
         }
-        private void HandleError(object sender, RenderingErrorEventArgs e)
+        private void HandleError(object Sender, RenderingErrorEventArgs E)
         {
-            IRenderer Renderer = (IRenderer)sender;
-            if (e.IsFatal)
+            IRenderer Renderer = (IRenderer)Sender;
+            if (E.IsFatal)
                 Renderer.Abort();
-            if (!RenderingConfig.IsPreview)
+            if (!_RenderingConfig.IsPreview)
             {
-                lock (SkipErrors)
+                lock (_SkipErrors)
                 {
                     // *** Alert user
-                    if (SkipErrors.Contains(e.ErrorCode))
+                    if (_SkipErrors.Contains(E.ErrorCode))
                         return;
 
-                    String ErrorMessage = String.Format("An error occurred while rendering: \r\n{0}", e.UserErrorMessage);
-                    if (e.ShowInnerException)
-                        ErrorMessage += e.ErrorException.Message + "\r\n";
-                    if (!e.IsFatal)
+                    String ErrorMessage = String.Format("An error occurred while rendering: \r\n{0}", E.UserErrorMessage);
+                    if (E.ShowInnerException)
+                        ErrorMessage += E.ErrorException.Message + "\r\n";
+                    if (!E.IsFatal)
                         ErrorMessage += "Ignore this error if it occurs again?";
 
-                    DialogResult R = MessageBox.Show(ErrorMessage, e.IsFatal ? "Rendering Failed" : "Rendering Error", e.IsFatal ? MessageBoxButtons.OK : MessageBoxButtons.YesNoCancel, e.IsFatal ? MessageBoxIcon.Stop : MessageBoxIcon.Error);
+                    DialogResult R = MessageBox.Show(ErrorMessage, E.IsFatal ? "Rendering Failed" : "Rendering Error", E.IsFatal ? MessageBoxButtons.OK : MessageBoxButtons.YesNoCancel, E.IsFatal ? MessageBoxIcon.Stop : MessageBoxIcon.Error);
 
-                    if (R == System.Windows.Forms.DialogResult.Yes)
-                        SkipErrors.Add(e.ErrorCode);
+                    if (R == DialogResult.Yes)
+                        _SkipErrors.Add(E.ErrorCode);
                 }
             }
 
 
         }
-        private void PreviewTimeout(object sender, EventArgs e)
+        private void PreviewTimeout(object Sender, EventArgs E)
         {
             tmrPreview.Stop();
             Thread RenderThread = new Thread(() => Render(true));
@@ -386,12 +389,12 @@ namespace SeeSharp.Gui
         #endregion
 
         private delegate void SelectionUpdater();
-        private SelectionUpdater InvokablePaletteSelector;
+        private readonly SelectionUpdater _InvokablePaletteSelector;
         private void UpdatePaletteSelection()
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
-                this.Invoke(InvokablePaletteSelector);
+                Invoke(_InvokablePaletteSelector);
                 return;
             }
 
@@ -403,24 +406,23 @@ namespace SeeSharp.Gui
 
         }
 
-        private void ExecuteOpenWorld(object sender, EventArgs e)
+        private void ExecuteOpenWorld(object Sender, EventArgs E)
         {
             DialogResult Result = fbOpenFolder.ShowDialog();
 
             // *** Open world, or at least try
-            if (Result != System.Windows.Forms.DialogResult.OK)
+            if (Result != DialogResult.OK)
                 return;
 
             ToggleControls(false, false, false);
 
-            World = null;
+            _World = null;
 
             try
             {
-                World = Substrate.AnvilWorld.Open(fbOpenFolder.SelectedPath);
+                _World = AnvilWorld.Open(fbOpenFolder.SelectedPath);
 
                 // *** Load Dimension list
-                String FilePath = World.Path;
 
                 Regex ValidDimNames = new Regex(@"(?<Path>(?:DIM[^\-\d]*)?(?<Name>-?\d{1,}|region))$");
 
@@ -429,7 +431,7 @@ namespace SeeSharp.Gui
 
                 int UseIndex = -1;
 
-                foreach (String S in Directory.GetDirectories(World.Path))
+                foreach (String S in Directory.GetDirectories(_World.Path))
                 {
                     Match Match = ValidDimNames.Match(S);
 
@@ -461,7 +463,7 @@ namespace SeeSharp.Gui
                 }
                 cbDimension.SelectedIndex = UseIndex;
                 cbDimension.EndUpdate();
-                SetStatus(String.Format("Loaded {0}", World.Level.LevelName));
+                SetStatus(String.Format("Loaded {0}", _World.Level.LevelName));
 
                 ToggleControls(false, true, false);
 
@@ -471,9 +473,9 @@ namespace SeeSharp.Gui
             {
                 MessageBox.Show(string.Format("The folder {0} does not appear to contain a valid minecraft world", fbOpenFolder.SelectedPath), "Error Loading World", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
-            catch (Exception ex)
+            catch (Exception Ex)
             {
-                MessageBox.Show(string.Format("Error - Could not load world:\r\n{1}\r\n({0})", ex.Message, ex.GetType().Name), "Error Loading World", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(string.Format("Error - Could not load world:\r\n{1}\r\n({0})", Ex.Message, Ex.GetType().Name), "Error Loading World", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             lblStatus.Text = "World load failed";
@@ -482,7 +484,7 @@ namespace SeeSharp.Gui
 
         private void QueuePreview()
         {
-            if (World != null)
+            if (_World != null)
             {
                 tmrPreview.Stop();
                 tmrPreview.Start();
@@ -491,71 +493,71 @@ namespace SeeSharp.Gui
 
         #region "Controls"
 
-        private void tbLightLevel_Scroll(object sender, EventArgs e)
+        private void tbLightLevel_Scroll(object Sender, EventArgs E)
         {
-            RenderingConfig.MinLightLevel = tbLightLevel.Value;
+            _RenderingConfig.MinLightLevel = tbLightLevel.Value;
             QueuePreview();
         }
-        private void cbDimension_SelectedIndexChanged(object sender, EventArgs e)
+        private void cbDimension_SelectedIndexChanged(object Sender, EventArgs E)
         {
             // Measure World
-            WorldMetrics Metrics = new WorldMetrics(World, ((DimensionListEntry)cbDimension.SelectedItem).Value);
+            WorldMetrics Metrics = new WorldMetrics(_World, ((DimensionListEntry)cbDimension.SelectedItem).Value);
 
-            RenderingConfig.Dimension = Metrics.Dimension;
-            RenderingConfig.Metrics = Metrics;
+            _RenderingConfig.Dimension = Metrics.Dimension;
+            _RenderingConfig.Metrics = Metrics;
 
             lblWorldMax.Text = String.Format("{0}, {1}", Metrics.MaxX, Metrics.MaxZ);
             lblWorldMin.Text = String.Format("{0}, {1}", Metrics.MinX, Metrics.MinZ);
 
             QueuePreview();
         }
-        private void cbRenderer_SelectedIndexChanged(object sender, EventArgs e)
+        private void cbRenderer_SelectedIndexChanged(object Sender, EventArgs E)
         {
-            SelectedRenderer = (RendererListEntry)cbRenderer.SelectedItem;
-            CachedConfigForm = null;
+            _SelectedRenderer = (RendererListEntry)cbRenderer.SelectedItem;
+            _CachedConfigForm = null;
         }
-        private void btnAbortRender_Click(object sender, EventArgs e)
+        private void btnAbortRender_Click(object Sender, EventArgs E)
         {
-            if (AbortRender != null)
-                AbortRender();
-            Abort = true;
+            if (_AbortRender != null)
+                _AbortRender();
+            _Abort = true;
         }
-        private void button1_Click(object sender, EventArgs e)
+        private void button1_Click(object Sender, EventArgs E)
         {
             fdSave.Filter = "All Files|*.*|PNG Files (*.png)|*.png";
             fdSave.ShowDialog();
-            RenderingConfig.SaveFilename = fdSave.FileName;
+            _RenderingConfig.SaveFilename = fdSave.FileName;
             Thread RenderThread = new Thread(() => Render(false));
             RenderThread.Start();
         }
-        private void dgPalettes_CurrentCellDirtyStateChanged(object sender, EventArgs e)
+        private void dgPalettes_CurrentCellDirtyStateChanged(object Sender, EventArgs E)
         {
             QueuePreview();
             dgPalettes.CommitEdit(DataGridViewDataErrorContexts.Commit);
         }
-        private void btnRendererOptions_Click(object sender, EventArgs e)
+        private void btnRendererOptions_Click(object Sender, EventArgs E)
         {
-            if (CachedConfigForm == null)
+            if (_CachedConfigForm == null)
             {
-                IRenderer Renderer = RendererManager.Instance().InstantiateRenderer((SelectedRenderer).RendererName);
-                CachedConfigForm = Renderer.ConfigurationForm;
+                IRenderer Renderer = RendererManager.Instance().InstantiateRenderer((_SelectedRenderer).RendererName);
+                _CachedConfigForm = Renderer.ConfigurationForm;
             }
-            if (CachedConfigForm == null)
+            if (_CachedConfigForm == null)
             {
                 MessageBox.Show(". does not have an advanced configuration.", "No Advanced Configuration", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
-                CachedConfigForm.ConfigStrings = RenderingConfig.AdvancedRenderOptions;
-                CachedConfigForm.ShowDialog(this);
-                RenderingConfig.AdvancedRenderOptions = CachedConfigForm.ConfigStrings;
+                _CachedConfigForm.ConfigStrings = _RenderingConfig.AdvancedRenderOptions;
+                _CachedConfigForm.ShowDialog(this);
+                _RenderingConfig.AdvancedRenderOptions = _CachedConfigForm.ConfigStrings;
                 QueuePreview();
             }
         }
 
         #endregion
 
-        private void btnCopyCLI_Click(object sender, EventArgs e)
+        private void btnCopyCLI_Click(object Sender, EventArgs E)
         {
             StringBuilder SB = new StringBuilder();
 
@@ -563,16 +565,16 @@ namespace SeeSharp.Gui
             fbOpenFolder.ShowDialog(this);
 
             SB.Append("SeeSharp");
-            SB.Append(" --world \"" + World.Path + "\"");
+            SB.Append(" --world \"" + _World.Path + "\"");
             SB.Append(" --dimension \"" + ((DimensionListEntry)cbDimension.SelectedItem).Value + "\"");
 
             SB.Append(" --output \"" + fbOpenFolder.SelectedPath + Path.DirectorySeparatorChar + "map.png\"");
             SB.Append(" --light-level " + tbLightLevel.Value.ToString());
             SB.Append(" --render-core " + ((RendererListEntry)cbRenderer.SelectedItem).RendererName);
 
-            if (CachedConfigForm != null)
+            if (_CachedConfigForm != null)
             {
-                List<KeyValuePair<String, String>> L = CachedConfigForm.ConfigStrings;
+                List<KeyValuePair<String, String>> L = _CachedConfigForm.ConfigStrings;
                 foreach (KeyValuePair<String, String> ConfigPair in L)
                     SB.Append(" --render-option " + ConfigPair.Key + " \"" + ConfigPair.Value + "\"");
             }
@@ -580,17 +582,17 @@ namespace SeeSharp.Gui
             if (cbCropMap.Checked)
             {
                 SB.Append(" --subregion");
-                SB.Append(" --subregion-min-x " + nudXMin.Value.ToString());
-                SB.Append(" --subregion-min-z " + nudZMin.Value.ToString());
-                SB.Append(" --subregion-max-x " + nudXMax.Value.ToString());
-                SB.Append(" --subregion-max-z " + nudZMax.Value.ToString());
+                SB.Append(" --subregion-min-x " + nudXMin.Value.ToString(Thread.CurrentThread.CurrentCulture));
+                SB.Append(" --subregion-min-z " + nudZMin.Value.ToString(Thread.CurrentThread.CurrentCulture));
+                SB.Append(" --subregion-max-x " + nudXMax.Value.ToString(Thread.CurrentThread.CurrentCulture));
+                SB.Append(" --subregion-max-z " + nudZMax.Value.ToString(Thread.CurrentThread.CurrentCulture));
             }
 
 
             if (nudThreads.Value != 1)
-                SB.Append(" --multi-thread --max-threads " + nudThreads.Value.ToString());
+                SB.Append(" --multi-thread --max-threads " + nudThreads.Value.ToString(Thread.CurrentThread.CurrentCulture));
 
-            foreach (PaletteFile Palette in PaletteManager.Instance().AllPalettes.Where((x) => x.Selected))
+            foreach (PaletteFile Palette in PaletteManager.Instance().AllPalettes.Where(x => x.Selected))
                 SB.Append(" --palette " + Palette.PalettePath.ConvertToRelativePath());
 
 
@@ -600,59 +602,59 @@ namespace SeeSharp.Gui
             SetStatus("Copied to Clipboard");
         }
 
-        private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
+        private void frmMain_FormClosing(object Sender, FormClosingEventArgs E)
         {
             btnAbortRender_Click(null, null);
             tmrPreview.Stop();
         }
 
-        private void tabControl1_Selecting(object sender, TabControlCancelEventArgs e)
+        private void tabControl1_Selecting(object Sender, TabControlCancelEventArgs E)
         {
-            e.Cancel = !e.TabPage.Enabled;
-            if (!e.Cancel && e.TabPageIndex < 3)
+            E.Cancel = !E.TabPage.Enabled;
+            if (!E.Cancel && E.TabPageIndex < 3)
             {
-                cbCropMap.Parent = e.TabPage;
-                gbSubregion.Parent = e.TabPage;
-                gbWorldDimensions.Parent = e.TabPage;
-                cbDimension.Parent = e.TabPage;
-                lblDimension.Parent = e.TabPage;
-                dgPalettes.Parent = e.TabPage;
-                lblSelectPalettes.Parent = e.TabPage;
+                cbCropMap.Parent = E.TabPage;
+                gbSubregion.Parent = E.TabPage;
+                gbWorldDimensions.Parent = E.TabPage;
+                cbDimension.Parent = E.TabPage;
+                lblDimension.Parent = E.TabPage;
+                dgPalettes.Parent = E.TabPage;
+                lblSelectPalettes.Parent = E.TabPage;
             }
         }
 
-        private void cbShowCLIButton_CheckedChanged(object sender, EventArgs e)
+        private void cbShowCLIButton_CheckedChanged(object Sender, EventArgs E)
         {
             btnCopyCLI.Visible = cbShowCLIButton.Checked;
             Properties.Settings.Default.ShowCLIButton = cbShowCLIButton.Checked;
             Properties.Settings.Default.Save();
         }
 
-        private void cbAutoUpdate_CheckedChanged(object sender, EventArgs e)
+        private void cbAutoUpdate_CheckedChanged(object Sender, EventArgs E)
         {
             pnlUpdate.Enabled = cbAutoUpdate.Checked;
             Properties.Settings.Default.AutoCheck = cbAutoUpdate.Checked;
             Properties.Settings.Default.Save();
-            ToggleControls(false, World != null, false, tpSettings);
+            ToggleControls(false, _World != null, false, tpSettings);
         }
 
-        private void rbAlwaysUpdate_CheckedChanged(object sender, EventArgs e)
+        private void rbAlwaysUpdate_CheckedChanged(object Sender, EventArgs E)
         {
             Properties.Settings.Default.AutoUpdate = rbAlwaysUpdate.Checked;
             Properties.Settings.Default.Save();
         }
 
-        private void cbTrackChanges_CheckedChanged(object sender, EventArgs e)
+        private void cbTrackChanges_CheckedChanged(object Sender, EventArgs E)
         {
             Properties.Settings.Default.ShowCLIButton = cbShowCLIButton.Checked;
             Properties.Settings.Default.Save();
         }
 
-        private void cbMultithread_CheckedChanged(object sender, EventArgs e)
+        private void cbMultithread_CheckedChanged(object Sender, EventArgs E)
         {
             Properties.Settings.Default.MTThreadCount = cbMultithread.Checked ? (int)nudThreads.Value : 1;
             Properties.Settings.Default.Save();
-            ToggleControls(false, World != null, false, tpSettings);
+            ToggleControls(false, _World != null, false, tpSettings);
         }
     }
 }

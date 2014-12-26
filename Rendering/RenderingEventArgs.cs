@@ -81,12 +81,12 @@ namespace SeeSharp.Rendering
     /// <summary>
     ///     
     /// </summary>
-    /// <param name="sender">
+    /// <param name="Sender">
     ///     The renderer throwing the error 
     /// </param>
-    /// <param name="e">
+    /// <param name="E">
     ///     The progress  
     /// </param>
-    public delegate void ProgressUpdateHandler(object sender, ProgressUpdateEventArgs e);
-    public delegate void RenderingErrorHandler(object sender, RenderingErrorEventArgs e);
+    public delegate void ProgressUpdateHandler(object Sender, ProgressUpdateEventArgs E);
+    public delegate void RenderingErrorHandler(object Sender, RenderingErrorEventArgs E);
 }

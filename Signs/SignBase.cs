@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using Substrate.TileEntities;
 
-namespace SeeSharp
+namespace SeeSharp.Signs
 {
 
     abstract public class SignBase

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SeeSharp
+namespace SeeSharp.Palette
 {
 
     internal struct PaletteToken

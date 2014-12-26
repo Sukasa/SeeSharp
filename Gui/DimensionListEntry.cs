@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.ComponentModel;
 
 namespace SeeSharp.Gui
 {
+    [Browsable(false)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     internal struct DimensionListEntry
     {
         public String Name;

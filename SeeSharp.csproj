@@ -305,9 +305,7 @@
     <None Include="Resources\application_xp_terminal.png" />
     <None Include="Resources\help.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Palette\PaletteCommands\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\Substrate-master\SubstrateCS\Substrate %28NET4%29.csproj">
       <Project>{7264A1C4-AB4A-4437-B252-7379B98B5509}</Project>

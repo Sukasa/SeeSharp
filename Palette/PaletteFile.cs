@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace SeeSharp
+namespace SeeSharp.Palette
 {
     internal class PaletteFile
     {
@@ -15,9 +15,9 @@ namespace SeeSharp
         public string AssociatedCfgFile;
         public string AssociatedRenderer;
 
-        public bool Selected = false;
+        public bool Selected;
 
-        public Dictionary<Tuple<int, int>, String> IDAutoConfig = new Dictionary<Tuple<int,int>,string>();
+        public Dictionary<Tuple<int, int>, String> IdAutoConfig = new Dictionary<Tuple<int,int>,string>();
         public List<PaletteEntry> PaletteEntries = new List<PaletteEntry>();
 
         public PaletteFile(String Filename)
@@ -40,7 +40,7 @@ namespace SeeSharp
 
             while (!String.IsNullOrEmpty(Line = S.ReadLine()) && Line.TrimStart().StartsWith("#"))
             {
-                Line = Line.TrimStart(new char[] { ' ', '#' });
+                Line = Line.TrimStart(' ', '#');
                 String[] LineParts = Line.Split('=');
                 if (LineParts.Length < 2)
                     continue;

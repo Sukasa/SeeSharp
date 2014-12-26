@@ -21,7 +21,7 @@ namespace SeeSharp.Plugins
         /// <remarks>
         ///     Configure() will provide the renderer with the user's specified configuration prior to rendering.  It does not constitute an initialization.
         /// </remarks>
-        /// <param name="Config">
+        /// <param name="Configuration">
         ///     Render configuration as selected by user
         /// </param>
         void Configure(RenderConfiguration Configuration);
@@ -53,7 +53,7 @@ namespace SeeSharp.Plugins
         ///         You should not throw exceptions from this function.  Raise <see cref="RenderError"/> with <code>IsFatal</code> set to <see langword="true"/>.
         ///     </para>
         /// </remarks>
-        /// <seealso cref="ProgressUpdateHandler">
+        /// <seealso cref="ProgressUpdateHandler" />
         void Render();
 
         /// <summary>

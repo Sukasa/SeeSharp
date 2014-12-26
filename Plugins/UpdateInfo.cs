@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net;
 using System.Xml;
-using System.Timers;
 
 namespace SeeSharp.Plugins
 {

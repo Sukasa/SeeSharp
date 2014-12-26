@@ -18,13 +18,13 @@ namespace SeeSharp.Palette
 
         internal class PaletteExecutionException : Exception
         {
-            public PaletteExecutionException() : base() { }
-            public PaletteExecutionException(string message) : base(message) { }
-            public PaletteExecutionException(string message, Exception inner) : base(message, inner) { }
+            public PaletteExecutionException() { }
+            public PaletteExecutionException(string Message) : base(Message) { }
+            public PaletteExecutionException(string Message, Exception InnerException) : base(Message, InnerException) { }
         }
 
-        private Dictionary<int, List<PaletteEntry>> PaletteEntries = new Dictionary<int, List<PaletteEntry>>();
-        private Dictionary<int, List<TintEntry>> BiomeTints = new Dictionary<int, List<TintEntry>>();
+        private readonly Dictionary<int, List<PaletteEntry>> _PaletteEntries = new Dictionary<int, List<PaletteEntry>>();
+        private readonly Dictionary<int, List<TintEntry>> _BiomeTints = new Dictionary<int, List<TintEntry>>();
 
         // *** Lookup tables, for faster rendering
         /// <summary>
@@ -55,12 +55,12 @@ namespace SeeSharp.Palette
 
         public List<PaletteEntry> GetPaletteEntry(Int32 Key)
         {
-            if (Key == 0 || Key > EntityEntries.Count)
+            if (Key == 0 || Key > _EntityEntries.Count)
                 return null;
-            return EntityEntries[Key - 1];
+            return _EntityEntries[Key - 1];
         }
 
-        private List<List<PaletteEntry>> EntityEntries = new List<List<PaletteEntry>>();
+        private readonly List<List<PaletteEntry>> _EntityEntries = new List<List<PaletteEntry>>();
 
         internal BlockPalette()
         {
@@ -144,8 +144,8 @@ namespace SeeSharp.Palette
                 Data = Resolve(Variables, (PaletteToken)Data);
             if (Data is int)
                 return true;
-            int t;
-            return Data is string && ((string)Data == "*" || int.TryParse((string)Data, out t)); // "*" resolves to -1 in practice, so return that it has a valid numeric value.
+            int T;
+            return Data is string && ((string)Data == "*" || int.TryParse((string)Data, out T)); // "*" resolves to -1 in practice, so return that it has a valid numeric value.
         }
 
         internal bool IsValidStringToken(object Data, Dictionary<string, string> Variables)
@@ -162,43 +162,43 @@ namespace SeeSharp.Palette
         {
 
             // *** Assemble palette & depth opacity lookup arrays
-            foreach (int Key in PaletteEntries.Keys)
+            foreach (int Key in _PaletteEntries.Keys)
             {
-                List<PaletteEntry> Entries = PaletteEntries[Key];
+                List<PaletteEntry> Entries = _PaletteEntries[Key];
                 foreach (PaletteEntry Entry in Entries)
                 {
                     for (int X = 0; X < 256; X++)
                     {
-                        if (Entry.PaletteEntryType == PaletteEntry.EntryType.IDEntity)
+                        if (Entry.PaletteEntryType == PaletteEntry.EntryType.IdEntity)
                             if (Entry.Metadata != -1)
                             {
                                 if (!FastPalette[X][Key][Entry.Metadata].IsEntityKey())
                                 {
-                                    EntityEntries.Add(new List<PaletteEntry>());
-                                    FastPalette[X][Key][Entry.Metadata].Color = 0x00FF0000U + (UInt32)(EntityEntries.Count - 1);
+                                    _EntityEntries.Add(new List<PaletteEntry>());
+                                    FastPalette[X][Key][Entry.Metadata].Color = 0x00FF0000U + (UInt32)(_EntityEntries.Count - 1);
                                 }
 
                                 GetPaletteEntry((int)(FastPalette[X][Key][Entry.Metadata].Color & 0xFFFF)).Add(Entry);
-                                DepthOpacities[Entry.BlockID][Entry.Metadata] = Entry.DepthOpacity;
+                                DepthOpacities[Entry.BlockId][Entry.Metadata] = Entry.DepthOpacity;
                             }
                             else
                                 for (int Meta = 0; Meta < 16; Meta++)
                                 {
                                     if (!FastPalette[X][Key][Meta].IsEntityKey())
                                     {
-                                        EntityEntries.Add(new List<PaletteEntry>());
-                                        FastPalette[X][Key][Meta].Color = 0x00FF0000U + (UInt32)(EntityEntries.Count - 1);
+                                        _EntityEntries.Add(new List<PaletteEntry>());
+                                        FastPalette[X][Key][Meta].Color = 0x00FF0000U + (UInt32)(_EntityEntries.Count - 1);
                                     }
 
                                     GetPaletteEntry((int)(FastPalette[X][Key][Meta].Color & 0xFFFF)).Add(Entry);
-                                    DepthOpacities[Entry.BlockID][Meta] = Entry.DepthOpacity;
+                                    DepthOpacities[Entry.BlockId][Meta] = Entry.DepthOpacity;
                                 }
                         else
                         {
                             if (Entry.Metadata != -1)
                             {
                                 FastPalette[X][Key][Entry.Metadata] = Entry.Color;
-                                DepthOpacities[Entry.BlockID][Entry.Metadata] = Entry.DepthOpacity;
+                                DepthOpacities[Entry.BlockId][Entry.Metadata] = Entry.DepthOpacity;
                             }
                             else
                             {
@@ -206,7 +206,7 @@ namespace SeeSharp.Palette
                                 {
                                     if (FastPalette[X][Key][Meta].A == 0)
                                         FastPalette[X][Key][Meta] = Entry.Color;
-                                    DepthOpacities[Entry.BlockID][Meta] = Entry.DepthOpacity;
+                                    DepthOpacities[Entry.BlockId][Meta] = Entry.DepthOpacity;
                                 }
                             }
                         }
@@ -216,22 +216,22 @@ namespace SeeSharp.Palette
 
 
             // *** Assemble tint lookups
-            foreach (int Key in BiomeTints.Keys)
+            foreach (int Key in _BiomeTints.Keys)
             {
-                List<TintEntry> Entries = BiomeTints[Key];
+                List<TintEntry> Entries = _BiomeTints[Key];
                 int M = 0;
                 foreach (TintEntry Entry in Entries)
                 {
                     if (Entry.Metadata > -1)
                     {
-                        FastPalette[Key][Entry.BlockID][Entry.Metadata].Blend(Entry.Tint);
+                        FastPalette[Key][Entry.BlockId][Entry.Metadata].Blend(Entry.Tint);
                         M |= (1 << Entry.Metadata);
                     }
                     else
                     {
                         for (int X = 0; X < 16; X++)
                             if ((M & (1 << X)) == 0)
-                                FastPalette[Key][Entry.BlockID][X].Blend(Entry.Tint);
+                                FastPalette[Key][Entry.BlockId][X].Blend(Entry.Tint);
                     }
                 }
             }
@@ -249,88 +249,88 @@ namespace SeeSharp.Palette
             Dictionary<string, string> Variables = new Dictionary<string, string>();
 
             // *** Loop through all the tokens and execute them as necessary
-            for (int x = 0; x < Tokens.Length; x++)
+            for (int X = 0; X < Tokens.Length; X++)
             {
-                PaletteToken Token = Tokens[x];
+                PaletteToken Token = Tokens[X];
                 switch (Token.Type)
                 {
                     case PaletteToken.TokenType.Command:
                         switch (Token.TokenData)
                         {
                             case "=":
-                                if (Tokens[x - 1].Type != PaletteToken.TokenType.Variable)
+                                if (Tokens[X - 1].Type != PaletteToken.TokenType.Variable)
                                 {
                                     // *** Throw Error - Cannot assign to non-variable
-                                    throw new PaletteExecutionException("Cannot assign to non-variable at line " + Tokens[x].Line.ToString());
+                                    throw new PaletteExecutionException("Cannot assign to non-variable at line " + Tokens[X].Line.ToString());
                                 }
-                                if ((Tokens[x + 1].Type != PaletteToken.TokenType.Variable) && (Tokens[x + 1].Type != PaletteToken.TokenType.Constant))
+                                if ((Tokens[X + 1].Type != PaletteToken.TokenType.Variable) && (Tokens[X + 1].Type != PaletteToken.TokenType.Constant))
                                 {
                                     // *** Throw Error - Can only assign from variables or constants
-                                    throw new PaletteExecutionException("Invalid assignment source at line " + Tokens[x].Line.ToString());
+                                    throw new PaletteExecutionException("Invalid assignment source at line " + Tokens[X].Line.ToString());
                                 }
 
-                                Variables[Tokens[x - 1].TokenData] = Resolve(Variables, Tokens[x + 1]);
-                                x++;
+                                Variables[Tokens[X - 1].TokenData] = Resolve(Variables, Tokens[X + 1]);
+                                X++;
                                 break;
                             case ">":
                                 Console.Write("  ");
-                                for (++x; Tokens[x].Type != PaletteToken.TokenType.Newline; x++)
-                                    Console.Write((Tokens[x].Type == PaletteToken.TokenType.Constant ? Tokens[x].TokenData : Resolve(Variables, Tokens[x])) + " ");
+                                for (++X; Tokens[X].Type != PaletteToken.TokenType.Newline; X++)
+                                    Console.Write((Tokens[X].Type == PaletteToken.TokenType.Constant ? Tokens[X].TokenData : Resolve(Variables, Tokens[X])) + " ");
                                 Console.WriteLine("");
                                 break;
                             case ".":
-                                for (int y = 1; y < 8; y++)
+                                for (int Y = 1; Y < 8; Y++)
                                 {
-                                    if (Tokens[x + y].Type == PaletteToken.TokenType.Newline)
-                                        throw new PaletteExecutionException("Too few arguments to command at line " + Tokens[x].Line.ToString());
+                                    if (Tokens[X + Y].Type == PaletteToken.TokenType.Newline)
+                                        throw new PaletteExecutionException("Too few arguments to command at line " + Tokens[X].Line.ToString());
                                 }
-                                if (!IsValidNumericToken(Tokens[x + 1], Variables) || !IsValidNumericToken(Tokens[x + 2], Variables) || !IsValidNumericToken(Tokens[x + 3], Variables) ||
-                                    !IsValidNumericToken(Tokens[x + 4], Variables) || !IsValidNumericToken(Tokens[x + 5], Variables) || !IsValidNumericToken(Tokens[x + 6], Variables) ||
-                                    !IsValidNumericToken(Tokens[x + 7], Variables))
-                                    throw new PaletteExecutionException("Illegal argument to command at line " + Tokens[x].Line.ToString());
+                                if (!IsValidNumericToken(Tokens[X + 1], Variables) || !IsValidNumericToken(Tokens[X + 2], Variables) || !IsValidNumericToken(Tokens[X + 3], Variables) ||
+                                    !IsValidNumericToken(Tokens[X + 4], Variables) || !IsValidNumericToken(Tokens[X + 5], Variables) || !IsValidNumericToken(Tokens[X + 6], Variables) ||
+                                    !IsValidNumericToken(Tokens[X + 7], Variables))
+                                    throw new PaletteExecutionException("Illegal argument to command at line " + Tokens[X].Line.ToString());
 
-                                ProspectiveAdditions.Add(new PaletteEntry(ResolveInteger(Tokens[x + 1], Variables), ResolveInteger(Tokens[x + 2], Variables), ResolveInteger(Tokens[x + 3], Variables),
-                                                                          ResolveInteger(Tokens[x + 4], Variables), ResolveInteger(Tokens[x + 5], Variables), ResolveInteger(Tokens[x + 6], Variables),
-                                                                          ResolveInteger(Tokens[x + 7], Variables)));
-                                x += 7;
+                                ProspectiveAdditions.Add(new PaletteEntry(ResolveInteger(Tokens[X + 1], Variables), ResolveInteger(Tokens[X + 2], Variables), ResolveInteger(Tokens[X + 3], Variables),
+                                                                          ResolveInteger(Tokens[X + 4], Variables), ResolveInteger(Tokens[X + 5], Variables), ResolveInteger(Tokens[X + 6], Variables),
+                                                                          ResolveInteger(Tokens[X + 7], Variables)));
+                                X += 7;
                                 break;
                             case "e":
-                                for (int y = 1; y < 10; y++)
+                                for (int Y = 1; Y < 10; Y++)
                                 {
-                                    if (Tokens[x + y].Type == PaletteToken.TokenType.Newline)
-                                        throw new PaletteExecutionException("Too few arguments to command at line " + Tokens[x].Line.ToString());
+                                    if (Tokens[X + Y].Type == PaletteToken.TokenType.Newline)
+                                        throw new PaletteExecutionException("Too few arguments to command at line " + Tokens[X].Line.ToString());
                                 }
-                                if (!IsValidNumericToken(Tokens[x + 1], Variables) || !IsValidNumericToken(Tokens[x + 2], Variables) || !IsValidNumericToken(Tokens[x + 5], Variables) ||
-                                    !IsValidNumericToken(Tokens[x + 6], Variables) || !IsValidNumericToken(Tokens[x + 7], Variables) || !IsValidNumericToken(Tokens[x + 5], Variables) ||
-                                    !IsValidNumericToken(Tokens[x + 9], Variables))
-                                    throw new PaletteExecutionException("Illegal argument to command at line " + Tokens[x].Line.ToString());
+                                if (!IsValidNumericToken(Tokens[X + 1], Variables) || !IsValidNumericToken(Tokens[X + 2], Variables) || !IsValidNumericToken(Tokens[X + 5], Variables) ||
+                                    !IsValidNumericToken(Tokens[X + 6], Variables) || !IsValidNumericToken(Tokens[X + 7], Variables) || !IsValidNumericToken(Tokens[X + 5], Variables) ||
+                                    !IsValidNumericToken(Tokens[X + 9], Variables))
+                                    throw new PaletteExecutionException("Illegal argument to command at line " + Tokens[X].Line.ToString());
 
-                                ProspectiveAdditions.Add(new PaletteEntry(ResolveInteger(Tokens[x + 1], Variables), ResolveInteger(Tokens[x + 2], Variables), Resolve(Variables, Tokens[x + 3]),
-                                                                          Resolve(Variables, Tokens[x + 4]), ResolveInteger(Tokens[x + 5], Variables), ResolveInteger(Tokens[x + 6], Variables),
-                                                                          ResolveInteger(Tokens[x + 7], Variables), ResolveInteger(Tokens[x + 5], Variables), ResolveInteger(Tokens[x + 6], Variables)));
-                                x += 9;
+                                ProspectiveAdditions.Add(new PaletteEntry(ResolveInteger(Tokens[X + 1], Variables), ResolveInteger(Tokens[X + 2], Variables), Resolve(Variables, Tokens[X + 3]),
+                                                                          Resolve(Variables, Tokens[X + 4]), ResolveInteger(Tokens[X + 5], Variables), ResolveInteger(Tokens[X + 6], Variables),
+                                                                          ResolveInteger(Tokens[X + 7], Variables), ResolveInteger(Tokens[X + 5], Variables), ResolveInteger(Tokens[X + 6], Variables)));
+                                X += 9;
                                 break;
                             case "t": // *** t Biome Block Meta R G B A
-                                for (int y = 1; y < 8; y++)
+                                for (int Y = 1; Y < 8; Y++)
                                 {
-                                    if (Tokens[x + y].Type == PaletteToken.TokenType.Newline)
-                                        throw new PaletteExecutionException("Too few arguments to command at line " + Tokens[x].Line.ToString());
+                                    if (Tokens[X + Y].Type == PaletteToken.TokenType.Newline)
+                                        throw new PaletteExecutionException("Too few arguments to command at line " + Tokens[X].Line.ToString());
                                 }
-                                if (!IsValidNumericToken(Tokens[x + 1], Variables) || !IsValidNumericToken(Tokens[x + 2], Variables) || !IsValidNumericToken(Tokens[x + 3], Variables) ||
-                                    !IsValidNumericToken(Tokens[x + 4], Variables) || !IsValidNumericToken(Tokens[x + 5], Variables) || !IsValidNumericToken(Tokens[x + 6], Variables) ||
-                                    !IsValidNumericToken(Tokens[x + 7], Variables))
+                                if (!IsValidNumericToken(Tokens[X + 1], Variables) || !IsValidNumericToken(Tokens[X + 2], Variables) || !IsValidNumericToken(Tokens[X + 3], Variables) ||
+                                    !IsValidNumericToken(Tokens[X + 4], Variables) || !IsValidNumericToken(Tokens[X + 5], Variables) || !IsValidNumericToken(Tokens[X + 6], Variables) ||
+                                    !IsValidNumericToken(Tokens[X + 7], Variables))
 
-                                    throw new PaletteExecutionException("Illegal argument to command at line " + Tokens[x].Line.ToString());
+                                    throw new PaletteExecutionException("Illegal argument to command at line " + Tokens[X].Line.ToString());
 
-                                ProspectiveTintAdditions.Add(new TintEntry(ResolveInteger(Tokens[x + 1], Variables), ResolveInteger(Tokens[x + 2], Variables), ResolveInteger(Tokens[x + 3], Variables),
-                                                                           ResolveInteger(Tokens[x + 4], Variables), ResolveInteger(Tokens[x + 5], Variables), ResolveInteger(Tokens[x + 6], Variables),
-                                                                           ResolveInteger(Tokens[x + 7], Variables)));
-                                x += 7;
+                                ProspectiveTintAdditions.Add(new TintEntry(ResolveInteger(Tokens[X + 1], Variables), ResolveInteger(Tokens[X + 2], Variables), ResolveInteger(Tokens[X + 3], Variables),
+                                                                           ResolveInteger(Tokens[X + 4], Variables), ResolveInteger(Tokens[X + 5], Variables), ResolveInteger(Tokens[X + 6], Variables),
+                                                                           ResolveInteger(Tokens[X + 7], Variables)));
+                                X += 7;
                                 break;
                         }
                         break;
                     case PaletteToken.TokenType.Constant:
-                        throw new PaletteExecutionException("Unexpected constant at line " + Tokens[x].Line.ToString());
+                        throw new PaletteExecutionException("Unexpected constant at line " + Tokens[X].Line.ToString());
                     case PaletteToken.TokenType.Variable:
                         //***  Do nothing
                         break;
@@ -342,21 +342,21 @@ namespace SeeSharp.Palette
             // *** Start by adding any lists needed to the dictionary and removing any outdated entries
             foreach (PaletteEntry Entry in ProspectiveAdditions)
             {
-                if (!PaletteEntries.ContainsKey(Entry.BlockID))
-                    PaletteEntries[Entry.BlockID] = new List<PaletteEntry>();
+                if (!_PaletteEntries.ContainsKey(Entry.BlockId))
+                    _PaletteEntries[Entry.BlockId] = new List<PaletteEntry>();
 
-                List<PaletteEntry> Entries = PaletteEntries[Entry.BlockID];
-                Entries.RemoveAll((X) => X.IsSupplantedBy(Entry));
+                List<PaletteEntry> Entries = _PaletteEntries[Entry.BlockId];
+                Entries.RemoveAll(x => x.IsSupplantedBy(Entry));
             }
 
             // *** Then add all the new entries to the palette
             foreach (PaletteEntry Entry in ProspectiveAdditions)
             {
-                PaletteEntries[Entry.BlockID].Add(Entry);
+                _PaletteEntries[Entry.BlockId].Add(Entry);
             }
 
             // *** Finally, sort the lists by specificity.  More specific palette entries will thus take rendering prevalence over broader catch-all entries.
-            foreach (List<PaletteEntry> EntryList in PaletteEntries.Values)
+            foreach (List<PaletteEntry> EntryList in _PaletteEntries.Values)
                 EntryList.Sort();
 
 
@@ -366,18 +366,18 @@ namespace SeeSharp.Palette
             // *** Start by adding any lists needed to the dictionary and removing any outdated entries
             foreach (TintEntry Entry in ProspectiveTintAdditions)
             {
-                if (!BiomeTints.ContainsKey(Entry.BiomeID))
-                    BiomeTints[Entry.BiomeID] = new List<TintEntry>();
-                List<TintEntry> Entries = BiomeTints[Entry.BiomeID];
-                Entries.RemoveAll((X) => X.IsSupplantedBy(Entry));
+                if (!_BiomeTints.ContainsKey(Entry.BiomeId))
+                    _BiomeTints[Entry.BiomeId] = new List<TintEntry>();
+                List<TintEntry> Entries = _BiomeTints[Entry.BiomeId];
+                Entries.RemoveAll(x => x.IsSupplantedBy(Entry));
             }
 
             // *** Then add all the new entries to the palette
             foreach (TintEntry Entry in ProspectiveTintAdditions)
-                BiomeTints[Entry.BiomeID].Add(Entry);
+                _BiomeTints[Entry.BiomeId].Add(Entry);
 
             // *** Finally, sort the lists by specificity.  More specific palette entries will thus take rendering prevalence over broader catch-all entries.
-            foreach (List<TintEntry> EntryList in BiomeTints.Values)
+            foreach (List<TintEntry> EntryList in _BiomeTints.Values)
                 EntryList.Sort();
 
         }
@@ -393,7 +393,7 @@ namespace SeeSharp.Palette
         /// </remarks>
         internal void LoadPalette(String PaletteFile)
         {
-            String[] Lines = System.IO.File.ReadAllLines(PaletteFile);
+            String[] Lines = File.ReadAllLines(PaletteFile);
             Console.WriteLine("Loading palette " + Path.GetFileNameWithoutExtension(PaletteFile));
 
             PaletteToken[] Tokens = TokenizePaletteFile(Lines);

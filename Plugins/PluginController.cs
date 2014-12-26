@@ -3,12 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Xml;
-using System.Xml.Linq;
-using SeeSharp.Rendering;
 using System.Windows.Forms;
-using SeeSharp.Signs;
-using System.Timers;
 
 // TODO: Make this use AppDomains, so that I can unload DLLs after loading them and checking for information.  This will allow me to update the DLLs (plugins) from within the app.
 
@@ -23,6 +18,8 @@ namespace SeeSharp.Plugins
         internal List<Type> AvailableComponents;
 
         internal List<UpdateInfo> Updates;
+        // ReSharper disable once InconsistentNaming
+        // *** Screw you ReSharper, I even added "DLL" as an acceptable abbreviation >8(
         internal List<String> LoadablePluginDLLs;
 
         internal AppDomain ProxyDomain;
@@ -50,6 +47,8 @@ namespace SeeSharp.Plugins
 
             DialogResult Result = DialogResult.No;
 
+            if (Rescan)
+                Result = DialogResult.Abort;
 
 
             // If they selected yes, update all plugins
@@ -57,8 +56,8 @@ namespace SeeSharp.Plugins
             if (Result == DialogResult.Yes)
             {
                 // Update Plugins
-
-                Update(true);
+                if(!Rescan)
+                    Update(true);
             }
 
 
@@ -73,12 +72,14 @@ namespace SeeSharp.Plugins
             if (!Directory.Exists(Assembly.GetExecutingAssembly().Location + Path.PathSeparator + "Plugins"))
                 return;
 
-            AppDomainSetup ProxySetup = new AppDomainSetup();
+            AppDomainSetup ProxySetup = new AppDomainSetup
+            {
+                DisallowCodeDownload = true,
+                DisallowBindingRedirects = false,
+                ApplicationBase = Environment.CurrentDirectory,
+                DisallowApplicationBaseProbing = false
+            };
 
-            ProxySetup.DisallowCodeDownload = true;
-            ProxySetup.DisallowBindingRedirects = false;
-            ProxySetup.ApplicationBase = Environment.CurrentDirectory;
-            ProxySetup.DisallowApplicationBaseProbing = false;
 
             ProxyDomain = null;
 
@@ -149,7 +150,6 @@ namespace SeeSharp.Plugins
         /// <summary>
         ///     Returns a list of all plugin classes that implement a specific interface
         /// </summary>
-        /// <param name="Inferface"></param>
         /// <returns></returns>
         public IEnumerable<Type> GetComponentsOfType<T>() where T : IComponent
         {

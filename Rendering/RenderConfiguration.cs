@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using SeeSharp.Palette;
 using Substrate;
 using System.Drawing;
+using SeeSharp.Plugins;
 
-namespace SeeSharp
+namespace SeeSharp.Rendering
 {
     /// <summary>
     ///     Render configuration as selected by user
@@ -147,7 +146,7 @@ namespace SeeSharp
         ///     The AdvancedRenderOptions param is a list of Key-Value pairs generated either from the command line, or via user interaction with the advanced settings dialog specific to the renderer.
         /// </remarks>
         /// <seealso cref="SeeSharp.Rendering.RendererConfigForm"/>
-        /// <seealso cref="SeeSharp.Rendering.IRenderer"/>
+        /// <seealso cref="IRenderer"/>
         public List<KeyValuePair<String, String>> AdvancedRenderOptions;
 
         internal RenderConfiguration()

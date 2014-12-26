@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.ComponentModel;
 using SeeSharp.Rendering;
 
 namespace SeeSharp.Gui
 {
+    [Browsable(false)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     internal struct RendererListEntry
     {
         public String RendererName;

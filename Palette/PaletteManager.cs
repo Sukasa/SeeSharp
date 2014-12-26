@@ -10,16 +10,16 @@ namespace SeeSharp.Palette
     {
         private static PaletteManager _Instance;
 
-        private List<PaletteFile> Palettes = new List<PaletteFile>();
-        private ReadOnlyCollection<PaletteFile> _Palettes_ReadOnly;
+        private readonly List<PaletteFile> _Palettes = new List<PaletteFile>();
+        private ReadOnlyCollection<PaletteFile> _PalettesReadOnly;
 
         public ReadOnlyCollection<PaletteFile> AllPalettes
         {
             get
             {
-                if (_Palettes_ReadOnly == null)
-                    _Palettes_ReadOnly = new ReadOnlyCollection<PaletteFile>(Palettes);
-                return _Palettes_ReadOnly;
+                if (_PalettesReadOnly == null)
+                    _PalettesReadOnly = new ReadOnlyCollection<PaletteFile>(_Palettes);
+                return _PalettesReadOnly;
             }
         }
 
@@ -32,7 +32,7 @@ namespace SeeSharp.Palette
 
         public void AutoConfig(String WorldPath, String RendererInternalName)
         {
-            foreach (PaletteFile File in Palettes)
+            foreach (PaletteFile File in _Palettes)
                 File.Selected = File.Selected || System.IO.File.Exists(WorldPath + Path.DirectorySeparatorChar + File.AssociatedCfgFile) || RendererInternalName == File.AssociatedRenderer;
         }
 
@@ -40,10 +40,9 @@ namespace SeeSharp.Palette
         {
 
             List<String> PaletteFilenames = new List<String>();
-            Palettes.Clear();
+            _Palettes.Clear();
 
-            List<String> Folders = new List<string>();
-            Folders.Add(Path.GetDirectoryName((Assembly.GetExecutingAssembly().Location)));
+            List<String> Folders = new List<string> {Path.GetDirectoryName((Assembly.GetExecutingAssembly().Location))};
 
             for (int I = 0; I < Folders.Count; I++)
             {
@@ -53,16 +52,14 @@ namespace SeeSharp.Palette
             }
 
                 foreach (string File in PaletteFilenames)
-                    Palettes.Add(new PaletteFile(File));
+                    _Palettes.Add(new PaletteFile(File));
 
-            _Palettes_ReadOnly = null;
+            _PalettesReadOnly = null;
         }
 
         public static PaletteManager Instance()
         {
-            if (_Instance == null)
-                _Instance = new PaletteManager();
-            return _Instance;
+            return _Instance ?? (_Instance = new PaletteManager());
         }
     }
 }
