@@ -27,7 +27,7 @@ namespace SeeSharp.Palette
         /// <summary>
         ///     What kind of entry this is, whether a basic BlockId-Metadata entry, or BlockId-Metadata-Entity entry
         /// </summary>
-        public EntryType PaletteEntryType = EntryType.IdMetadata;
+        public readonly EntryType PaletteEntryType = EntryType.IdMetadata;
         /// <summary>
         ///     The base colour for the block
         /// </summary>
@@ -35,19 +35,21 @@ namespace SeeSharp.Palette
         /// <summary>
         ///     The depth opacity for a block.  Lower depth opacities cause the renderer to draw farther down past this block
         /// </summary>
-        public int DepthOpacity;
+        public readonly int DepthOpacity;
 
         /// <summary>
         ///     Block ID this palette entry applies to
         /// </summary>
-        public int BlockId;
+        public readonly int BlockId;
         /// <summary>
         ///     Metadata this palette entry applies to, or -1 if it applies to all 16 metadatas for this entry's Block ID.
         /// </summary>
-        public int Metadata;
+        public readonly int Metadata;
 
         private readonly string _EntityTag;
         private readonly string _EntityTagCheckValue;
+
+        private readonly Dictionary<String, String> _CustomData = new Dictionary<string, string>();
 
         /// <summary>
         ///     Return custom data about a block, or a default value if it is not defined
@@ -66,10 +68,8 @@ namespace SeeSharp.Palette
         /// </returns>
         public String GetCustomData(String Key, String DefaultValue = "")
         {
-            return CustomData.ContainsKey(Key) ? CustomData[Key] : DefaultValue;
+            return _CustomData.ContainsKey(Key) ? _CustomData[Key] : DefaultValue;
         }
-
-        internal Dictionary<String, String> CustomData = new Dictionary<string, string>();
 
         internal PaletteEntry(int BlockId, int MetaData, int Opacity, int Red, int Green, int Blue, int Alpha)
         {
@@ -85,6 +85,11 @@ namespace SeeSharp.Palette
             PaletteEntryType = EntryType.IdEntity;
             _EntityTag = ValueKey;
             _EntityTagCheckValue = ValueRef;
+        }
+
+        internal void AddCustomData(string DataKey, string DataValue)
+        {
+            _CustomData.Add(DataKey, DataValue);
         }
 
         internal bool IsSupplantedBy(PaletteEntry NewEntry)

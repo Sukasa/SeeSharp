@@ -17,9 +17,10 @@ namespace SeeSharp.Rendering
     internal sealed class Renderer : IRenderer
     {
         // *** Error Codes
-        public const Int32 ErrorNoMemory = -1;  // *** ERROR: Couldn't allocate bitmap.  Fatal, because w/o a bitmap wtf are you rendering to?
-        public const Int32 ErrorBadChunk = 1;   // *** ERROR: There was a bad chunk that couldn't be rendered.  Not a fatal error.
-        public const Int32 ErrorErrors = 2;     // *** ERROR: There were errors in the render!  Makes sense in context.
+        private const Int32 ErrorNoMemory = -1;  // *** ERROR: Couldn't allocate bitmap.  Fatal, because w/o a bitmap wtf are you rendering to?
+        // ReSharper disable once UnusedMember.Local
+        private const Int32 ErrorBadChunk = 1;   // *** ERROR: There was a bad chunk that couldn't be rendered.  Not a fatal error.  Only used in Release config.
+        private const Int32 ErrorErrors = 2;     // *** ERROR: There were errors in the render!  Makes sense in context.
 
 
         // *** Configuration data
@@ -45,6 +46,7 @@ namespace SeeSharp.Rendering
         // *** Progress Update Data
         private int _ProcessedChunks;
         private bool _PendingRender;
+        private int _ActiveRenderThreads;
 
 
         // *** Not used in release mode
@@ -59,7 +61,7 @@ namespace SeeSharp.Rendering
 
 
         // *** Render start determiners
-        public int GetStartRenderYNormal(AlphaBlockCollection Blocks, int X, int Z)
+        private int GetStartRenderYNormal(AlphaBlockCollection Blocks, int X, int Z)
         {
             int Y = Blocks.GetHeight(X, Z);
             if (Y > 255)
@@ -68,7 +70,7 @@ namespace SeeSharp.Rendering
                 return _ColourPalette.DepthOpacities[Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)] == 0 ? -1 : 0;
             return Y;
         }
-        public int GetStartRenderYCave(AlphaBlockCollection Blocks, int X, int Z)
+        private int GetStartRenderYCave(AlphaBlockCollection Blocks, int X, int Z)
         {
             int Y = 255;
             if (Y > 255)
@@ -85,7 +87,7 @@ namespace SeeSharp.Rendering
                 return _ColourPalette.DepthOpacities[Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)] == 0 ? -1 : 0;
             return Y;
         }
-        public int GetStartRenderYCaveAlternate(AlphaBlockCollection Blocks, int X, int Z)
+        private int GetStartRenderYCaveAlternate(AlphaBlockCollection Blocks, int X, int Z)
         {
             int Y = 255;
             if (Y > 255)
@@ -200,7 +202,7 @@ namespace SeeSharp.Rendering
         {
             // *** Track how many chunks have been processed, for user feedback
             Interlocked.Increment(ref _ProcessedChunks);
-
+            Interlocked.Increment(ref _ActiveRenderThreads);
 #if !DEBUG
             // *** In release mode, gracefully handle bad chunks.  Explode in debug mode so I can track down the issue.
             try
@@ -212,7 +214,10 @@ namespace SeeSharp.Rendering
                 LoopState.Stop();
 
             if (LoopState != null && LoopState.IsStopped)
+            {
+                Interlocked.Decrement(ref _ActiveRenderThreads);
                 return;
+            }
 
             // *** Hold off on rendering if the user needs to attend to an issue
             while (_PauseRendering > 0)
@@ -298,6 +303,7 @@ namespace SeeSharp.Rendering
                 Interlocked.Decrement(ref _PauseRendering);
             }
 #endif
+            Interlocked.Decrement(ref _ActiveRenderThreads);
         }
 
 
@@ -372,6 +378,10 @@ namespace SeeSharp.Rendering
 
             if (!_PendingRender)
                 return;
+
+            // *** Wait for renderers to exit before disposing
+            while(_ActiveRenderThreads > 0)
+                Thread.Sleep(10);
 
             _OutputMap.Dispose();
             _OutputMap = null;

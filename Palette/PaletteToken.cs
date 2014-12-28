@@ -25,9 +25,9 @@ namespace SeeSharp.Palette
             Line = NewLine;
         }
 
-        public TokenType Type;
-        public String TokenData;
-        public int Line;
+        public readonly TokenType Type;
+        public readonly String TokenData;
+        public readonly int Line;
     }
 
 }

@@ -4,9 +4,9 @@ namespace SeeSharp.Palette
 {
     internal class TintEntry : IComparable<TintEntry>
     {
-        public int BiomeId;
-        public int BlockId;
-        public int Metadata;
+        public readonly int BiomeId;
+        public readonly int BlockId;
+        public readonly int Metadata;
 
         public Colour Tint;
 

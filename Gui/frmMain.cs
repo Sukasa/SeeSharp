@@ -136,9 +136,9 @@ namespace SeeSharp.Gui
                 DataGridViewRow Row = dgPalettes.Rows[dgPalettes.Rows.Add(File.Selected, File.Name, File.Version)];
                 Row.Tag = File;
                 if (File.Version != String.Empty)
-                    Row.Cells[1].ToolTipText = string.Format("{0} v{1}\r\n{2}", File.Name, File.Version, File.Description);
+                    Row.Cells[1].ToolTipText = string.Format("{0} v{1} by {2}\r\n{3}", File.Name, File.Version, File.Author, File.Description);
                 else
-                    Row.Cells[1].ToolTipText = string.Format("{0}\r\n{1}", File.Name, File.Description);
+                    Row.Cells[1].ToolTipText = string.Format("{0} by {1}\r\n{2}", File.Name, File.Author, File.Description);
 
             }
 
@@ -473,11 +473,13 @@ namespace SeeSharp.Gui
             {
                 MessageBox.Show(string.Format("The folder {0} does not appear to contain a valid minecraft world", fbOpenFolder.SelectedPath), "Error Loading World", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
+#if !DEBUG
+
             catch (Exception Ex)
             {
                 MessageBox.Show(string.Format("Error - Could not load world:\r\n{1}\r\n({0})", Ex.Message, Ex.GetType().Name), "Error Loading World", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
+#endif
             lblStatus.Text = "World load failed";
 
         }
@@ -655,6 +657,11 @@ namespace SeeSharp.Gui
             Properties.Settings.Default.MTThreadCount = cbMultithread.Checked ? (int)nudThreads.Value : 1;
             Properties.Settings.Default.Save();
             ToggleControls(false, _World != null, false, tpSettings);
+        }
+
+        private void toolStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
         }
     }
 }

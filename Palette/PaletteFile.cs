@@ -8,12 +8,13 @@ namespace SeeSharp.Palette
     {
         public string Name;
         public string Version;
-        public string PalettePath;
         public string Author;
         public string Description;
 
         public string AssociatedCfgFile;
         public string AssociatedRenderer;
+
+        public readonly string PalettePath;
 
         public bool Selected;
 
@@ -32,7 +33,7 @@ namespace SeeSharp.Palette
             ReadMetadata();
         }
 
-        public void ReadMetadata()
+        private void ReadMetadata()
         {
             StreamReader S = File.OpenText(PalettePath);
 

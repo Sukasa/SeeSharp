@@ -715,17 +715,17 @@
             this.tpSettings.Text = "Settings";
             this.tpSettings.UseVisualStyleBackColor = true;
             // 
-            // chkMultithread
+            // cbMultithread
             // 
             this.cbMultithread.AutoSize = true;
             this.cbMultithread.Location = new System.Drawing.Point(10, 127);
-            this.cbMultithread.Name = "chkMultithread";
+            this.cbMultithread.Name = "cbMultithread";
             this.cbMultithread.Size = new System.Drawing.Size(190, 17);
             this.cbMultithread.TabIndex = 36;
             this.cbMultithread.Tag = "IGNORE";
             this.cbMultithread.Text = "Use multithreading where available";
             this.Tooltips.SetToolTip(this.cbMultithread, "If checked, will multi-thread operations where possible.  Takes effect immediatel" +
-                    "y.");
+        "y.");
             this.cbMultithread.UseVisualStyleBackColor = true;
             this.cbMultithread.CheckedChanged += new System.EventHandler(this.cbMultithread_CheckedChanged);
             // 
@@ -763,17 +763,17 @@
             this.label8.Text = "Threads:";
             this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // chkShowCLIButton
+            // cbShowCLIButton
             // 
             this.cbShowCLIButton.AutoSize = true;
             this.cbShowCLIButton.Location = new System.Drawing.Point(10, 104);
-            this.cbShowCLIButton.Name = "chkShowCLIButton";
+            this.cbShowCLIButton.Name = "cbShowCLIButton";
             this.cbShowCLIButton.Size = new System.Drawing.Size(193, 17);
             this.cbShowCLIButton.TabIndex = 4;
             this.cbShowCLIButton.Tag = "IGNORE";
             this.cbShowCLIButton.Text = "Show \'CLI Params\' button in toolbar";
             this.Tooltips.SetToolTip(this.cbShowCLIButton, "If checked, show the \'CLI Params\' button in the menu bar.  Not useful unless you " +
-                    "are planning on writing a batch script");
+        "are planning on writing a batch script");
             this.cbShowCLIButton.UseVisualStyleBackColor = true;
             this.cbShowCLIButton.CheckedChanged += new System.EventHandler(this.cbShowCLIButton_CheckedChanged);
             // 
@@ -827,13 +827,13 @@
             this.rbPromptUpdates.Text = "Prompt on updates available";
             this.rbPromptUpdates.UseVisualStyleBackColor = true;
             // 
-            // chkAutoUpdate
+            // cbAutoUpdate
             // 
             this.cbAutoUpdate.AutoSize = true;
             this.cbAutoUpdate.Checked = true;
             this.cbAutoUpdate.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbAutoUpdate.Location = new System.Drawing.Point(10, 8);
-            this.cbAutoUpdate.Name = "chkAutoUpdate";
+            this.cbAutoUpdate.Name = "cbAutoUpdate";
             this.cbAutoUpdate.Size = new System.Drawing.Size(191, 17);
             this.cbAutoUpdate.TabIndex = 0;
             this.cbAutoUpdate.Tag = "IGNORE";
@@ -875,6 +875,7 @@
             this.toolStrip1.TabIndex = 3;
             this.toolStrip1.Tag = "ALWAYS";
             this.toolStrip1.Text = "toolStrip1";
+            this.toolStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolStrip1_ItemClicked);
             // 
             // btnOpenWorld
             // 
@@ -894,7 +895,7 @@
             this.btnCopyCLI.Size = new System.Drawing.Size(86, 22);
             this.btnCopyCLI.Text = "CLI Params";
             this.btnCopyCLI.ToolTipText = "Copy the current operation settings in the GUI to clipboard as command-line argum" +
-                "ents";
+    "ents";
             this.btnCopyCLI.Click += new System.EventHandler(this.btnCopyCLI_Click);
             // 
             // toolStripButton2

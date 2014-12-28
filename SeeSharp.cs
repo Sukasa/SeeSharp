@@ -16,7 +16,7 @@ namespace SeeSharp
     [EditorBrowsable(EditorBrowsableState.Never)]
     public sealed class SeeSharpMain : IPlugin
     {
-        internal SeeSharpMain()
+        private SeeSharpMain()
         {
             // *** Empty
         }

@@ -75,7 +75,7 @@ namespace SeeSharp.Signs
         ///     The string to use as the Value
         /// </param>
         /// <returns></returns>
-        protected KeyValuePair<String, String> Pair(String S1, String S2)
+        protected static KeyValuePair<String, String> Pair(String S1, String S2)
         {
             return new KeyValuePair<string, string>(S1, S2);
         }
