@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using MoreLinq;
 using System.Linq;
 
-namespace SeeSharp.Rendering.Heatmaps.HeatmapBase
+namespace SeeSharp.Rendering
 {
-    class Heatmap
+    class Heatmap : IEnumerable<int>
     {
         private Granularity _Granularity; // Divisor for map size -> heatmap size
         private int[] _Map;
@@ -100,9 +101,38 @@ namespace SeeSharp.Rendering.Heatmaps.HeatmapBase
             Smooth(1);
         }
 
-        public int Adjust(int BlockX, int BlockZ, int Adjustment)
+        public void Offset(int Offset)
         {
-            return _Map[((BlockX >> (int)_Granularity) + ((BlockZ >> (int)_Granularity) * _Width))] += Adjustment;
+            for (int x = 0; x < _Width; x++)
+                for (int y = 0; y < _Height; y++)
+                    this.Offset(x, y, Offset);
+        }
+
+        public int Offset(int BlockX, int BlockZ, int Offset)
+        {
+            return _Map[((BlockX >> (int)_Granularity) + ((BlockZ >> (int)_Granularity) * _Width))] += Offset;
+        }
+
+        public void Factor(float Factor)
+        {
+            for (int x = 0; x < _Width; x++)
+                for (int y = 0; y < _Height; y++)
+                    this.Factor(x, y, Factor);
+        }
+
+        public int Factor(int BlockX, int BlockZ, float Factor)
+        {
+            return _Map[((BlockX >> (int)_Granularity) + ((BlockZ >> (int)_Granularity) * _Width))] = (int)((float)_Map[((BlockX >> (int)_Granularity) + ((BlockZ >> (int)_Granularity) * _Width))] * Factor);
+        }
+
+        public IEnumerator<int> GetEnumerator()
+        {
+            return ((IEnumerable<int>)_Map).GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return _Map.GetEnumerator();
         }
     }
 }
