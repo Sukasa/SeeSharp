@@ -148,7 +148,7 @@ namespace SeeSharp.Rendering
                 }
                 catch (OperationCanceledException)
                 {
-
+                    // Discard exception - this just means the user cancelled.
                 }
             }
             else
@@ -198,7 +198,7 @@ namespace SeeSharp.Rendering
         }
 
         // ReSharper disable once FunctionComplexityOverflow
-        // *** I do this because this function is the 'hottest' block of code in the program, and saving cycles during execution is ridiculously important here.
+        // *** I do ^ because this function is the 'hottest' block of code in the program, and saving cycles during execution is ridiculously important here.
         void RenderChunk(ChunkRef Chunk, ParallelLoopState LoopState)
         {
             // *** Track how many chunks have been processed, for user feedback
@@ -311,25 +311,29 @@ namespace SeeSharp.Rendering
         // *** Progress Updating
         void DoProgressUpdate()
         {
-            _ProgressUpdateEventData.ProgressShortDescription = "Rendering";
             if (ProgressUpdate != null)
             {
+                // *** There are "short" and "long" descriptions of progress.
+                _ProgressUpdateEventData.ProgressShortDescription = "Rendering";
                 _ProgressUpdateEventData.Progress = _ProcessedChunks / (float)_RenderableChunks;
+                
                 if (_RenderableChunks > 0)
                 {
                     _ProgressUpdateEventData.ProgressDescription = String.Format("Rendered {0} of {1} chunks ({2}%)",
-                        _ProcessedChunks, _RenderableChunks, (100*_ProcessedChunks)/_RenderableChunks);
+                        _ProcessedChunks, _RenderableChunks, (100 * _ProcessedChunks)/_RenderableChunks);
                 }
                 else
                 {
                     _ProgressUpdateEventData.ProgressDescription = "No chunks to render";
                 }
+                
                 ProgressUpdate.Invoke(this, _ProgressUpdateEventData);
             }
         }
+
+        // *** Multithreaded-rendering progress display thread.
         void DisplayProgress()
         {
-
             while (true)
             {
                 DoProgressUpdate();
