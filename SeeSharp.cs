@@ -16,7 +16,7 @@ namespace SeeSharp
     [EditorBrowsable(EditorBrowsableState.Never)]
     public sealed class SeeSharpMain : IPlugin
     {
-        internal SeeSharpMain()
+        private SeeSharpMain()
         {
             // *** Empty
         }
@@ -24,29 +24,29 @@ namespace SeeSharp
         /// <summary>
         ///     Win32 main entry point
         /// </summary>
-        /// <param name="args">
+        /// <param name="Args">
         ///     Command-line arguments
         /// </param>
         /// <returns>
         ///     Program return code
         /// </returns>
         [STAThread]
-        public static int Main(string[] args)
+        public static int Main(string[] Args)
         {
-            return (new SeeSharpMain()).ProgramMain(args);
+            return (new SeeSharpMain()).ProgramMain(Args);
         }
 
-        private int ProgramMain(string[] args)
+        private int ProgramMain(string[] Args)
         {
-            if (args.Length == 0)
+            if (Args.Length == 0)
             {
                 Console.WriteLine("No command-line parameters; opening Gui...");
                 Application.EnableVisualStyles();
-                Application.Run(new Gui.frmMain());
+                Application.Run(new Gui.FrmMain());
             }
             else
             {
-                return (new CLIMain()).HandleCLI(args);
+                return (new CliMain()).HandleCli(Args);
             }
 
 

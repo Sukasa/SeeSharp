@@ -4,32 +4,32 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 using System.Xml;
 using Substrate;
 using Substrate.TileEntities;
-
-namespace SeeSharp
+// ReSharper disable RedundantJumpStatement
+// *** Redundant continue statements are used for code clarity.
+namespace SeeSharp.Signs
 {
     internal class SignExporter
     {
 
-        Dictionary<String, Type> SignMap = new Dictionary<String, Type>();
-        List<SignBase> ExportableSigns = new List<SignBase>();
+        Dictionary<String, Type> _SignMap = new Dictionary<String, Type>();
+        readonly List<SignBase> _ExportableSigns = new List<SignBase>();
 
 
-        Dictionary<String, Type> CreateSignMap()
+        static Dictionary<String, Type> CreateSignMap()
         {
-            Dictionary<String, Type> SignMap = new Dictionary<String, Type>();
+            Dictionary<String, Type> Map = new Dictionary<String, Type>();
             List<Type> Plugins = new List<Type>();
-            string FolderPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + Path.DirectorySeparatorChar + "Signs";
+            string FolderPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + Path.DirectorySeparatorChar + "Signs";
             if (!Directory.Exists(FolderPath))
-                return SignMap;
-            foreach (System.IO.FileInfo DllFile in new System.IO.DirectoryInfo(FolderPath).GetFiles("*.dll"))
+                return Map;
+            foreach (FileInfo DllFile in new DirectoryInfo(FolderPath).GetFiles("*.dll"))
             {
                 try
                 {
-                    foreach (Type ClassDef in Assembly.LoadFrom(DllFile.FullName).GetTypes().Where((System.Type ClassType) => typeof(SignBase).IsAssignableFrom(ClassType)))
+                    foreach (Type ClassDef in Assembly.LoadFrom(DllFile.FullName).GetTypes().Where(classType => typeof(SignBase).IsAssignableFrom(classType)))
                     {
                         try
                         {
@@ -37,14 +37,14 @@ namespace SeeSharp
                         }
                         catch
                         {
-                            // *** Handle a broken or incompatible Class
+                            // *** Handle a broken or incompatible Class - by skipping it.
                             continue;
                         }
                     }
                 }
                 catch
                 {
-                    // *** Handle a broken or incompatible DLL
+                    // *** Handle a broken or incompatible DLL - by skipping it.
                     continue;
                 }
             }
@@ -54,26 +54,26 @@ namespace SeeSharp
                 try
                 {
                     SignBase Sign = (SignBase)Activator.CreateInstance(ClassDef, true);
-                    SignMap.Add("[" + Sign.SignType() + "]", ClassDef);
+                    Map.Add("[" + Sign.SignType() + "]", ClassDef);
                     Console.WriteLine("Registered sign type " + ClassDef.Name);
-                } catch (Exception ex) {
+                } catch (Exception Ex) {
                     Console.WriteLine("Failure registering plugin class " + ClassDef.AssemblyQualifiedName);
-                    Console.WriteLine("    " + ex.Message);
+                    Console.WriteLine("    " + Ex.Message);
                 }
             }
 
-            return SignMap;
+            return Map;
         }
 
         public void Process(RegionChunkManager Chunks, WorldMetrics Metrics, String Filename)
         {
             // *** Accumulate list of sign types
-            SignMap = CreateSignMap();
+            _SignMap = CreateSignMap();
 
 
             int NumLen = Metrics.NumberOfChunks.ToString().Length;
             int NumCount = Metrics.NumberOfChunks;
-            string NumFormat = "D" + NumLen.ToString();
+            string NumFormat = "D" + NumLen;
             int ProcessedChunks = 0;
             Console.Write("Scanned " + 0.ToString(NumFormat) + " of " + Metrics.NumberOfChunks.ToString() + " chunks (0%)");
             Point ProcessedCountPoint = new Point(8, Console.CursorTop);
@@ -100,7 +100,7 @@ namespace SeeSharp
             Writer.WriteStartElement("Signs");
 
             // *** Curly braces used to ensure that start and end element counts are matched.
-            foreach (SignBase Sign in ExportableSigns)
+            foreach (SignBase Sign in _ExportableSigns)
             {
 
                 Writer.WriteStartElement("Sign");
@@ -150,16 +150,10 @@ namespace SeeSharp
                 {
                     for (int ChunkY = 0; ChunkY < 128; ChunkY++)
                     {
-                        try
-                        {
-                            TileEntity Entity = Blocks.SafeGetTileEntity(ChunkX, ChunkY, ChunkZ);
-                            if (Entity is TileEntitySign)
-                                ParseSignInfo((TileEntitySign)Entity, ChunkX, ChunkY, ChunkZ, Chunk);
-                        }
-                        catch
-                        {
-
-                        }
+                        TileEntity Entity = Blocks.SafeGetTileEntity(ChunkX, ChunkY, ChunkZ);
+                        TileEntitySign Sign = Entity as TileEntitySign;
+                        if (Sign != null)
+                            ParseSignInfo(Sign, ChunkX, ChunkY, ChunkZ, Chunk);
                     }
                 }
             }
@@ -167,8 +161,8 @@ namespace SeeSharp
 
         SignBase CreateSign(string Text1)
         {
-            if (SignMap.ContainsKey(Text1))
-                return (SignBase)Activator.CreateInstance(SignMap[Text1], true);
+            if (_SignMap.ContainsKey(Text1))
+                return (SignBase)Activator.CreateInstance(_SignMap[Text1], true);
             return null;
         }
 
@@ -196,7 +190,7 @@ namespace SeeSharp
             } while (Y > 0 && Ent is TileEntitySign && Sign.AddSign((TileEntitySign)Ent));
 
             if (Sign.IsValid())
-                ExportableSigns.Add(Sign);
+                _ExportableSigns.Add(Sign);
 
         }
     }

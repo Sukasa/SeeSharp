@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace SeeSharp.Gui.Dialogs
 {
-    internal partial class dlgCheckingForUpdates : Form
+    internal partial class DlgCheckingForUpdates : Form
     {
-        internal dlgCheckingForUpdates()
+        internal DlgCheckingForUpdates()
         {
             InitializeComponent();
         }

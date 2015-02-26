@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -39,7 +39,7 @@ namespace SeeSharp
         /// <returns>
         ///     The tile entity for the block, or <see langword="null"/>
         /// </returns>
-        /// <seealso cref=" Susbtrate.TileEntity"/>
+        /// <seealso cref=" Substrate.TileEntity"/>
         public static TileEntity SafeGetTileEntity(this AlphaBlockCollection Blocks, int X, int Y, int Z)
         {
             try
@@ -58,39 +58,42 @@ namespace SeeSharp
         /// <remarks>
         ///     When calls, invokes the supplied <see cref="System.Action"/> on the control's UI thread
         /// </remarks>
-        /// <param name="code">
+        /// <param name="Code">
         ///     The <see cref="System.Action"/> to execute
         /// </param>
-        public static void UIThread(this Control @this, Action code)
+        /// <param name="This">
+        ///     The Control to execute the <see cref="System.Action"/>  on
+        /// </param>
+        public static void UIThread(this Control This, Action Code)
         {
-            if (@this.InvokeRequired)
+            if (This.InvokeRequired)
             {
-                @this.BeginInvoke(code);
+                This.BeginInvoke(Code);
             }
             else
             {
-                code.Invoke();
+                Code.Invoke();
             }
         }
 
         /// <summary>
         ///     Whether an X/Y point intersects this rectangle
         /// </summary>
-        /// <param name="this">
+        /// <param name="This">
         ///     Rectangle to compare the point against
         /// </param>
-        /// <param name="x">
+        /// <param name="X">
         ///     X value of the point to check
         /// </param>
-        /// <param name="y">
+        /// <param name="Y">
         ///     Y value of the point to check
         /// </param>
         /// <returns>
         ///     Whether the X/Y point is contained within the rectangle inclusively
         /// </returns>
-        public static bool ContainsPoint(this Rectangle @this, int x, int y)
+        public static bool ContainsPoint(this Rectangle This, int X, int Y)
         {
-            return (x >= @this.Left && x < @this.Right && y >= @this.Top && y < @this.Bottom);
+            return (X >= This.Left && X < This.Right && Y >= This.Top && Y < This.Bottom);
         }
 
         /// <summary>
@@ -102,11 +105,12 @@ namespace SeeSharp
         /// <returns>
         ///     An Enumerable list of all controls contained by or within the root control
         /// </returns>
+        [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
         public static IEnumerable<Control> GetSubControls(this Control Root)
         {
             IEnumerable<Control> Controls = Root.Controls.Cast<Control>();
 
-            return Controls.SelectMany(X => X.GetSubControls())
+            return Controls.SelectMany(x => x.GetSubControls())
                                       .Concat(Controls);
         }
 
@@ -122,15 +126,18 @@ namespace SeeSharp
         public static string ConvertToRelativePath(this string FilePath)
         {
             String RootRef = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            Uri pathUri = new Uri(FilePath);
+            Uri PathUri = new Uri(FilePath);
+
+            if (RootRef == null)
+                return string.Empty;
 
             // *** Folders must end in a slash
             if (!RootRef.EndsWith(Path.DirectorySeparatorChar.ToString()))
             {
                 RootRef += Path.DirectorySeparatorChar;
             }
-            Uri folderUri = new Uri(RootRef);
-            return Uri.UnescapeDataString(folderUri.MakeRelativeUri(pathUri).ToString().Replace('/', Path.DirectorySeparatorChar));
+            Uri FolderUri = new Uri(RootRef);
+            return Uri.UnescapeDataString(FolderUri.MakeRelativeUri(PathUri).ToString().Replace('/', Path.DirectorySeparatorChar));
         }
 
         public static T[] GetRange<T>(this T[] Array, int StartingOffset, int Range, int Stride)

@@ -67,10 +67,6 @@ namespace SeeSharp
         public String Dimension = "";
 
         internal WorldMetrics() { }
-        internal WorldMetrics(RegionChunkManager Chunks)
-        {
-            Measure(Chunks);
-        }
         internal WorldMetrics(AnvilWorld World, String Dimension)
         {
             this.Dimension = Dimension;
@@ -95,7 +91,7 @@ namespace SeeSharp
                 NumberOfChunks++;
             }
         }
-        internal void Measure(AnvilWorld World)
+        private void Measure(AnvilWorld World)
         {
             Measure(World.GetChunkManager(Dimension));
         }

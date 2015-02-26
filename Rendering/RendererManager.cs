@@ -10,7 +10,7 @@ namespace SeeSharp.Rendering
     internal class RendererManager
     {
         private static RendererManager _Instance;
-        private Dictionary<String, Tuple<String, Type>> Renderers = new Dictionary<string, Tuple<string, Type>>();
+        private readonly Dictionary<String, Tuple<String, Type>> _Renderers = new Dictionary<string, Tuple<string, Type>>();
 
         private RendererManager()
         {
@@ -20,9 +20,9 @@ namespace SeeSharp.Rendering
         void LoadRenderers()
         {
             // TODO replace this with code that references and uses the plugin controller
-            Renderers.Clear();
+            _Renderers.Clear();
             Renderer CoreRenderer = new Renderer();
-            Renderers.Add(CoreRenderer.RendererName, new Tuple<string, Type>(CoreRenderer.RendererFriendlyName, CoreRenderer.GetType()));
+            _Renderers.Add(CoreRenderer.RendererName, new Tuple<string, Type>(CoreRenderer.RendererFriendlyName, CoreRenderer.GetType()));
 
             if (!Directory.Exists(Assembly.GetExecutingAssembly().Location + "/Plugins"))
                 return;
@@ -32,11 +32,11 @@ namespace SeeSharp.Rendering
                     if (typeof(IRenderer).IsAssignableFrom(TestType))
                     {
                         IRenderer TestRenderer = (IRenderer)Activator.CreateInstance(TestType);
-                        if (!Renderers.ContainsKey(TestRenderer.RendererFriendlyName))
-                            Renderers.Add(TestRenderer.RendererName, new Tuple<string, Type>(TestRenderer.RendererFriendlyName, TestType));
+                        if (!_Renderers.ContainsKey(TestRenderer.RendererFriendlyName))
+                            _Renderers.Add(TestRenderer.RendererName, new Tuple<string, Type>(TestRenderer.RendererFriendlyName, TestType));
                     }
 
-            Renderers[""] = new Tuple<string, Type>("Standard Renderer", typeof(Renderer));
+            _Renderers[""] = new Tuple<string, Type>("Standard Renderer", typeof(Renderer));
         }
 
         public static RendererManager Instance()
@@ -48,19 +48,19 @@ namespace SeeSharp.Rendering
 
         public String GetFriendlyName(String RendererName)
         {
-            return Renderers[RendererName].Item1;
+            return _Renderers[RendererName].Item1;
         }
 
         public IRenderer InstantiateRenderer(String RendererName)
         {
-            return (IRenderer)Activator.CreateInstance(Renderers[RendererName].Item2);
+            return (IRenderer)Activator.CreateInstance(_Renderers[RendererName].Item2);
         }
 
         public IEnumerable<String> AvailableRendererCodes
         {
             get
             {
-                return Renderers.Keys;
+                return _Renderers.Keys;
             }
         }
     }

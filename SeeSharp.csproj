@@ -232,7 +232,9 @@
     <Compile Include="WorldMetrics.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Biomes\Vanilla.pal">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -308,9 +310,7 @@
     <None Include="Resources\application_xp_terminal.png" />
     <None Include="Resources\help.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Palette\PaletteCommands\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="Gui\Dialogs\dlgCheckingForUpdates.resx">
       <DependentUpon>dlgCheckingForUpdates.cs</DependentUpon>

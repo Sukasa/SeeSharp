@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using Substrate.TileEntities;
 
-namespace SeeSharp
+namespace SeeSharp.Signs
 {
 
     abstract public class SignBase
@@ -75,7 +75,7 @@ namespace SeeSharp
         ///     The string to use as the Value
         /// </param>
         /// <returns></returns>
-        protected KeyValuePair<String, String> Pair(String S1, String S2)
+        protected static KeyValuePair<String, String> Pair(String S1, String S2)
         {
             return new KeyValuePair<string, string>(S1, S2);
         }

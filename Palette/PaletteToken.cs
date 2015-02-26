@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SeeSharp
+namespace SeeSharp.Palette
 {
 
     internal struct PaletteToken
@@ -25,9 +25,9 @@ namespace SeeSharp
             Line = NewLine;
         }
 
-        public TokenType Type;
-        public String TokenData;
-        public int Line;
+        public readonly TokenType Type;
+        public readonly String TokenData;
+        public readonly int Line;
     }
 
 }

@@ -9,97 +9,99 @@ using System.Threading;
 using System.Threading.Tasks;
 using SeeSharp.Palette;
 using SeeSharp.Plugins;
-using SeeSharp.Rendering;
 using Substrate;
+// ReSharper disable PossibleMultipleEnumeration
 
-namespace SeeSharp
+namespace SeeSharp.Rendering
 {
     internal sealed class Renderer : IRenderer
     {
         // *** Error Codes
-        public const Int32 ErrorNoMemory = -1;  // *** ERROR: Couldn't allocate bitmap.  Fatal, because w/o a bitmap wtf are you rendering to?
-        public const Int32 ErrorBadChunk = 1;   // *** ERROR: There was a bad chunk that couldn't be rendered.  Not a fatal error.
-        public const Int32 ErrorErrors = 2;     // *** ERROR: There were errors in the render!  Makes sense in context.
+        private const Int32 ErrorNoMemory = -1;  // *** ERROR: Couldn't allocate bitmap.  Fatal, because w/o a bitmap wtf are you rendering to?
+        // ReSharper disable once UnusedMember.Local
+        private const Int32 ErrorBadChunk = 1;   // *** ERROR: There was a bad chunk that couldn't be rendered.  Not a fatal error.  Only used in Release config.
+        private const Int32 ErrorErrors = 2;     // *** ERROR: There were errors in the render!  Makes sense in context.
 
 
         // *** Configuration data
-        private BlockPalette ColourPalette = new BlockPalette();
-        private WorldMetrics Metrics;
-        private RenderConfiguration Config;
-        private RegionChunkManager Chunks;
+        private BlockPalette _ColourPalette = new BlockPalette();
+        private WorldMetrics _Metrics;
+        private RenderConfiguration _Config;
+        private RegionChunkManager _Chunks;
 
 
         // *** Rendering data
-        private Bitmap OutputMap;
-        private BitmapData RenderTarget;
-        private Int32 Stride;
-        private Func<AlphaBlockCollection, int, int, int> RenderStartY;
-        private CancellationTokenSource Cancellation = new CancellationTokenSource();
-        private ParallelOptions RenderingParallelOptions = new ParallelOptions();
-        private ProgressUpdateEventArgs ProgressUpdateEventData = new ProgressUpdateEventArgs();
-        private int PauseRendering = 0;
-        private int RenderableChunks;
+        private Bitmap _OutputMap;
+        private BitmapData _RenderTarget;
+        private Int32 _Stride;
+        private Func<AlphaBlockCollection, int, int, int> _RenderStartY;
+        private readonly CancellationTokenSource _Cancellation = new CancellationTokenSource();
+        private readonly ParallelOptions _RenderingParallelOptions = new ParallelOptions();
+        private readonly ProgressUpdateEventArgs _ProgressUpdateEventData = new ProgressUpdateEventArgs();
+
+        // ** Chunk Stuff
+        private int _RenderableChunks;
 
 
         // *** Progress Update Data
-        private int ProcessedChunks = 0;
-        private bool CorruptChunks = false;
-        private bool PendingRender = false;
+        private int _ProcessedChunks;
+        private bool _PendingRender;
+        private int _ActiveRenderThreads;
 
+
+        // *** Not used in release mode
+#pragma warning disable 649
+        private int _PauseRendering;
+        private bool _CorruptChunks;
+#pragma warning restore 649
 
         // *** Events
         public event ProgressUpdateHandler ProgressUpdate;
         public event RenderingErrorHandler RenderError;
 
 
-        // *** Constructor
-        public Renderer()
-        {
-        }
-
-
         // *** Render start determiners
-        public int GetStartRenderYNormal(AlphaBlockCollection Blocks, int X, int Z)
+        private int GetStartRenderYNormal(AlphaBlockCollection Blocks, int X, int Z)
         {
             int Y = Blocks.GetHeight(X, Z);
             if (Y > 255)
                 Y = 255;
             if (Y == 0)
-                return ColourPalette.DepthOpacities[Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)] == 0 ? -1 : 0;
+                return _ColourPalette.DepthOpacities[Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)] == 0 ? -1 : 0;
             return Y;
         }
-        public int GetStartRenderYCave(AlphaBlockCollection Blocks, int X, int Z)
+        private int GetStartRenderYCave(AlphaBlockCollection Blocks, int X, int Z)
         {
             int Y = 255;
             if (Y > 255)
                 Y = 255;
 
-            while (Y >= 0 && ColourPalette.FastPalette[0][Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)].A == 0)
+            while (Y >= 0 && _ColourPalette.FastPalette[0][Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)].A == 0)
                 Y--;
-            while (Y >= 0 && ColourPalette.FastPalette[0][Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)].A != 0)
+            while (Y >= 0 && _ColourPalette.FastPalette[0][Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)].A != 0)
                 Y--;
-            while (Y >= 0 && ColourPalette.FastPalette[0][Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)].A == 0)
+            while (Y >= 0 && _ColourPalette.FastPalette[0][Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)].A == 0)
                 Y--;
 
             if (Y == 0)
-                return ColourPalette.DepthOpacities[Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)] == 0 ? -1 : 0;
+                return _ColourPalette.DepthOpacities[Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)] == 0 ? -1 : 0;
             return Y;
         }
-        public int GetStartRenderYCaveAlternate(AlphaBlockCollection Blocks, int X, int Z)
+        private int GetStartRenderYCaveAlternate(AlphaBlockCollection Blocks, int X, int Z)
         {
             int Y = 255;
             if (Y > 255)
                 Y = 255;
 
-            while (Y >= 0 && ColourPalette.FastPalette[0][Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)].A < 255) // Find first renderable fully opaque block
+            while (Y >= 0 && _ColourPalette.FastPalette[0][Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)].A < 255) // Find first renderable fully opaque block
                 Y--;
-            while (Y >= 0 && ColourPalette.FastPalette[0][Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)].A != 0)
+            while (Y >= 0 && _ColourPalette.FastPalette[0][Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)].A != 0)
                 Y--;
-            while (Y >= 0 && ColourPalette.FastPalette[0][Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)].A == 0)
+            while (Y >= 0 && _ColourPalette.FastPalette[0][Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)].A == 0)
                 Y--;
 
             if (Y == 0)
-                return ColourPalette.DepthOpacities[Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)] == 0 ? -1 : 0;
+                return _ColourPalette.DepthOpacities[Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)] == 0 ? -1 : 0;
 
             return Y;
         }
@@ -110,35 +112,38 @@ namespace SeeSharp
         {
 
             // *** Define the chunk query, in order to cleanly support subregions
-            IEnumerable<ChunkRef> ChunkProvider = from ChunkRef Chunk in Chunks
-                                                  where !Config.RenderSubregion || Config.SubregionChunks.ContainsPoint(Chunk.X, Chunk.Z)
+            IEnumerable<ChunkRef> ChunkProvider = from ChunkRef Chunk in _Chunks
+                                                  where !_Config.RenderSubregion || _Config.SubregionChunks.ContainsPoint(Chunk.X, Chunk.Z)
                                                   select Chunk;
 
-            PendingRender = false;
+            _PendingRender = false;
 
-            if (Config.RenderSubregion)
-                foreach (ChunkRef Chunk in ChunkProvider)
-                    RenderableChunks++;
-
-            if (Cancellation.IsCancellationRequested)
+            // *** If rendering a subregion, then wipe the _RenderableChunks var and recalculate it from the number of chunks in the subregion, not the world
+            if (_Config.RenderSubregion)
             {
-                OutputMap.Dispose();
-                OutputMap = null;
+                _RenderableChunks = ChunkProvider.Count();
+            }
+
+            // *** If rendering was cancelled between init and now, abort.
+            if (_Cancellation.IsCancellationRequested)
+            {
+                _OutputMap.Dispose();
+                _OutputMap = null;
                 return;
             }
 
-            // *** And render
-            if (Config.EnableMultithreading)
+            // *** Render
+            if (_Config.EnableMultithreading)
             {
                 Thread UpdateThread = new Thread(DisplayProgress);
                 UpdateThread.Start();
 
-                RenderingParallelOptions.CancellationToken = Cancellation.Token;
-                RenderingParallelOptions.MaxDegreeOfParallelism = Config.MaxThreads;
+                _RenderingParallelOptions.CancellationToken = _Cancellation.Token;
+                _RenderingParallelOptions.MaxDegreeOfParallelism = _Config.MaxThreads;
 
                 try
                 {
-                    Parallel.ForEach<ChunkRef>(ChunkProvider, RenderingParallelOptions, RenderChunk);
+                    Parallel.ForEach(ChunkProvider, _RenderingParallelOptions, RenderChunk);
                     UpdateThread.Join();
                 }
                 catch (OperationCanceledException)
@@ -151,58 +156,75 @@ namespace SeeSharp
                 foreach (ChunkRef Chunk in ChunkProvider)
                 {
                     RenderChunk(Chunk, null);
-                    if (Cancellation.IsCancellationRequested)
+                    if (_Cancellation.IsCancellationRequested)
                         break;
                     DoProgressUpdate();
                 }
             }
 
-            OutputMap.UnlockBits(RenderTarget);
+            _OutputMap.UnlockBits(_RenderTarget);
 
-            if (Cancellation.IsCancellationRequested)
+            if (_Cancellation.IsCancellationRequested)
             {
-                OutputMap.Dispose();
-                OutputMap = null;
+                _OutputMap.Dispose();
+                _OutputMap = null;
                 return;
             }
 
-            if (!Config.IsPreview)
+            // *** If this is not a preview, then make sure the output directory exists then save the output bitmap
+            if (!_Config.IsPreview)
             {
-                Directory.CreateDirectory(Path.GetDirectoryName(Config.SaveFilename));
-                OutputMap.Save(Config.SaveFilename);
-                OutputMap.Dispose();
-                OutputMap = null;
+                // ReSharper disable once AssignNullToNotNullAttribute
+                Directory.CreateDirectory(Path.GetDirectoryName(_Config.SaveFilename));
+                _OutputMap.Save(_Config.SaveFilename);
+                _OutputMap.Dispose();
+                _OutputMap = null;
             }
 
             // *** If a chunk failed to render, let the user know.  Unless we aborted, because there's no point then.
-            if (CorruptChunks)
+            if (_CorruptChunks)
             {
-                RenderingErrorEventArgs e = new RenderingErrorEventArgs();
-                e.ErrorCode = ErrorErrors;
-                e.IsFatal = true;
-                e.UserErrorMessage = "WARNING: At least one potentially corrupt chunk was encountered during rendering.\r\nThe map image may contain missing sections as a result.";
+                RenderingErrorEventArgs E = new RenderingErrorEventArgs
+                {
+                    ErrorCode = ErrorErrors,
+                    IsFatal = true,
+                    UserErrorMessage =
+                        "WARNING: At least one potentially corrupt chunk was encountered during rendering.\r\nThe map image may contain missing sections as a result."
+                };
 
                 if (RenderError != null)
-                    RenderError.Invoke(this, e);
+                    RenderError.Invoke(this, E);
             }
         }
 
+        // ReSharper disable once FunctionComplexityOverflow
+        // *** I do this because this function is the 'hottest' block of code in the program, and saving cycles during execution is ridiculously important here.
         void RenderChunk(ChunkRef Chunk, ParallelLoopState LoopState)
         {
-            Interlocked.Increment(ref ProcessedChunks);
+            // *** Track how many chunks have been processed, for user feedback
+            Interlocked.Increment(ref _ProcessedChunks);
+            Interlocked.Increment(ref _ActiveRenderThreads);
 #if !DEBUG
+            // *** In release mode, gracefully handle bad chunks.  Explode in debug mode so I can track down the issue.
             try
             {
 #endif
-            if (LoopState != null && Cancellation.IsCancellationRequested)
+
+            // *** Cancellation logic for parallel processing    
+            if (LoopState != null && _Cancellation.IsCancellationRequested)
                 LoopState.Stop();
 
             if (LoopState != null && LoopState.IsStopped)
+            {
+                Interlocked.Decrement(ref _ActiveRenderThreads);
                 return;
+            }
 
-            while (PauseRendering > 0)
+            // *** Hold off on rendering if the user needs to attend to an issue
+            while (_PauseRendering > 0)
                 Thread.Sleep(50);
 
+            // *** Load the chunk from disk here
             AlphaBlockCollection Blocks = Chunk.Blocks;
 
             for (int X = 0; X < 16; X++)
@@ -210,7 +232,7 @@ namespace SeeSharp
                 for (int Z = 0; Z < 16; Z++)
                 {
                     // *** Start by finding the topmost block to render
-                    int EndY = RenderStartY(Blocks, X, Z);
+                    int EndY = _RenderStartY(Blocks, X, Z);
                     int Y = EndY;
 
                     if (Y < 0)
@@ -220,28 +242,28 @@ namespace SeeSharp
                     int RenderVal = 255;
                     while (RenderVal > 0)
                     {
-                        RenderVal -= ColourPalette.DepthOpacities[Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)];
+                        RenderVal -= _ColourPalette.DepthOpacities[Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)];
                         if (Y == 0) // *** If we've hit the bottom of the map, don't try and keep going.
                             break;  // *** It wouldn't end well.
                         Y--;
                     }
 
                     Colour SetColour = Colour.Transparent; // *** What colour to set the current column's pixel to.
-                    Colour TempColour; // *** Working pixel colour
 
                     // *** The Block-Metadata palette for this column's biome
-                    Colour[][] BiomePalette = ColourPalette.FastPalette[Chunk.Biomes.GetBiome(X, Z)];
+                    Colour[][] BiomePalette = _ColourPalette.FastPalette[Chunk.Biomes.GetBiome(X, Z)];
 
 
                     for (; Y <= EndY; Y++) // *** Now render up from the lowest block to the starting block
                     {
                         // *** For each block we render, grab its palette entry.
                         Colour Entry = BiomePalette[Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)];
+                        Colour TempColour; // *** Working pixel colour
 
                         // *** If it has an associated entity colours list, then it needs special consideration to get its colour
                         if ((Entry.Color & 0xFFFF0000U) == 0x00FF0000U) // *** Check for the flag value (0 Alpha, 255 Red - Blue and Green form the 0-65535 index)
                         {
-                            PaletteEntry Entry2 = ColourPalette.GetPaletteEntry((int)(Entry.Color & 0x0000FFFFU)).First((E) => E.IsMatch(Blocks.GetData(X, Y, Z), Blocks.SafeGetTileEntity(X, Y, Z)));
+                            PaletteEntry Entry2 = _ColourPalette.GetPaletteEntry((int)(Entry.Color & 0x0000FFFFU)).First(e => e.IsMatch(Blocks.GetData(X, Y, Z), Blocks.SafeGetTileEntity(X, Y, Z)));
                             if (Entry2 != null)
                                 TempColour = Entry2.Color;
                             else
@@ -254,47 +276,55 @@ namespace SeeSharp
                             continue; // *** If we're trying to render air, let's not.
 
                         // *** Blend in our working colour to the column's pixel, after applying altitude and light-level blends.
-                        SetColour.Blend(TempColour.Copy().LightLevel((uint)Math.Max(Config.MinLightLevel, Blocks.GetBlockLight(X, Math.Min(Y + 1, 255), Z))).Altitude(Y));
+                        SetColour.Blend(TempColour.Copy().LightLevel((uint)Math.Max(_Config.MinLightLevel, Blocks.GetBlockLight(X, Math.Min(Y + 1, 255), Z))).Altitude(Y));
                     }
 
                     if (SetColour.A > 0) // *** If our pixel isn't just transparent, then write it out to the target bitmap
-                        Marshal.WriteInt32(RenderTarget.Scan0 + (Stride * (((Chunk.Z - Config.SubregionChunks.Y) << 4) + Z)) + ((((Chunk.X - Config.SubregionChunks.X) << 4) + X) << 2), (int)SetColour.FullAlpha().Color);
+                        Marshal.WriteInt32(_RenderTarget.Scan0 + (_Stride * (((Chunk.Z - _Config.SubregionChunks.Y) << 4) + Z)) + ((((Chunk.X - _Config.SubregionChunks.X) << 4) + X) << 2), (int)SetColour.FullAlpha().Color);
                 }
             }
 #if !DEBUG // *** When not running in debug mode, chunks that fail to render should NOT crash everything.
             }
-            catch (Exception ex)
+            catch (Exception Ex)
             {
-                Interlocked.Increment(ref PauseRendering);
+                Interlocked.Increment(ref _PauseRendering);
 
-                CorruptChunks = true;
-                RenderingErrorEventArgs e = new RenderingErrorEventArgs();
-                e.ErrorException = ex;
-                e.IsFatal = false;
-                e.UserErrorMessage = "A chunk failed to render";
-                e.ErrorCode = ErrorBadChunk;
+                _CorruptChunks = true;
+                RenderingErrorEventArgs E = new RenderingErrorEventArgs
+                {
+                    ErrorException = Ex,
+                    IsFatal = false,
+                    UserErrorMessage = "A chunk failed to render",
+                    ErrorCode = ErrorBadChunk
+                };
 
                 if (RenderError != null)
-                    RenderError.Invoke(this, e);
+                    RenderError.Invoke(this, E);
 
-                Interlocked.Decrement(ref PauseRendering);
+                Interlocked.Decrement(ref _PauseRendering);
             }
 #endif
+            Interlocked.Decrement(ref _ActiveRenderThreads);
         }
 
 
         // *** Progress Updating
         void DoProgressUpdate()
         {
-            ProgressUpdateEventData.ProgressShortDescription = "Rendering";
+            _ProgressUpdateEventData.ProgressShortDescription = "Rendering";
             if (ProgressUpdate != null)
             {
-                ProgressUpdateEventData.Progress = (float)ProcessedChunks / (float)RenderableChunks;
-                if (RenderableChunks > 0)
-                    ProgressUpdateEventData.ProgressDescription = String.Format("Rendered {0} of {1} chunks ({2}%)", ProcessedChunks, RenderableChunks, (100 * ProcessedChunks) / RenderableChunks);
+                _ProgressUpdateEventData.Progress = _ProcessedChunks / (float)_RenderableChunks;
+                if (_RenderableChunks > 0)
+                {
+                    _ProgressUpdateEventData.ProgressDescription = String.Format("Rendered {0} of {1} chunks ({2}%)",
+                        _ProcessedChunks, _RenderableChunks, (100*_ProcessedChunks)/_RenderableChunks);
+                }
                 else
-                    ProgressUpdateEventData.ProgressDescription = "No chunks to render";
-                ProgressUpdate.Invoke(this, ProgressUpdateEventData);
+                {
+                    _ProgressUpdateEventData.ProgressDescription = "No chunks to render";
+                }
+                ProgressUpdate.Invoke(this, _ProgressUpdateEventData);
             }
         }
         void DisplayProgress()
@@ -304,10 +334,10 @@ namespace SeeSharp
             {
                 DoProgressUpdate();
 
-                if (ProcessedChunks >= RenderableChunks)
+                if (_ProcessedChunks >= _RenderableChunks)
                     return;
 
-                if (Cancellation.IsCancellationRequested)
+                if (_Cancellation.IsCancellationRequested)
                     return;
 
                 Thread.Sleep(100);
@@ -318,80 +348,90 @@ namespace SeeSharp
         // ** Initialization and control
         public void Configure(RenderConfiguration Configuration)
         {
-            Config = Configuration;
+            _Config = Configuration;
 
-            ColourPalette = Config.Palette;
-            Metrics = Config.Metrics;
+            _ColourPalette = _Config.Palette;
+            _Metrics = _Config.Metrics;
 
-            Chunks = Configuration.Chunks;
+            _Chunks = Configuration.Chunks;
 
-            if (Config.AdvancedRenderOptions.Exists((x) => x.Key == "Mode"))
+            if (_Config.AdvancedRenderOptions.Exists(x => x.Key == "Mode"))
             {
-                switch (Config.AdvancedRenderOptions.Find((x) => x.Key == "Mode").Value)
+                switch (_Config.AdvancedRenderOptions.Find(x => x.Key == "Mode").Value)
                 {
                     case "c":
-                        RenderStartY = GetStartRenderYCave;
+                        _RenderStartY = GetStartRenderYCave;
                         break;
                     case "C":
-                        RenderStartY = GetStartRenderYCaveAlternate;
+                        _RenderStartY = GetStartRenderYCaveAlternate;
                         break;
                     default:
-                        RenderStartY = GetStartRenderYNormal;
+                        _RenderStartY = GetStartRenderYNormal;
                         break;
                 }
             }
             else
-                RenderStartY = GetStartRenderYNormal;
+                _RenderStartY = GetStartRenderYNormal;
         }
         public void Abort()
         {
-            Cancellation.Cancel();
-            if (PendingRender)
-            {
-                OutputMap.Dispose();
-                OutputMap = null;
-            }
+            _Cancellation.Cancel();
+
+            if (!_PendingRender)
+                return;
+
+            // *** Wait for renderers to exit before disposing
+            while(_ActiveRenderThreads > 0)
+                Thread.Sleep(10);
+
+            _OutputMap.Dispose();
+            _OutputMap = null;
         }
         public void Initialize()
         {
             // *** Perform basic init.  Set up the bitmap, cache stride, etc
 
-            RenderableChunks = Config.RenderSubregion ? 0 : Metrics.NumberOfChunks;
+            _RenderableChunks = _Config.RenderSubregion ? 0 : _Metrics.NumberOfChunks;
 
             try
             {
-                OutputMap = new Bitmap((Config.SubregionChunks.Width + 1) * 16, (Config.SubregionChunks.Height + 1) * 16, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-                PendingRender = true;
+                _OutputMap = new Bitmap((_Config.SubregionChunks.Width + 1) * 16, (_Config.SubregionChunks.Height + 1) * 16, PixelFormat.Format32bppArgb);
+                _PendingRender = true;
             }
             catch (OutOfMemoryException)
             {
-                RenderingErrorEventArgs e = new RenderingErrorEventArgs();
-                e.ErrorCode = ErrorNoMemory;
-                e.IsFatal = true;
-                e.UserErrorMessage = "Failed to allocate dimension bitmap: memory unavailable.  Try rendering a smaller area";
+                RenderingErrorEventArgs E = new RenderingErrorEventArgs
+                {
+                    ErrorCode = ErrorNoMemory,
+                    IsFatal = true,
+                    UserErrorMessage =
+                        "Failed to allocate dimension bitmap: memory unavailable.  Try rendering a smaller area"
+                };
 
                 if (RenderError != null)
-                    RenderError.Invoke(this, e);
+                    RenderError.Invoke(this, E);
             }
-            catch (Exception ex)
+            catch (Exception Ex)
             {
-                RenderingErrorEventArgs e = new RenderingErrorEventArgs();
-                e.ErrorException = ex;
-                e.ErrorCode = ErrorNoMemory;
-                e.ShowInnerException = true;
-                e.IsFatal = true;
-                e.UserErrorMessage = "Failed to allocate dimension bitmap.";
+                RenderingErrorEventArgs E = new RenderingErrorEventArgs
+                {
+                    ErrorException = Ex,
+                    ErrorCode = ErrorNoMemory,
+                    ShowInnerException = true,
+                    IsFatal = true,
+                    UserErrorMessage = "Failed to allocate dimension bitmap."
+                };
 
                 if (RenderError != null)
-                    RenderError.Invoke(this, e);
+                    RenderError.Invoke(this, E);
             }
 
-            RenderTarget = OutputMap.LockBits(new Rectangle(0, 0, OutputMap.Width, OutputMap.Height), System.Drawing.Imaging.ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            Stride = RenderTarget.Stride;
+            _RenderTarget = _OutputMap.LockBits(new Rectangle(0, 0, _OutputMap.Width, _OutputMap.Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+            _Stride = _RenderTarget.Stride;
         }
         public bool IsAborting
         {
-            get { return Cancellation.IsCancellationRequested; }
+            get { return _Cancellation.IsCancellationRequested; }
         }
         public RendererConfigForm ConfigurationForm
         {
@@ -403,9 +443,9 @@ namespace SeeSharp
         public Bitmap Preview()
         {
             Render();
-            if (Cancellation.IsCancellationRequested)
+            if (_Cancellation.IsCancellationRequested)
                 return new Bitmap(512, 512, PixelFormat.Format32bppArgb);
-            return OutputMap;
+            return _OutputMap;
         }
 
 

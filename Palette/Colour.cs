@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace SeeSharp
+// ReSharper disable RedundantCast
+// *** Because I've found a weird issue where (byte) + (value over 255) comes out to (invalid value).
+
+namespace SeeSharp.Palette
 {
     /// <summary>
     ///     Color struct.  Similar to System.Drawing.Color, but is designed for extremely fast draw and blend calls, as well as some application-specific functions
@@ -121,7 +124,10 @@ namespace SeeSharp
         ///     Blend another colour onto this one with the specified alpha. storing the result into this colour
         /// </summary>
         /// <param name="Top">
-        ///     What colour to blend on top of this one
+        ///     What colour to blend on top of this one.  Alpha is ignored for blending, but returned as part of the resulting colour.
+        /// </param>
+        /// <param name="UseAlpha">
+        ///     What alpha value to use for the source colour
         /// </param>
         /// <returns>
         ///     This colour
@@ -147,7 +153,7 @@ namespace SeeSharp
         /// </returns>
         public Colour FullAlpha()
         {
-            Color |= 0xFF000000;
+            Color |= 0xFF000000U;
             return this;
         }
         /// <summary>

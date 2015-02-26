@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -8,34 +9,35 @@ using System.Xml;
 using SeeSharp.Palette;
 using SeeSharp.Plugins;
 using SeeSharp.Rendering;
+using SeeSharp.Signs;
 using Substrate;
 
 namespace SeeSharp
 {
-    /// <summary>
-    ///     Main handler class that processes "command-line mode" for See Sharp.
-    /// </summary>
-    internal class CLIMain
+    [Browsable(false)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    //    Main handler class that processes "command-line mode" for See Sharp.
+    internal class CliMain
     {
-        Stopwatch StepTimer = new Stopwatch();
-        List<String> LoadAdditionalPalettes = new List<string>();
-        WorldMetrics Metrics = new WorldMetrics();
-        BlockPalette ColourPalette = new BlockPalette();
+        readonly Stopwatch _StepTimer = new Stopwatch();
+        readonly List<String> _LoadAdditionalPalettes = new List<string>();
+        readonly WorldMetrics _Metrics = new WorldMetrics();
+        readonly BlockPalette _ColourPalette = new BlockPalette();
 
-        RenderConfiguration Configuration;
-        IRenderer Renderer;
+        RenderConfiguration _Configuration;
+        IRenderer _Renderer;
 
-        public int HandleCLI(string[] args)
+        public int HandleCli(string[] Args)
         {
-            Configuration = new RenderConfiguration(ColourPalette, Metrics);
+            _Configuration = new RenderConfiguration(_ColourPalette, _Metrics);
 
             // *** Function returns TRUE if the command line is invalid and the program should NOT proceed.
-            if (HandleCommandLineArguments(args))
+            if (HandleCommandLineArguments(Args))
                 return 0;
 
 
             // *** World path is mandatory.
-            if (Configuration.WorldPath == "")
+            if (_Configuration.WorldPath == "")
             {
                 Console.WriteLine("A world must be specified.");
                 ShowHelp();
@@ -44,19 +46,19 @@ namespace SeeSharp
 
             // *** Load the world
             Console.WriteLine("Opening world file:");
-            Console.WriteLine("    " + Configuration.WorldPath + "...");
+            Console.WriteLine("    " + _Configuration.WorldPath + "...");
             AnvilWorld World;
 
 
             // *** Try and open the world.  If it fails, handle it gracefully
             try
             {
-                World = Substrate.AnvilWorld.Open(Configuration.WorldPath);
+                World = AnvilWorld.Open(_Configuration.WorldPath);
             }
-            catch (Exception e)
+            catch (Exception Ex)
             {
                 Console.WriteLine("World could not be opened for reading:");
-                Console.WriteLine(e.ToString());
+                Console.WriteLine(Ex.ToString());
                 Console.WriteLine("Please check that the world exists and is valid.");
                 return 0;
             }
@@ -64,23 +66,25 @@ namespace SeeSharp
 
             // *** Read world and compute metrics (size, chunk count, more?)
             Console.WriteLine("Determining world boundaries");
-            StepTimer.Reset();
-            StepTimer.Start();
-            Metrics.Measure(World.GetChunkManager(Configuration.Dimension));
-            StepTimer.Stop();
-            Console.WriteLine("Took " + StepTimer.Elapsed.ToString("m\\ms\\sff"));
-            Console.WriteLine("Boundaries: (" + Metrics.MinX.ToString() + ", " + Metrics.MinZ.ToString() + ") to (" + Metrics.MaxX.ToString() + ", " + Metrics.MaxZ.ToString() + ")");
+            _StepTimer.Reset();
+            _StepTimer.Start();
+            _Metrics.Measure(World.GetChunkManager(_Configuration.Dimension));
+            _StepTimer.Stop();
+            Console.WriteLine("Took " + _StepTimer.Elapsed.ToString("m\\ms\\sff"));
+            Console.WriteLine("Boundaries: (" + _Metrics.MinX.ToString() + ", " + _Metrics.MinZ.ToString() + ") to (" + _Metrics.MaxX.ToString() + ", " + _Metrics.MaxZ.ToString() + ")");
 
 
             // *** Render dimension, if applicable
-            if (Configuration.SaveFilename != "")
+            if (_Configuration.SaveFilename != "")
             {
-                StepTimer.Reset();
-                StepTimer.Start();
+                _StepTimer.Reset();
+                _StepTimer.Start();
 
                 // *** Load palettes.  Start with palettes in EXE directory, then append all palettes in the force-load list.
                 Console.WriteLine("Loading Palettes...");
-                foreach (String PalFile in Directory.EnumerateFiles(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "*.pal").Concat(LoadAdditionalPalettes))
+                // ReSharper disable once AssignNullToNotNullAttribute
+                // *** Safe to assume our EXE will never not be in a folder.
+                foreach (String PalFile in Directory.EnumerateFiles(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "*.pal").Concat(_LoadAdditionalPalettes))
                 {
                     string PaletteFile = PalFile;
 
@@ -91,17 +95,17 @@ namespace SeeSharp
                     {
                         try
                         {
-                            ColourPalette.LoadPalette(PaletteFile);
+                            _ColourPalette.LoadPalette(PaletteFile);
                         }
-                        catch (BlockPalette.PaletteExecutionException ex)
+                        catch (BlockPalette.PaletteExecutionException Ex)
                         {
-                            Console.WriteLine(ex.Message);
+                            Console.WriteLine(Ex.Message);
                         }
-                        catch (Exception ex)
+                        catch (Exception Ex)
                         {
                             Console.WriteLine("Failed to load palette " + Path.GetFileNameWithoutExtension(PaletteFile) + ":");
-                            if (ex is BlockPalette.PaletteExecutionException)
-                                Console.WriteLine(ex.Message);
+                            if (Ex is BlockPalette.PaletteExecutionException)
+                                Console.WriteLine(Ex.Message);
                             else
                                 Console.WriteLine("Internal Error");
                         }
@@ -110,55 +114,55 @@ namespace SeeSharp
                         Console.WriteLine("Skipped missing file " + PaletteFile);
                 }
 
-                ColourPalette.AssembleLookupTables();
+                _ColourPalette.AssembleLookupTables();
 
-                Console.WriteLine("Palettes loaded.  Took " + StepTimer.Elapsed.ToString("m\\ms\\sff"));
-                StepTimer.Reset();
+                Console.WriteLine("Palettes loaded.  Took " + _StepTimer.Elapsed.ToString("m\\ms\\sff"));
+                _StepTimer.Reset();
 
-                StepTimer.Start();
-                Renderer = new Renderer();
+                _StepTimer.Start();
+                _Renderer = new Renderer();
 
                 // *** Set up the progress indicator
-                Console.WriteLine("Using " + (Configuration.EnableMultithreading ? "multi-threaded" : "single-threaded") + " " + Renderer.RendererFriendlyName);
+                Console.WriteLine("Using " + (_Configuration.EnableMultithreading ? "multi-threaded" : "single-threaded") + " " + _Renderer.RendererFriendlyName);
 
 
-                Renderer.ProgressUpdate += OnRenderProgressUpdate;
-                Renderer.RenderError += OnRenderError;
+                _Renderer.ProgressUpdate += OnRenderProgressUpdate;
+                _Renderer.RenderError += OnRenderError;
 
-                Configuration.Chunks = World.GetChunkManager(Metrics.Dimension);
-                if (!Configuration.RenderSubregion)
-                    Configuration.SubregionChunks = new Rectangle(Metrics.MinX, Metrics.MinZ, (Metrics.MaxX - Metrics.MinX), (Metrics.MaxZ - Metrics.MinZ));
-                Renderer.Configure(Configuration);
-                Renderer.Initialize();
+                _Configuration.Chunks = World.GetChunkManager(_Metrics.Dimension);
+                if (!_Configuration.RenderSubregion)
+                    _Configuration.SubregionChunks = new Rectangle(_Metrics.MinX, _Metrics.MinZ, (_Metrics.MaxX - _Metrics.MinX), (_Metrics.MaxZ - _Metrics.MinZ));
+                _Renderer.Configure(_Configuration);
+                _Renderer.Initialize();
 
-                if (!Renderer.IsAborting)
-                    Renderer.Render();
+                if (!_Renderer.IsAborting)
+                    _Renderer.Render();
 
-                StepTimer.Stop();
+                _StepTimer.Stop();
 
-                if (Renderer.IsAborting)
+                if (_Renderer.IsAborting)
                     Console.WriteLine("\r\nMap export failed.");
                 else
-                    Console.WriteLine("\r\nMap export complete.  Took " + StepTimer.Elapsed.ToString("m\\ms\\sff"));
+                    Console.WriteLine("\r\nMap export complete.  Took " + _StepTimer.Elapsed.ToString("m\\ms\\sff"));
             }
 
 
             // *** Produce sign information file, if applicable
-            if (Configuration.ScanFilename != "")
+            if (_Configuration.ScanFilename != "")
             {
-                StepTimer.Reset();
-                StepTimer.Start();
+                _StepTimer.Reset();
+                _StepTimer.Start();
 
                 SignExporter Exporter = new SignExporter();
-                Exporter.Process(World.GetChunkManager(Metrics.Dimension), Metrics, Configuration.ScanFilename);
+                Exporter.Process(World.GetChunkManager(_Metrics.Dimension), _Metrics, _Configuration.ScanFilename);
 
-                StepTimer.Stop();
-                Console.WriteLine("Took " + StepTimer.Elapsed.ToString("m\\ms\\sff"));
+                _StepTimer.Stop();
+                Console.WriteLine("Took " + _StepTimer.Elapsed.ToString("m\\ms\\sff"));
             }
 
 
             // *** Write world metrics, if applicable
-            if (Configuration.MetricsFilename != "")
+            if (_Configuration.MetricsFilename != "")
             {
                 WriteMetricsFile(World);
             }
@@ -169,28 +173,28 @@ namespace SeeSharp
             return 0;
         }
 
-        void OnRenderProgressUpdate(object sender, ProgressUpdateEventArgs e)
+        void OnRenderProgressUpdate(object Sender, ProgressUpdateEventArgs E)
         {
             Console.SetCursorPosition(0, Console.CursorTop);
-            Console.Write(e.ProgressDescription);
+            Console.Write(E.ProgressDescription);
         }
 
-        void OnRenderError(object sender, RenderingErrorEventArgs e)
+        void OnRenderError(object Sender, RenderingErrorEventArgs E)
         {
-            Console.WriteLine(e.UserErrorMessage);
-            if (e.ShowInnerException)
-                Console.WriteLine(e.ErrorException.Message);
-            if (e.IsFatal)
-                ((IRenderer)sender).Abort();
+            Console.WriteLine(E.UserErrorMessage);
+            if (E.ShowInnerException)
+                Console.WriteLine(E.ErrorException.Message);
+            if (E.IsFatal)
+                ((IRenderer)Sender).Abort();
         }
 
         void WriteMetricsFile(AnvilWorld World)
         {
 
-            XmlWriter Writer = XmlWriter.Create(Configuration.MetricsFilename);
+            XmlWriter Writer = XmlWriter.Create(_Configuration.MetricsFilename);
 
             Writer.WriteStartElement("Metrics");
-            Writer.WriteAttributeString("Dimension", Metrics.Dimension.ToString());
+            Writer.WriteAttributeString("Dimension", _Metrics.Dimension);
             Writer.WriteAttributeString("Name", World.Level.LevelName);
 
             {
@@ -218,22 +222,22 @@ namespace SeeSharp
 
                 Writer.WriteStartElement("Size");
                 {
-                    Writer.WriteElementString("WidthChunks", (Metrics.MaxX - Metrics.MinX + 1).ToString());
-                    Writer.WriteElementString("HeightChunks", (Metrics.MaxZ - Metrics.MinZ + 1).ToString());
+                    Writer.WriteElementString("WidthChunks", (_Metrics.MaxX - _Metrics.MinX + 1).ToString());
+                    Writer.WriteElementString("HeightChunks", (_Metrics.MaxZ - _Metrics.MinZ + 1).ToString());
                 }
                 Writer.WriteEndElement();
 
                 Writer.WriteStartElement("Extents");
                 {
-                    Writer.WriteElementString("X1", Metrics.MinX.ToString());
-                    Writer.WriteElementString("Y1", Metrics.MinZ.ToString());
+                    Writer.WriteElementString("X1", _Metrics.MinX.ToString());
+                    Writer.WriteElementString("Y1", _Metrics.MinZ.ToString());
 
-                    Writer.WriteElementString("X2", Metrics.MaxX.ToString());
-                    Writer.WriteElementString("Y2", Metrics.MaxZ.ToString());
+                    Writer.WriteElementString("X2", _Metrics.MaxX.ToString());
+                    Writer.WriteElementString("Y2", _Metrics.MaxZ.ToString());
                 }
                 Writer.WriteEndElement();
 
-                Writer.WriteElementString("ChunkCount", Metrics.NumberOfChunks.ToString());
+                Writer.WriteElementString("ChunkCount", _Metrics.NumberOfChunks.ToString());
             }
 
             Writer.WriteEndElement();
@@ -241,97 +245,99 @@ namespace SeeSharp
             Writer.Flush();
             Writer.Close();
 
-            Console.WriteLine("Wrote metrics file to " + Path.GetFileName(Configuration.MetricsFilename));
+            Console.WriteLine("Wrote metrics file to " + Path.GetFileName(_Configuration.MetricsFilename));
         }
 
-        bool HandleCommandLineArguments(string[] args)
+        // ReSharper disable once FunctionComplexityOverflow
+        // *** It's a freaking switch.  Not exactly overly complex.
+        bool HandleCommandLineArguments(IList<string> Args)
         {
             bool DoShowHelp = false;
-            for (int x = 0; x < args.Length; x++)
+            for (int X = 0; X < Args.Count; X++)
             {
-                switch (args[x])
+                switch (Args[X])
                 {
                     case "-l":
                     case "--light-Level":
-                        Configuration.MinLightLevel = int.Parse(args[++x]);
-                        if (Configuration.MinLightLevel < 0 || Configuration.MinLightLevel > 15)
+                        _Configuration.MinLightLevel = int.Parse(Args[++X]);
+                        if (_Configuration.MinLightLevel < 0 || _Configuration.MinLightLevel > 15)
                         {
                             Console.WriteLine("The Minlight (--light-level) value must be between 0 and 15, inclusive.  Will use a Minlight value of 15 (full daylight).");
-                            Configuration.MinLightLevel = 15;
+                            _Configuration.MinLightLevel = 15;
                         }
                         break;
                     case "-w":
                     case "--world":
-                        Configuration.WorldPath = args[++x];
+                        _Configuration.WorldPath = Args[++X];
                         break;
                     case "-s":
                     case "--signs":
-                        Configuration.ScanFilename = args[++x];
+                        _Configuration.ScanFilename = Args[++X];
                         break;
                     case "-m":
                     case "--metrics":
-                        Configuration.MetricsFilename = args[++x];
+                        _Configuration.MetricsFilename = Args[++X];
                         break;
                     case "-p":
                     case "--palette":
-                        LoadAdditionalPalettes.Add(args[++x]);
+                        _LoadAdditionalPalettes.Add(Args[++X]);
                         break;
                     case "-o":
                     case "--output":
-                        Configuration.SaveFilename = args[++x];
+                        _Configuration.SaveFilename = Args[++X];
                         break;
                     case "-T":
                     case "--multi-thread":
-                        Configuration.EnableMultithreading = true;
+                        _Configuration.EnableMultithreading = true;
                         break;
                     case "-t":
                     case "--max-threads":
-                        Configuration.MaxThreads =  int.Parse(args[++x]);
+                        _Configuration.MaxThreads =  int.Parse(Args[++X]);
                         break;
                     case "-d":
                     case "--dimension":
-                        Metrics.Dimension = args[++x];
-                        Configuration.Dimension = args[x];
+                        _Metrics.Dimension = Args[++X];
+                        _Configuration.Dimension = Args[X];
                         break;
                     case "-S":
                     case "--subregion":
-                        Configuration.RenderSubregion = true;
+                        _Configuration.RenderSubregion = true;
                         break;
                     case "-mX":
                     case "--subregion-min-x":
-                        int NewLeft = int.Parse(args[++x]);
-                        Configuration.SubregionChunks.Width += Configuration.SubregionChunks.Left - NewLeft;
-                        Configuration.SubregionChunks.X = NewLeft;
+                        int NewLeft = int.Parse(Args[++X]);
+                        _Configuration.SubregionChunks.Width += _Configuration.SubregionChunks.Left - NewLeft;
+                        _Configuration.SubregionChunks.X = NewLeft;
                         break;
                     case "-mZ":
                     case "--subregion-min-Z":
-                        int NewTop = int.Parse(args[++x]);
-                        Configuration.SubregionChunks.Height += Configuration.SubregionChunks.Top - NewTop;
-                        Configuration.SubregionChunks.Y = NewTop;
+                        int NewTop = int.Parse(Args[++X]);
+                        _Configuration.SubregionChunks.Height += _Configuration.SubregionChunks.Top - NewTop;
+                        _Configuration.SubregionChunks.Y = NewTop;
                         break;
                     case "-MX":
                     case "--subregion-max-x":
-                        Configuration.SubregionChunks.Width = int.Parse(args[++x]) - Configuration.SubregionChunks.Left;
+                        _Configuration.SubregionChunks.Width = int.Parse(Args[++X]) - _Configuration.SubregionChunks.Left;
                         break;
                     case "-MZ":
                     case "--subregion-max-Z":
-                        Configuration.SubregionChunks.Height = int.Parse(args[++x]) - Configuration.SubregionChunks.Top;
+                        _Configuration.SubregionChunks.Height = int.Parse(Args[++X]) - _Configuration.SubregionChunks.Top;
                         break;
                     case "-r":
                     case "--render-core":
-                        Configuration.RendererName = args[++x];
+                        _Configuration.RendererName = Args[++X];
                         break;
                     case "-R":
                     case "--render-option":
-                            String Option = args[++x];
-                            Configuration.AdvancedRenderOptions.Add(new KeyValuePair<string, string>(Option, args[++x]));
+                            String Option = Args[++X];
+                            _Configuration.AdvancedRenderOptions.Add(new KeyValuePair<string, string>(Option, Args[++X]));
                         break;
                     case "-ls":
                     case "--list-renderers":
                         Console.Write("Renderers:");
                         foreach (String RendererName in RendererManager.Instance().AvailableRendererCodes)
                         {
-                            Console.WriteLine(String.Format("{0} - {1}", RendererName, RendererManager.Instance().GetFriendlyName(RendererName)));
+                            Console.WriteLine(RendererName + " - " + RendererManager.Instance().GetFriendlyName(RendererName));
                         }
                         break;
                     case "-?":
@@ -340,7 +346,7 @@ namespace SeeSharp
                         DoShowHelp = true;
                         break;
                     default:
-                        Console.WriteLine("Error: Unknown command line parameter " + args[x]);
+                        Console.WriteLine("Error: Unknown command line parameter " + Args[X]);
                         ShowHelp();
                         return true;
                 }
@@ -368,7 +374,7 @@ namespace SeeSharp
             Console.WriteLine("    -r Renderer-Name: . Which renderer to use.  'Standard' is built in");
             Console.WriteLine("    -R Option Value:. . Advanced renderer option");
 
-            IRenderer Renderer = RendererManager.Instance().InstantiateRenderer(!String.IsNullOrEmpty(Configuration.RendererName) ? Configuration.RendererName : "");
+            IRenderer Renderer = RendererManager.Instance().InstantiateRenderer(!String.IsNullOrEmpty(_Configuration.RendererName) ? _Configuration.RendererName : "");
             Console.WriteLine("");
             Console.WriteLine(Renderer.RendererFriendlyName + " advanced options: ");
             Renderer.PrintHelpInfo();

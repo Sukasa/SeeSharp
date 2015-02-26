@@ -1,18 +1,18 @@
 ﻿using System;
 
-namespace SeeSharp
+namespace SeeSharp.Palette
 {
     internal class TintEntry : IComparable<TintEntry>
     {
-        public int BiomeID;
-        public int BlockID;
-        public int Metadata;
+        public readonly int BiomeId;
+        public readonly int BlockId;
+        public readonly int Metadata;
 
         public Colour Tint;
 
         public bool IsSupplantedBy(TintEntry NewEntry)
         {
-            if (NewEntry.BlockID != BlockID)
+            if (NewEntry.BlockId != BlockId)
                 return false;
 
             if (Metadata != NewEntry.Metadata && NewEntry.Metadata != -1)
@@ -21,31 +21,29 @@ namespace SeeSharp
             return true;
         }
 
-        public TintEntry(int BiomeID, int BlockID, int MetaData, int Red, int Green, int Blue, int Alpha)
+        public TintEntry(int BiomeId, int BlockId, int MetaData, int Red, int Green, int Blue, int Alpha)
         {
-            this.BiomeID = BiomeID;
-            this.BlockID = BlockID;
-            this.Metadata = MetaData;
-            this.Tint = new Colour { A = (byte)Alpha, R = (byte)Red, G = (byte)Green, B = (byte)Blue };
+            this.BiomeId = BiomeId;
+            this.BlockId = BlockId;
+            Metadata = MetaData;
+            Tint = new Colour { A = (byte)Alpha, R = (byte)Red, G = (byte)Green, B = (byte)Blue };
         }
 
-        public bool IsMatch(int CheckBlockID, int CheckMetaData)
+        public bool IsMatch(int CheckBlockId, int CheckMetaData)
         {
-            if (CheckBlockID != BlockID)
+            if (CheckBlockId != BlockId)
                 return false;
 
-            if (Metadata >= 0 && CheckMetaData != Metadata)
-                return false;
 
-            return true;
+            return (!(Metadata >= 0 && CheckMetaData != Metadata));
         }
 
         int IComparable<TintEntry>.CompareTo(TintEntry OtherEntry)
         {
-            if (BlockID < OtherEntry.BlockID)
+            if (BlockId < OtherEntry.BlockId)
                 return -1;
 
-            if (BlockID > OtherEntry.BlockID)
+            if (BlockId > OtherEntry.BlockId)
                 return 1;
 
             if (OtherEntry.Metadata == -1 && Metadata != -1)
