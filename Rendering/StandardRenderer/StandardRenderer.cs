@@ -186,6 +186,7 @@ namespace SeeSharp
                     RenderError.Invoke(this, e);
             }
         }
+
         void RenderChunk(ChunkRef Chunk, ParallelLoopState LoopState)
         {
             Interlocked.Increment(ref ProcessedChunks);
@@ -211,12 +212,12 @@ namespace SeeSharp
                     // *** Start by finding the topmost block to render
                     int EndY = RenderStartY(Blocks, X, Z);
                     int Y = EndY;
-                    int RenderVal = 255;
 
                     if (Y < 0)
                         continue; // *** No valid renderable blocks in this column, so continue with the next column
 
                     // *** Drill into the column to determine how many blocks down to render
+                    int RenderVal = 255;
                     while (RenderVal > 0)
                     {
                         RenderVal -= ColourPalette.DepthOpacities[Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)];
@@ -238,7 +239,7 @@ namespace SeeSharp
                         Colour Entry = BiomePalette[Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)];
 
                         // *** If it has an associated entity colours list, then it needs special consideration to get its colour
-                        if (Entry.Color < 0x01000000U && Entry.Color >= 0x00FF0000U)
+                        if ((Entry.Color & 0xFFFF0000U) == 0x00FF0000U) // *** Check for the flag value (0 Alpha, 255 Red - Blue and Green form the 0-65535 index)
                         {
                             PaletteEntry Entry2 = ColourPalette.GetPaletteEntry((int)(Entry.Color & 0x0000FFFFU)).First((E) => E.IsMatch(Blocks.GetData(X, Y, Z), Blocks.SafeGetTileEntity(X, Y, Z)));
                             if (Entry2 != null)
