@@ -34,6 +34,10 @@ namespace SeeSharp
         /// </summary>
         [FieldOffset(3)] public byte A;
 
+        /*
+         *  These functions all include repeated code, specifically the integer blending.  This is on purpose; the overhead of the function call forms more than 50% of the
+         *  total consumed CPU cycles for Blend()! 
+         */
 
         // *** Functions
         /// <summary>
@@ -152,7 +156,7 @@ namespace SeeSharp
         /// <returns></returns>
         public bool IsEntityKey()
         {
-            return Color < 0x01000000U && Color >= 0x00FF0000U;
+            return (Color & 0xFFFF0000U) == 0x00FF0000U;
         }
 
         // *** Colour Constants
