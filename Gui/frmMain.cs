@@ -105,7 +105,7 @@ namespace SeeSharp.Gui
 
             SetupPalettes();
 
-            lblStatus.Text = string.Format("See Sharp v{0}", Assembly.GetExecutingAssembly().GetName().Version);
+            SetStatus(string.Format("See Sharp v{0}", Assembly.GetExecutingAssembly().GetName().Version));
             LoadRenderers();
 
             nudThreads.Maximum = Environment.ProcessorCount;
@@ -313,14 +313,14 @@ namespace SeeSharp.Gui
             }
 
             ToggleControls(false, _World != null, false);
-            SetStatus(_Abort ? "Aborted" : "Finished");
+            SetStatus(_Abort ? "Aborted" : "Finished", "Render " + (_Abort ? "Aborted" : "Finished"));
             SetProgress(0);
             _AbortRender = null;
             _Abort = false;
         }
         private void DoUpdate(object Sender, ProgressUpdateEventArgs E)
         {
-            SetStatus(E.ProgressShortDescription);
+            SetStatus(E.ProgressShortDescription, E.ProgressDescription);
             SetProgress(E.Progress);
         }
         private void HandleError(object Sender, RenderingErrorEventArgs E)
@@ -381,11 +381,17 @@ namespace SeeSharp.Gui
         /// <param name="Status">
         ///     Text to set the status bar to
         /// </param>
-        void SetStatus(String Status)
+        void SetStatus(String Status, String Tooltip)
         {
             statusStrip1.UIThread(() => lblStatus.Text = Status);
+            statusStrip1.UIThread(() => lblStatus.ToolTipText = Tooltip);
         }
 
+        void SetStatus(String Status)
+        {
+            SetStatus(Status, Status);
+        }
+       
         #endregion
 
         private delegate void SelectionUpdater();
@@ -471,7 +477,7 @@ namespace SeeSharp.Gui
             }
             catch (FileNotFoundException)
             {
-                MessageBox.Show(string.Format("The folder {0} does not appear to contain a valid minecraft world", fbOpenFolder.SelectedPath), "Error Loading World", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show(string.Format("The folder {0} does not appear to contain a valid Minecraft world", fbOpenFolder.SelectedPath), "Error Loading World", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
 #if !DEBUG
 
@@ -480,7 +486,7 @@ namespace SeeSharp.Gui
                 MessageBox.Show(string.Format("Error - Could not load world:\r\n{1}\r\n({0})", Ex.Message, Ex.GetType().Name), "Error Loading World", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 #endif
-            lblStatus.Text = "World load failed";
+            SetStatus("World load failed");
 
         }
 
