@@ -101,6 +101,7 @@
     <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -305,7 +306,6 @@
     <None Include="Resources\application_xp_terminal.png" />
     <None Include="Resources\help.png" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\Substrate-master\SubstrateCS\Substrate %28NET4%29.csproj">
       <Project>{7264A1C4-AB4A-4437-B252-7379B98B5509}</Project>
@@ -341,8 +341,7 @@
   <PropertyGroup>
     <TransformOnBuild>true</TransformOnBuild>
   </PropertyGroup>
-  <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\TextTemplating\v10.0\Microsoft.TextTemplating.targets" />
   <PropertyGroup>
-    <PreBuildEvent>"C:\Program Files (x86)\Common Files\microsoft shared\TextTemplating\10.0\TextTransform.exe" -out "$(ProjectDir)version.cs" "$(ProjectDir)version.tt"</PreBuildEvent>
+    <PreBuildEvent>"C:\Program Files (x86)\Common Files\microsoft shared\TextTemplating\12.0\TextTransform.exe" -out "$(ProjectDir)version.cs" "$(ProjectDir)version.tt"</PreBuildEvent>
   </PropertyGroup>
 </Project>

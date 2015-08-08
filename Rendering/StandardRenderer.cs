@@ -14,7 +14,7 @@ using Substrate;
 
 namespace SeeSharp.Rendering
 {
-    internal sealed class Renderer : IRenderer
+    internal sealed class Renderer : IRenderer, IDisposable
     {
         // *** Error Codes
         private const Int32 ErrorNoMemory = -1;  // *** ERROR: Couldn't allocate bitmap.  Fatal, because w/o a bitmap wtf are you rendering to?
@@ -209,6 +209,10 @@ namespace SeeSharp.Rendering
             {
 #endif
 
+            int[][] DepthOpacities = _ColourPalette.DepthOpacities;
+            
+
+
             // *** Cancellation logic for parallel processing    
             if (LoopState != null && _Cancellation.IsCancellationRequested)
                 LoopState.Stop();
@@ -241,7 +245,7 @@ namespace SeeSharp.Rendering
                     // *** Drill into the column to determine how many blocks down to render
                     while (RenderVal > 0)
                     {
-                        RenderVal -= _ColourPalette.DepthOpacities[Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)];
+                        RenderVal -= DepthOpacities[Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)];
                         if (Y == 0) // *** If we've hit the bottom of the map, don't try and keep going.
                             break;  // *** It wouldn't end well.
                         Y--;
@@ -257,25 +261,20 @@ namespace SeeSharp.Rendering
                     {
                         // *** For each block we render, grab its palette entry.
                         Colour Entry = BiomePalette[Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)];
-                        Colour TempColour; // *** Working pixel colour
 
                         // *** If it has an associated entity colours list, then it needs special consideration to get its colour
                         if ((Entry.Color & 0xFFFF0000U) == 0x00FF0000U)
                         {
                             PaletteEntry Entry2 = _ColourPalette.GetPaletteEntry((int)(Entry.Color & 0x0000FFFFU)).First(e => e.IsMatch(Blocks.GetData(X, Y, Z), Blocks.SafeGetTileEntity(X, Y, Z)));
                             if (Entry2 != null)
-                                TempColour = Entry2.Color;
-                            else
-                                TempColour = Entry;
+                                Entry = Entry2.Color;
                         }
-                        else // *** No special consideration, just grab the colour in the palette
-                            TempColour = Entry;
 
-                        if (TempColour.A == 0)
+                        if (Entry.A == 0)
                             continue; // *** If we're trying to render air, let's not.
 
                         // *** Blend in our working colour to the column's pixel, after applying altitude and light-level blends.
-                        SetColour.Blend(TempColour.Copy().LightLevel((uint)Math.Max(_Config.MinLightLevel, Blocks.GetBlockLight(X, Math.Min(Y + 1, 255), Z))).Altitude(Y));
+                        SetColour.Blend(Entry.Copy().LightLevel((uint)Math.Max(_Config.MinLightLevel, Blocks.GetBlockLight(X, Math.Min(Y + 1, 255), Z))).Altitude(Y));
                     }
 
                     if (SetColour.A > 0) // *** If our pixel isn't just transparent, then write it out to the target bitmap
@@ -464,6 +463,14 @@ namespace SeeSharp.Rendering
             Console.WriteLine("        n:. . . . . . . . Normal rendering (default)");
             Console.WriteLine("        c:. . . . . . . . Cave rendering");
             Console.WriteLine("        C:. . . . . . . . Alternate cave rendering (ignores leaves, glass, etc)");
+        }
+
+        public void Dispose()
+        {
+            if (_OutputMap != null)
+                _OutputMap.Dispose();
+            if (_Cancellation != null)
+                _Cancellation.Dispose();
         }
     }
 }
