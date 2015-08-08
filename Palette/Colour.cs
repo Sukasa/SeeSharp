@@ -93,8 +93,8 @@ namespace SeeSharp.Palette
         {
             UInt32 UseAlpha = (15 - LightLevel) << 3;
             Color = (Color & 0xFF000000) | // *** Alpha
-                    (((Color & 0x00FF00FFU) + ((((Black.Color & 0x00FF00FFU) - (Color & 0x00FF00FFU)) * UseAlpha + 0x00800080U) >> 8)) & 0x00FF00FFU) | // Red, Blue
-                    (((Color & 0x0000FF00U) + ((((Black.Color & 0x0000FF00U) - (Color & 0x0000FF00U)) * UseAlpha + 0x00008000U) >> 8)) & 0x0000FF00U); // Green
+                    (((Color & 0x00FF00FFU) + (((0x00800080U - (Color & 0x00FF00FFU)) * UseAlpha) >> 8)) & 0x00FF00FFU) | // Red, Blue
+                    (((Color & 0x0000FF00U) + (((0x00008000U - (Color & 0x0000FF00U)) * UseAlpha) >> 8)) & 0x0000FF00U); // Green
             return this;
         }
         /// <summary>
