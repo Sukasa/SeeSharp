@@ -121,7 +121,7 @@ namespace SeeSharp.Palette
             return this;
         }
         /// <summary>
-        ///     Blend another colour onto this one with the specified alpha. storing the result into this colour
+        ///     Blend another colour onto this one with the specified alpha, storing the result into this colour
         /// </summary>
         /// <param name="Top">
         ///     What colour to blend on top of this one.  Alpha is ignored for blending, but returned as part of the resulting colour.

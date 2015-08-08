@@ -120,7 +120,7 @@ namespace SeeSharp
                 _StepTimer.Reset();
 
                 _StepTimer.Start();
-                _Renderer = new Renderer();
+                _Renderer = new StandardRenderer();
 
                 // *** Set up the progress indicator
                 Console.WriteLine("Using " + (_Configuration.EnableMultithreading ? "multi-threaded" : "single-threaded") + " " + _Renderer.RendererFriendlyName);

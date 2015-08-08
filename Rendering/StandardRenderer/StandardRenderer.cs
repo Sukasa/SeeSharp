@@ -319,7 +319,7 @@ namespace SeeSharp.Rendering
                 if (_RenderableChunks > 0)
                 {
                     _ProgressUpdateEventData.ProgressDescription = String.Format("Rendered {0} of {1} chunks ({2}%)",
-                        _ProcessedChunks, _RenderableChunks, (100 * _ProcessedChunks)/_RenderableChunks);
+                        _ProcessedChunks, _RenderableChunks, (100 * _ProcessedChunks) / _RenderableChunks);
                 }
                 else
                 {
@@ -358,9 +358,9 @@ namespace SeeSharp.Rendering
 
             _Chunks = Configuration.Chunks;
 
-            if (_Config.AdvancedRenderOptions.Exists(x => x.Key == "Mode"))
+            if (_Config.AdvancedRenderOptions.Exists(x => x.Key.ToLower() == "mode"))
             {
-                switch (_Config.AdvancedRenderOptions.Find(x => x.Key == "Mode").Value)
+                switch (_Config.AdvancedRenderOptions.Find(x => x.Key.ToLower() == "mode").Value)
                 {
                     case "c":
                         _RenderStartY = GetStartRenderYCave;
