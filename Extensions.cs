@@ -139,5 +139,35 @@ namespace SeeSharp
             Uri FolderUri = new Uri(RootRef);
             return Uri.UnescapeDataString(FolderUri.MakeRelativeUri(PathUri).ToString().Replace('/', Path.DirectorySeparatorChar));
         }
+
+        public static T[] GetRange<T>(this T[] Array, int StartingOffset, int Range, int Stride)
+        {
+            // *** Get center point
+            int X = StartingOffset % Stride;
+            int Y = StartingOffset / Stride;
+
+            // *** Get bounds of range
+            int MinX = Math.Max(0, X - Range);
+            int MinY = Math.Max(0, Y - Range);
+            int MaxX = Math.Min(Stride - 1, X + Range);
+            int MaxY = Math.Min((Array.Length / Stride) - 1, Y + Range);
+
+            // *** Define output table + write pointer
+            T[] Output = new T[(MaxX - MinX + 1) * (MaxY - MinY + 1)];
+            int Ptr = 0;
+
+            // *** Copy data into range output
+            for (int y = MinY; y <= MaxY; y++)
+            {
+                for (int x = MinX; x <= MaxX; X++)
+                {
+                    Output[Ptr] = Array[(y * Stride) + x];
+                    Ptr++;
+                }
+            }
+
+            return Output;
+        }
+
     } 
 }

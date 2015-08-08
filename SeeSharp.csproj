@@ -147,6 +147,9 @@
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MoreLinq">
+      <HintPath>packages\morelinq.2.0.0-alpha01\lib\net35\MoreLinq.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -194,6 +197,7 @@
     <Compile Include="Plugins\IPlugin.cs" />
     <Compile Include="Plugins\PluginController.cs" />
     <Compile Include="Plugins\ProxyPluginManager.cs" />
+    <Compile Include="Rendering\Heatmaps\Heatmap.cs" />
     <Compile Include="SeeSharp.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -214,8 +218,8 @@
     <Compile Include="Rendering\RendererManager.cs" />
     <Compile Include="Rendering\RenderingEventArgs.cs" />
     <Compile Include="Rendering\RenderConfiguration.cs" />
-    <Compile Include="Rendering\StandardRenderer.cs" />
-    <Compile Include="Rendering\StandardRendererConfig.cs">
+    <Compile Include="Rendering\StandardRenderer\StandardRenderer.cs" />
+    <Compile Include="Rendering\StandardRenderer\StandardRendererConfig.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Signs\ISign.cs" />
@@ -253,6 +257,7 @@
     <None Include="Mods\RP2.pal">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -307,12 +312,6 @@
     <None Include="Resources\help.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Substrate-master\SubstrateCS\Substrate %28NET4%29.csproj">
-      <Project>{7264A1C4-AB4A-4437-B252-7379B98B5509}</Project>
-      <Name>Substrate %28NET4%29</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Gui\Dialogs\dlgCheckingForUpdates.resx">
       <DependentUpon>dlgCheckingForUpdates.cs</DependentUpon>
     </EmbeddedResource>
@@ -329,12 +328,18 @@
     <EmbeddedResource Include="Rendering\RendererConfigForm.resx">
       <DependentUpon>RendererConfigForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Rendering\StandardRendererConfig.resx">
+    <EmbeddedResource Include="Rendering\StandardRenderer\StandardRendererConfig.resx">
       <DependentUpon>StandardRendererConfig.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Substrate\substrate\SubstrateCS\Substrate %28NET4%29.csproj">
+      <Project>{7264A1C4-AB4A-4437-B252-7379B98B5509}</Project>
+      <Name>Substrate %28NET4%29</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- process *.tt templates on each build  -->

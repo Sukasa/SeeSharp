@@ -148,7 +148,7 @@ namespace SeeSharp.Rendering
                 }
                 catch (OperationCanceledException)
                 {
-
+                    // Discard exception - this just means the user cancelled.
                 }
             }
             else
@@ -196,8 +196,9 @@ namespace SeeSharp.Rendering
                     RenderError.Invoke(this, E);
             }
         }
+
         // ReSharper disable once FunctionComplexityOverflow
-        // *** I do this because this function is the 'hottest' block of code in the program, and saving cycles during execution is ridiculously important here.
+        // *** I do ^ because this function is the 'hottest' block of code in the program, and saving cycles during execution is ridiculously important here.
         void RenderChunk(ChunkRef Chunk, ParallelLoopState LoopState)
         {
             // *** Track how many chunks have been processed, for user feedback
@@ -237,12 +238,12 @@ namespace SeeSharp.Rendering
                     // *** Start by finding the topmost block to render
                     int EndY = _RenderStartY(Blocks, X, Z);
                     int Y = EndY;
-                    int RenderVal = 255;
 
                     if (Y < 0)
                         continue; // *** No valid renderable blocks in this column, so continue with the next column
 
                     // *** Drill into the column to determine how many blocks down to render
+                    int RenderVal = 255;
                     while (RenderVal > 0)
                     {
                         RenderVal -= DepthOpacities[Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)];
@@ -263,7 +264,7 @@ namespace SeeSharp.Rendering
                         Colour Entry = BiomePalette[Blocks.GetID(X, Y, Z)][Blocks.GetData(X, Y, Z)];
 
                         // *** If it has an associated entity colours list, then it needs special consideration to get its colour
-                        if ((Entry.Color & 0xFFFF0000U) == 0x00FF0000U)
+                        if ((Entry.Color & 0xFFFF0000U) == 0x00FF0000U) // *** Check for the flag value (0 Alpha, 255 Red - Blue and Green form the 0-65535 index)
                         {
                             PaletteEntry Entry2 = _ColourPalette.GetPaletteEntry((int)(Entry.Color & 0x0000FFFFU)).First(e => e.IsMatch(Blocks.GetData(X, Y, Z), Blocks.SafeGetTileEntity(X, Y, Z)));
                             if (Entry2 != null)
@@ -309,25 +310,29 @@ namespace SeeSharp.Rendering
         // *** Progress Updating
         void DoProgressUpdate()
         {
-            _ProgressUpdateEventData.ProgressShortDescription = "Rendering";
             if (ProgressUpdate != null)
             {
+                // *** There are "short" and "long" descriptions of progress.
+                _ProgressUpdateEventData.ProgressShortDescription = "Rendering";
                 _ProgressUpdateEventData.Progress = _ProcessedChunks / (float)_RenderableChunks;
+                
                 if (_RenderableChunks > 0)
                 {
                     _ProgressUpdateEventData.ProgressDescription = String.Format("Rendered {0} of {1} chunks ({2}%)",
-                        _ProcessedChunks, _RenderableChunks, (100*_ProcessedChunks)/_RenderableChunks);
+                        _ProcessedChunks, _RenderableChunks, (100 * _ProcessedChunks)/_RenderableChunks);
                 }
                 else
                 {
                     _ProgressUpdateEventData.ProgressDescription = "No chunks to render";
                 }
+                
                 ProgressUpdate.Invoke(this, _ProgressUpdateEventData);
             }
         }
+
+        // *** Multithreaded-rendering progress display thread.
         void DisplayProgress()
         {
-
             while (true)
             {
                 DoProgressUpdate();

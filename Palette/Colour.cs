@@ -37,6 +37,10 @@ namespace SeeSharp.Palette
         /// </summary>
         [FieldOffset(3)] public byte A;
 
+        /*
+         *  These functions all include repeated code, specifically the integer blending.  This is on purpose; the overhead of the function call forms more than 50% of the
+         *  total consumed CPU cycles for Blend()! 
+         */
 
         // *** Functions
         /// <summary>
