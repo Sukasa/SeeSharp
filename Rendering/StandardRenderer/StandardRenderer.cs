@@ -204,15 +204,13 @@ namespace SeeSharp.Rendering
             // *** Track how many chunks have been processed, for user feedback
             Interlocked.Increment(ref _ProcessedChunks);
             Interlocked.Increment(ref _ActiveRenderThreads);
-#if !DEBUG
+#if !DEBUG && !FAST
             // *** In release mode, gracefully handle bad chunks.  Explode in debug mode so I can track down the issue.
             try
             {
 #endif
 
             int[][] DepthOpacities = _ColourPalette.DepthOpacities;
-            
-
 
             // *** Cancellation logic for parallel processing    
             if (LoopState != null && _Cancellation.IsCancellationRequested)
@@ -256,8 +254,7 @@ namespace SeeSharp.Rendering
 
                     // *** The Block-Metadata palette for this column's biome
                     Colour[][] BiomePalette = _ColourPalette.FastPalette[Chunk.Biomes.GetBiome(X, Z)];
-
-
+                    
                     for (; Y <= EndY; Y++) // *** Now render up from the lowest block to the starting block
                     {
                         // *** For each block we render, grab its palette entry.
@@ -278,11 +275,10 @@ namespace SeeSharp.Rendering
                         SetColour.Blend(Entry.Copy().LightLevel((uint)Math.Max(_Config.MinLightLevel, Blocks.GetBlockLight(X, Math.Min(Y + 1, 255), Z))).Altitude(Y));
                     }
 
-                    if (SetColour.A > 0) // *** If our pixel isn't just transparent, then write it out to the target bitmap
-                        Marshal.WriteInt32(_RenderTarget.Scan0 + (_Stride * (((Chunk.Z - _Config.SubregionChunks.Y) << 4) + Z)) + ((((Chunk.X - _Config.SubregionChunks.X) << 4) + X) << 2), (int)SetColour.FullAlpha().Color);
+                    Marshal.WriteInt32(_RenderTarget.Scan0 + (_Stride * (((Chunk.Z - _Config.SubregionChunks.Y) << 4) + Z)) + ((((Chunk.X - _Config.SubregionChunks.X) << 4) + X) << 2), (int)SetColour.FullAlpha().Color);
                 }
             }
-#if !DEBUG // *** When not running in debug mode, chunks that fail to render should NOT crash everything.
+#if !DEBUG && !FAST // *** When not running in debug mode, chunks that fail to render should NOT crash everything.
             }
             catch (Exception Ex)
             {
@@ -315,17 +311,17 @@ namespace SeeSharp.Rendering
                 // *** There are "short" and "long" descriptions of progress.
                 _ProgressUpdateEventData.ProgressShortDescription = "Rendering";
                 _ProgressUpdateEventData.Progress = _ProcessedChunks / (float)_RenderableChunks;
-                
+
                 if (_RenderableChunks > 0)
                 {
                     _ProgressUpdateEventData.ProgressDescription = String.Format("Rendered {0} of {1} chunks ({2}%)",
-                        _ProcessedChunks, _RenderableChunks, (100 * _ProcessedChunks)/_RenderableChunks);
+                        _ProcessedChunks, _RenderableChunks, (100 * _ProcessedChunks) / _RenderableChunks);
                 }
                 else
                 {
                     _ProgressUpdateEventData.ProgressDescription = "No chunks to render";
                 }
-                
+
                 ProgressUpdate.Invoke(this, _ProgressUpdateEventData);
             }
         }
@@ -384,7 +380,7 @@ namespace SeeSharp.Rendering
                 return;
 
             // *** Wait for renderers to exit before disposing
-            while(_ActiveRenderThreads > 0)
+            while (_ActiveRenderThreads > 0)
                 Thread.Sleep(10);
 
             _OutputMap.Dispose();
