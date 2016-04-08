@@ -21,7 +21,7 @@ namespace SeeSharp.Rendering
         {
             // TODO replace this with code that references and uses the plugin controller
             _Renderers.Clear();
-            Renderer CoreRenderer = new Renderer();
+            StandardRenderer CoreRenderer = new StandardRenderer();
             _Renderers.Add(CoreRenderer.RendererName, new Tuple<string, Type>(CoreRenderer.RendererFriendlyName, CoreRenderer.GetType()));
 
             if (!Directory.Exists(Assembly.GetExecutingAssembly().Location + "/Plugins"))
@@ -32,11 +32,11 @@ namespace SeeSharp.Rendering
                     if (typeof(IRenderer).IsAssignableFrom(TestType))
                     {
                         IRenderer TestRenderer = (IRenderer)Activator.CreateInstance(TestType);
-                        if (!_Renderers.ContainsKey(TestRenderer.RendererFriendlyName))
+                        if (!_Renderers.ContainsKey(TestRenderer.RendererName))
                             _Renderers.Add(TestRenderer.RendererName, new Tuple<string, Type>(TestRenderer.RendererFriendlyName, TestType));
                     }
 
-            _Renderers[""] = new Tuple<string, Type>("Standard Renderer", typeof(Renderer));
+            _Renderers[""] = new Tuple<string, Type>("Standard Renderer", typeof(StandardRenderer));
         }
 
         public static RendererManager Instance()

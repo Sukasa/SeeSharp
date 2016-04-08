@@ -14,7 +14,7 @@ using Substrate;
 
 namespace SeeSharp.Rendering
 {
-    internal sealed class Renderer : IRenderer, IDisposable
+    internal sealed class StandardRenderer : IRenderer, IDisposable
     {
         // *** Error Codes
         private const Int32 ErrorNoMemory = -1;  // *** ERROR: Couldn't allocate bitmap.  Fatal, because w/o a bitmap wtf are you rendering to?
@@ -354,9 +354,9 @@ namespace SeeSharp.Rendering
 
             _Chunks = Configuration.Chunks;
 
-            if (_Config.AdvancedRenderOptions.Exists(x => x.Key == "Mode"))
+            if (_Config.AdvancedRenderOptions.Exists(x => x.Key.ToLower() == "mode"))
             {
-                switch (_Config.AdvancedRenderOptions.Find(x => x.Key == "Mode").Value)
+                switch (_Config.AdvancedRenderOptions.Find(x => x.Key.ToLower() == "mode").Value)
                 {
                     case "c":
                         _RenderStartY = GetStartRenderYCave;

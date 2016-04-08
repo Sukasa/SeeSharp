@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace SeeSharp.Rendering
 {
-    class Heatmap : IEnumerable<int>
+    public class Heatmap : IEnumerable<int>
     {
         private Granularity _Granularity; // Divisor for map size -> heatmap size
         private int[] _Map;
@@ -34,6 +34,14 @@ namespace SeeSharp.Rendering
             Sixteenth = 4
         }
 
+        public Heatmap(RenderConfiguration Config, Granularity Granularity)
+        {
+            _Granularity = Granularity;
+            _Width = (((Config.SubregionChunks.Width + 1) << 4) >> (int)_Granularity);
+            _Height = (((Config.SubregionChunks.Height + 1) << 4) >> (int)_Granularity);
+            _Map = new int[_Height * _Width];
+        }
+
         public Heatmap(WorldMetrics Metrics, Granularity Granularity)
         {
             _Granularity = Granularity;
@@ -42,15 +50,23 @@ namespace SeeSharp.Rendering
             _Map = new int[_Height * _Width];
         }
 
-        public int this[int BlockX, int BlockZ]
+        public int this[int PixelX, int PixelZ]
         {
             get
             {
-                return _Map[((BlockX >> (int)_Granularity) + ((BlockZ >> (int)_Granularity) * _Width))];
+                return _Map[PixelX + (PixelZ * _Width)];
             }
             set
             {
-                _Map[((BlockX >> (int)_Granularity) + ((BlockZ >> (int)_Granularity) * _Width))] = value;
+                _Map[PixelX + (PixelZ * _Width)] = value;
+            }
+        }
+
+        public void Normalize()
+        {
+            for (int x = 0; x < _Map.Length; x++)
+            {
+                _Map[x] >>= (int)_Granularity;
             }
         }
 
@@ -133,6 +149,15 @@ namespace SeeSharp.Rendering
         IEnumerator IEnumerable.GetEnumerator()
         {
             return _Map.GetEnumerator();
+        }
+
+        public int Width {
+            get { return _Width; }
+        }
+
+        public int Height
+        {
+            get { return _Height; }
         }
     }
 }
