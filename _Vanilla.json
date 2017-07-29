@@ -1,0 +1,770 @@
+﻿{
+    "Name": "Vanilla 1.10 Palette",
+    "Author": "Sukasa",
+    "Version": "1.10.2",
+    "Description": "Palette file for 1.10",
+    "Defaults": {
+        "MetaData": "*",
+        "Density": 255
+    },
+    "Colors": {
+        "grassbase": {
+            "Red": 136,
+            "Green": 136,
+            "Blue": 136,
+            "Alpha": 255
+        },
+        "water": {
+            "Red": 15,
+            "Green": 25,
+            "Blue": 145,
+            "Alpha": 25
+        },
+        "lava": {
+            "Red": 240,
+            "Green": 84,
+            "Blue": 10,
+            "Alpha": 255
+        },
+        "leaves": {
+            "Red": 112,
+            "Green": 112,
+            "Blue": 112,
+            "Alpha": 245
+        },
+        "foliage": {
+            "Red": 40,
+            "Green": 240,
+            "Blue": 40,
+            "Alpha": 96
+        },
+        "flowers": {
+            "Red": 185,
+            "Green": 185,
+            "Blue": 40,
+            "Alpha": 96
+        },
+        "wood": {
+            "Red": 159,
+            "Green": 132,
+            "Blue": 72,
+            "Alpha": 255
+        },
+        "trunk": {
+            "Red": 167,
+            "Green": 98,
+            "Blue": 35,
+            "Alpha": 255
+        },
+        "cactus": {
+            "Red": 10,
+            "Green": 150,
+            "Blue": 10,
+            "Alpha": 255
+        },
+        "redbigmushroom": {
+            "Red": 194,
+            "Green": 139,
+            "Blue": 86,
+            "Alpha": 255
+        },
+        "stone": {
+            "Red": 110,
+            "Green": 110,
+            "Blue": 110,
+            "Alpha": 255
+        },
+        "sand": {
+            "Red": 236,
+            "Green": 227,
+            "Blue": 174,
+            "Alpha": 255
+        },
+        "sandstone": {
+            "Red": 200,
+            "Green": 190,
+            "Blue": 120,
+            "Alpha": 255
+        },
+        "gravel": {
+            "Red": 144,
+            "Green": 128,
+            "Blue": 132,
+            "Alpha": 255
+        },
+        "clay": {
+            "Red": 214,
+            "Green": 168,
+            "Blue": 168,
+            "Alpha": 255
+        },
+        "snow": {
+            "Red": 246,
+            "Green": 255,
+            "Blue": 255,
+            "Alpha": 255
+        },
+        "dirt": {
+            "Red": 67,
+            "Green": 188,
+            "Blue": 77,
+            "Alpha": 255
+        }
+    },
+    "Blocks": [
+        /*
+        {
+
+            The Minecraft block ID (textual) of the block
+            "BlockId" : "minecraft:grass",
+
+            The metadata value of the block (0-15), or "*" for any metadata
+            "Metadata" : "*" | 0 - 15,
+            
+            The colour of the block, either a string key to an object in the
+            Colors array, or a color object
+            "Color" : "grassbase",
+            
+            Block density, for determining how far down to render
+            "Density" : 255
+        },
+
+        */
+        {
+            "BlockId": "minecraft:grass",
+            "Color": "grassbase"
+        },
+        {
+            "BlockId": "minecraft:stone",
+            "Color": "stone"
+        },
+        {
+            "BlockId": "minecraft:dirt",
+            "Color": "dirt"
+        },
+        {
+            "BlockId": "minecraft:farmland",
+            "Color": "dirt"
+        },
+        {
+            "BlockId": "minecraft:bedrock",
+            "Color": {
+                "Red": 10,
+                "Green": 10,
+                "Blue": 10,
+                "Alpha": 255
+            }
+        },
+        {
+            "BlockId": "minecraft:sand",
+            "Color": "sand"
+        },
+        {
+            "BlockId": "minecraft:sandstone",
+            "Color": "sandstone"
+        },
+        {
+            "BlockId": "minecraft:gravel",
+            "Color": "gravel"
+        },
+        {
+            "BlockId": "minecraft:clay",
+            "Color": "clay"
+        },
+        {
+            "BlockId": "minecraft:netherrack",
+            "Color": {
+                "Red": 211,
+                "Green": 44,
+                "Blue": 48,
+                "Alpha": 255
+            }
+        },
+        {
+            "BlockId": "minecraft:soul_sand",
+            "Color": {
+                "Red": 87,
+                "Green": 65,
+                "Blue": 57,
+                "Alpha": 255
+            }
+        },
+        {
+            "BlockId": "minecraft:netherbrick",
+            "Color": {
+                "Red": 180,
+                "Green": 8,
+                "Blue": 12,
+                "Alpha": 255
+            }
+        },
+        {
+            "BlockId": "minecraft:snow",
+            "Color": "snow"
+        },
+        {
+            "BlockId": "minecraft:snow_block",
+            "Color": "snow"
+        },
+        {
+            "BlockId": "minecraft:ice",
+            "Color": {
+                "Red": 210,
+                "Green": 250,
+                "Blue": 250,
+                "Alpha": 100
+            },
+            "Density": 80
+        },
+        {
+            "BlockId": "minecraft:packed_ice",
+            "Color": {
+                "Red": 170,
+                "Green": 210,
+                "Blue": 210,
+                "Alpha": 255
+            }
+        },
+        {
+            "BlockId": "minecraft:mycelium",
+            "Color": {
+                "Red": 201,
+                "Green": 180,
+                "Blue": 199,
+                "Alpha": 255
+            }
+        },
+        {
+            "BlockId": "minecraft:endstone",
+            "Color": {
+                "Red": 201,
+                "Green": 201,
+                "Blue": 100,
+                "Alpha": 255
+            }
+        },
+        {
+            "BlockId": "minecraft:flowing_water",
+            "Color": "water",
+            "Density": 15
+        },
+        {
+            "BlockId": "minecraft:water",
+            "Color": "water",
+            "Density": 15
+        },
+        {
+            "BlockId": "minecraft:flowing_lava",
+            "Color": "lava"
+        },
+        {
+            "BlockId": "minecraft:lava",
+            "Color": "lava"
+        },
+        {
+            "BlockId": "minecraft:gold_ore",
+            "Color": "stone"
+        },
+        {
+            "BlockId": "minecraft:icon_ore",
+            "Color": "stone"
+        },
+        {
+            "BlockId": "minecraft:coal_ore",
+            "Color": "stone"
+        },
+        {
+            "BlockId": "minecraft:lapis_ore",
+            "Color": "stone"
+        },
+        {
+            "BlockId": "minecraft:diamond_ore",
+            "Color": "stone"
+        },
+        {
+            "BlockId": "minecraft:redstone_ore",
+            "Color": "stone"
+        },
+        {
+            "BlockId": "minecraft:lit_redstone_ore",
+            "Color": "stone"
+        },
+        {
+            "BlockId": "minecraft:sapling",
+            "Color": "foliage",
+            "Density": 100
+        },
+        {
+            "BlockId": "minecraft:wheat",
+            "Color": "foliage",
+            "Density": 100
+        },
+        {
+            "BlockId": "minecraft:reeds",
+            "Color": "foliage",
+            "Density": 100
+        },
+        {
+            "BlockId": "minecraft:pumpkin_stem",
+            "Color": "foliage",
+            "Density": 100
+        },
+        {
+            "BlockId": "minecraft:melon_stem",
+            "Color": "foliage",
+            "Density": 100
+        },
+        {
+            "BlockId": "minecraft:waterlily",
+            "Color": "foliage",
+            "Density": 100
+        },
+        {
+            "BlockId": "minecraft:yellow_flower",
+            "Color": "foliage",
+            "Density": 100
+        },
+        {
+            "BlockId": "minecraft:red_flower",
+            "Color": "foliage",
+            "Density": 100
+        },
+        {
+            "BlockId": "minecraft:brown_mushroom",
+            "Color": "foliage",
+            "Density": 100
+        },
+        {
+            "BlockId": "minecraft:red_mushroom",
+            "Color": "foliage",
+            "Density": 100
+        },
+        {
+            "BlockId": "minecraft:tallgrass",
+            "Color": "foliage",
+            "Density": 100
+        },
+        {
+            "BlockId": "minecraft:carrots",
+            "Color": "foliage",
+            "Density": 100
+        },
+        {
+            "BlockId": "minecraft:potatoes",
+            "Color": "foliage",
+            "Density": 100
+        },
+        {
+            "BlockId": "minecraft:beetroots",
+            "Color": "foliage",
+            "Density": 100
+        },
+        {
+            "BlockId": "minecraft:double_plant",
+            "Color": "foliage",
+            "Density": 100
+        },
+        {
+            "BlockId": "minecraft:leaves",
+            "Color": "leaves",
+            "Density": 100
+        },
+        {
+            "BlockId": "minecraft:leaves2",
+            "Color": "leaves",
+            "Density": 100
+        },
+        {
+            "BlockId": "minecraft:planks",
+            "Color": "wood"
+        },
+        {
+            "BlockId": "minecraft:log",
+            "Color": "trunk"
+        },
+        {
+            "BlockId": "minecraft:log2",
+            "Color": "trunk"
+        },
+        {
+            "BlockId": "minecraft:cactus",
+            "Color": "cactus"
+        },
+        {
+            "BlockId": "minecraft:pumpkin",
+            "Color": "trunk"
+        },
+        {
+            "BlockId": "minecraft:lit_pumpkin",
+            "Color": "trunk"
+        },
+        {
+            "BlockId": "minecraft:melon",
+            "Color": "trunk"
+        },
+        {
+            "BlockId": "minecraft:sponge",
+            "Color": "trunk"
+        },
+        {
+            "BlockId": "minecraft:flower_pot",
+            "Color": "trunk"
+        },
+        {
+            "BlockId": "minecraft:torch",
+            "Color": "trunk"
+        },
+        {
+            "BlockId": "minecraft:hardened_clay",
+            "Color": "hardclay"
+        },
+        {
+            "BlockId": "minecraft:stained_clay",
+            "Metadata": 0,
+            "Color": "stainedclay0"
+        },
+        {
+            "BlockId": "minecraft:stained_clay",
+            "Metadata": 1,
+            "Color": "stainedclay1"
+        },
+        {
+            "BlockId": "minecraft:stained_clay",
+            "Metadata": 2,
+            "Color": "stainedclay2"
+        },
+        {
+            "BlockId": "minecraft:stained_clay",
+            "Metadata": 3,
+            "Color": "hardclay3"
+        },
+        {
+            "BlockId": "minecraft:stained_clay",
+            "Metadata": 4,
+            "Color": "stainedclay4"
+        },
+        {
+            "BlockId": "minecraft:stained_clay",
+            "Metadata": 5,
+            "Color": "stainedclay5"
+        },
+        {
+            "BlockId": "minecraft:stained_clay",
+            "Metadata": 6,
+            "Color": "stainedclay6"
+        },
+        {
+            "BlockId": "minecraft:stained_clay",
+            "Metadata": 7,
+            "Color": "stainedclay7"
+        },
+        {
+            "BlockId": "minecraft:stained_clay",
+            "Metadata": 8,
+            "Color": "stainedclay8"
+        },
+        {
+            "BlockId": "minecraft:stained_clay",
+            "Metadata": 9,
+            "Color": "stainedclay9"
+        },
+        {
+            "BlockId": "minecraft:stained_clay",
+            "Metadata": 10,
+            "Color": "stainedclay10"
+        },
+        {
+            "BlockId": "minecraft:stained_clay",
+            "Metadata": 11,
+            "Color": "stainedclay11"
+        },
+        {
+            "BlockId": "minecraft:stained_clay",
+            "Metadata": 12,
+            "Color": "stainedclay12"
+        },
+        {
+            "BlockId": "minecraft:stained_clay",
+            "Metadata": 13,
+            "Color": "stainedclay13"
+        },
+        {
+            "BlockId": "minecraft:stained_clay",
+            "Metadata": 14,
+            "Color": "stainedclay14"
+        },
+        {
+            "BlockId": "minecraft:stained_clay",
+            "Metadata": 15,
+            "Color": "stainedclay15"
+        },
+        {
+            "BlockId": "minecraft:obsidian",
+            "Color": "obsidian"
+        },
+        {
+            "BlockId": "minecraft:stonebrick",
+            "Color": "stonebrick"
+        },
+        {
+            "BlockId": "minecraft:stone_brick_stairs",
+            "Color": "stonebrick"
+        },
+        {
+            "BlockId": "minecraft:oak_stairs",
+            "Color": "wood"
+        },
+        {
+            "BlockId": "minecraft:brick_stairs",
+            "Color": "brick"
+        },
+        {
+            "BlockId": "minecraft:nether_brick_stairs",
+            "Color": "netherbrick"
+        },
+        {
+            "BlockId": "minecraft:sandstone_stairs",
+            "Color": "sandstone"
+        },
+        {
+            "BlockId": "minecraft:quartz_stairs",
+            "Color": "quartz"
+        },
+        {
+            "BlockId": "minecraft:acacia_stairs",
+            "Color": "acacia"
+        },
+        {
+            "BlockId": "minecraft:dark_oak_stairs",
+            "Color": "darkoak"
+        },
+        {
+            "BlockId": "minecraft:red_sandstone_stairs",
+            "Color": "redsandstone"
+        },
+        {
+            "BlockId": "minecraft:purpur_stairs",
+            "Color": "purpur"
+        },
+        {
+            "BlockId": "minecraft:spruce_stairs",
+            "Color": "spruce"
+        },
+        {
+            "BlockId": "minecraft:jungle_stairs",
+            "Color": "jungle"
+        },
+        {
+            "BlockId": "minecraft:birch_stairs",
+            "Color": "birch"
+        },
+        {
+            "BlockId": "minecraft:double_stone_slab",
+            "Color": "stoneslab"
+        },
+        {
+            "BlockId": "minecraft:stone_slab",
+            "Color": "stoneslab"
+        },
+        {
+            "BlockId": "minecraft:double_wooden_slab",
+            "Metadata": 0,
+            "Color": "wood"
+        },
+        {
+            "BlockId": "minecraft:double_wooden_slab",
+            "Metadata": 1,
+            "Color": "spruce"
+        },
+        {
+            "BlockId": "minecraft:double_wooden_slab",
+            "Metadata": 2,
+            "Color": "birch"
+        },
+        {
+            "BlockId": "minecraft:double_wooden_slab",
+            "Metadata": 3,
+            "Color": "jungle"
+        },
+        {
+            "BlockId": "minecraft:double_wooden_slab",
+            "Metadata": 4,
+            "Color": "acacia"
+        },
+        {
+            "BlockId": "minecraft:double_wooden_slab",
+            "Metadata": 5,
+            "Color": "darkoak"
+        },
+        {
+            "BlockId": "minecraft:wooden_slab",
+            "Metadata": 0,
+            "Color": "wood"
+        },
+        {
+            "BlockId": "minecraft:wooden_slab",
+            "Metadata": 1,
+            "Color": "spruce"
+        },
+        {
+            "BlockId": "minecraft:wooden_slab",
+            "Metadata": 2,
+            "Color": "birch"
+        },
+        {
+            "BlockId": "minecraft:wooden_slab",
+            "Metadata": 3,
+            "Color": "jungle"
+        },
+        {
+            "BlockId": "minecraft:wooden_slab",
+            "Metadata": 4,
+            "Color": "acacia"
+        },
+        {
+            "BlockId": "minecraft:wooden_slab",
+            "Metadata": 5,
+            "Color": "darkoak"
+        },
+        {
+            "BlockId": "minecraft:wooden_slab",
+            "Metadata": 8,
+            "Color": "wood"
+        },
+        {
+            "BlockId": "minecraft:wooden_slab",
+            "Metadata": 9,
+            "Color": "spruce"
+        },
+        {
+            "BlockId": "minecraft:wooden_slab",
+            "Metadata": 10,
+            "Color": "birch"
+        },
+        {
+            "BlockId": "minecraft:wooden_slab",
+            "Metadata": 11,
+            "Color": "jungle"
+        },
+        {
+            "BlockId": "minecraft:wooden_slab",
+            "Metadata": 12,
+            "Color": "acacia"
+        },
+        {
+            "BlockId": "minecraft:wooden_slab",
+            "Metadata": 13,
+            "Color": "darkoak"
+        },
+        {
+            "BlockId": "minecraft:log2",
+            "Color": "trunk"
+        },
+        {
+            "BlockId": "minecraft:log2",
+            "Color": "trunk"
+        },
+        {
+            "BlockId": "minecraft:log2",
+            "Color": "trunk"
+        },
+        {
+            "BlockId": "minecraft:log2",
+            "Color": "trunk"
+        },
+        {
+            "BlockId": "minecraft:log2",
+            "Color": "trunk"
+        },
+        {
+            "BlockId": "minecraft:log2",
+            "Color": "trunk"
+        },
+        {
+            "BlockId": "minecraft:log2",
+            "Color": "trunk"
+        },
+        {
+            "BlockId": "minecraft:log2",
+            "Color": "trunk"
+        },
+        {
+            "BlockId": "minecraft:log2",
+            "Color": "trunk"
+        },
+        {
+            "BlockId": "minecraft:log2",
+            "Color": "trunk"
+        },
+        {
+            "BlockId": "minecraft:log2",
+            "Color": "trunk"
+        },
+        {
+            "BlockId": "minecraft:log2",
+            "Color": "trunk"
+        },
+        {
+            "BlockId": "minecraft:log2",
+            "Color": "trunk"
+        },
+        {
+            "BlockId": "minecraft:log2",
+            "Color": "trunk"
+        },
+        {
+            "BlockId": "minecraft:log2",
+            "Color": "trunk"
+        },
+        {
+            "BlockId": "minecraft:log2",
+            "Color": "trunk"
+        },
+        {
+            "BlockId": "minecraft:log2",
+            "Color": "trunk"
+        },
+        {
+            "BlockId": "minecraft:log2",
+            "Color": "trunk"
+        },
+        {
+            "BlockId": "minecraft:log2",
+            "Color": "trunk"
+        },
+        {
+            "BlockId": "minecraft:log2",
+            "Color": "trunk"
+        },
+        {
+            "BlockId": "minecraft:bedrock",
+            "MetaData": "*",
+            "Color": "grassbase",
+            "Density": 255
+        },
+        {
+            "BlockId": "minecraft:bedrock",
+            "MetaData": "*",
+            "Color": "grassbase",
+            "Density": 255
+        }
+    ],
+    "Biomes": [
+        {
+            "BiomeId": 0,
+            "BlockId": "minecraft:grass",
+            "Color": "grassbase"
+        },
+        {
+            "BiomeId": 0,
+            "BlockId": "minecraft:grass",
+            "Metadata": 0,
+            "Color": "grassbase"
+        },
+        {
+            "BiomeId": 0,
+            "BlockId": "minecraft:grass",
+            "Color": "grassbase"
+        }
+    ]
+}

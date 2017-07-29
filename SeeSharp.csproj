@@ -164,6 +164,10 @@
     <Reference Include="MoreLinq">
       <HintPath>packages\morelinq.2.0.0-alpha01\lib\net35\MoreLinq.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -200,6 +204,7 @@
     </Compile>
     <Compile Include="Palette\Colour.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="Palette\JsonPaletteFile.cs" />
     <Compile Include="Palette\Palette.cs" />
     <Compile Include="Palette\PaletteEntry.cs" />
     <Compile Include="Palette\PaletteFile.cs" />
@@ -283,6 +288,7 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Version.cs</LastGenOutput>
     </None>
+    <None Include="_Vanilla.json" />
     <None Include="_Vanilla.pal">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -311,6 +317,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include=".gitignore" />
+    <Content Include="Documentation\New Palette Format.txt" />
     <Content Include="Icon1.ico" />
     <Content Include="Resources\BaseIDs.txt" />
     <None Include="Resources\wrench.png" />
@@ -352,7 +359,7 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Substrate-master\SubstrateCS\Substrate %28NET4%29.csproj">
+    <ProjectReference Include="..\Substrate\substrate\SubstrateCS\Substrate %28NET4%29.csproj">
       <Project>{7264A1C4-AB4A-4437-B252-7379B98B5509}</Project>
       <Name>Substrate %28NET4%29</Name>
     </ProjectReference>

@@ -1,0 +1,43 @@
+﻿Use Json?  Would be clearer and probably easier to handle...
+
+{
+  "colors" : {
+	  "grass" = {
+	    R = 1,
+	    G = 2,
+	    B = 3,
+	    A = 255
+	  },
+	  "leaves" = {
+	    R = 128,
+		G = 128,
+		B = 128,
+		A = 96
+	  }
+	],
+	"blocks" : [
+	  {
+	    "blockId" = "minecraft:grass",
+		"metaData" = "*",
+		"color" = "grass",
+		"density" = 255
+	  }
+	]
+	"Biomes" : [
+		{
+			"Name" : "Biome Name",
+			"Id" : BiomeID,
+			"Tints" : [
+				{
+					"BlockIDs" : [ID1, ID2],
+					"Color" : {
+						"Red" : 255,
+						"Blue" : 255,
+						"Green" : 255,
+						"Alpha" : 255
+					}
+				}
+			]
+		}
+	]
+}

@@ -83,7 +83,7 @@ namespace SeeSharp
                 // *** Load palettes.  Start with palettes in EXE directory, then append all palettes in the force-load list.
                 Console.WriteLine("Loading Palettes...");
                 // ReSharper disable once AssignNullToNotNullAttribute
-                // *** Safe to assume our EXE will never not be in a folder.
+                // *** It's probably safe to assume our EXE is gonna be in a folder.
                 foreach (String PalFile in Directory.EnumerateFiles(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "*.pal").Concat(_LoadAdditionalPalettes))
                 {
                     string PaletteFile = PalFile;
