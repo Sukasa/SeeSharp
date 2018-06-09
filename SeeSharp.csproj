@@ -207,8 +207,7 @@
     <Compile Include="Palette\JsonPaletteFile.cs" />
     <Compile Include="Palette\Palette.cs" />
     <Compile Include="Palette\PaletteEntry.cs" />
-    <Compile Include="Palette\PaletteFile.cs" />
-    <Compile Include="Palette\PaletteManager.cs" />
+    <Compile Include="Palette\PaletteException.cs" />
     <Compile Include="Palette\PaletteToken.cs" />
     <Compile Include="Palette\TintEntry.cs" />
     <Compile Include="Plugins\UpdateInfo.cs" />

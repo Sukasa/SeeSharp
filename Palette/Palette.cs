@@ -28,7 +28,7 @@ namespace SeeSharp.Palette
         private readonly Dictionary<int, List<PaletteEntry>> _PaletteEntries = new Dictionary<int, List<PaletteEntry>>();
         private readonly Dictionary<int, List<TintEntry>> _BiomeTints = new Dictionary<int, List<TintEntry>>();
 
-        private readonly List<JsonPaletteFile> LoadedPalettes = new List<JsonPaletteFile>();
+        private readonly List<JsonPalette> LoadedPalettes = new List<JsonPalette>();
 
         // *** Lookup tables, for faster rendering
         /// <summary>
@@ -68,14 +68,14 @@ namespace SeeSharp.Palette
 
         internal BlockPalette()
         {
-            for (int X = 0; X < BiomesMax; X++)
+            for (int Biome = 0; Biome < BiomesMax; Biome++)
             {
-                FastPalette[X] = new Colour[BlocksMax][];
-                for (int Y = 0; Y < BlocksMax; Y++)
-                    FastPalette[X][Y] = new Colour[MetadataMax];
+                FastPalette[Biome] = new Colour[MetadataMax][];
+                for (int Meta = 0; Meta < MetadataMax; Meta++)
+                    FastPalette[Biome][Meta] = new Colour[BlocksMax];
             }
-            for (int X = 0; X < BlocksMax; X++)
-                DepthOpacities[X] = new int[MetadataMax];
+            for (int Blocks = 0; Blocks < MetadataMax; Blocks++)
+                DepthOpacities[Blocks] = new int[BlocksMax];
 
         }
         internal void AssembleLookupTables()
@@ -173,7 +173,7 @@ namespace SeeSharp.Palette
         internal void LoadPalette(String PaletteFile)
         {
             JsonSerializer SerDes = new JsonSerializer();
-            JsonPaletteFile Palette = SerDes.Deserialize<JsonPaletteFile>(new JsonTextReader(File.OpenText(PaletteFile)));
+            JsonPalette Palette = SerDes.Deserialize<JsonPalette>(new JsonTextReader(File.OpenText(PaletteFile)));
 
             LoadedPalettes.Add(Palette);
         }
